@@ -66,14 +66,24 @@ public class TargetPointer {
             float x = screenX - centerX;
             double angle = Math.atan2(y, x);
             double dotted = rotVec.dotProduct(pos);
+            int d = 0;
             if (dotted < 0) {
                 angle += Math.PI;
             } else if (x * x + y * y < dx2 * dx2) {
-                continue;
+                d = dx2 - (int) Math.hypot(x, y);
+                dx2 -= d;
             }
             matrices.push();
             matrices.multiply(new Quaternionf().rotateZ((float) angle), centerX, centerY, 0);
-            drawContext.drawHorizontalLine((int) centerX + 10, (int) (centerX + dx2), (int) centerY - 1, -1);
+            //RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR, GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
+            for (int i = -1; i <= 1; i++) {
+                int abs = Math.abs(i);
+                drawContext.drawHorizontalLine(
+                  (int) centerX + Math.max(0, 10 - d) + abs,
+                  (int) (centerX + dx2) - abs,
+                  (int) centerY + i,
+                  (abs - 1) & 0x00FFFFFF | 0xAA000000);
+            }
             matrices.pop();
         }
     }
