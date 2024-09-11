@@ -15,12 +15,12 @@ final class ChineseGen extends FabricLanguageProvider {
     }
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder b) {
-        String modName = "快速下楼梯";
+        String modName = "琐物·客户端";
         b.add(TrifleClient.NAME_KEY, modName);
-        b.add("modmenu.summaryTranslation." + ID, "下楼梯不再磕头");
+        b.add("modmenu.summaryTranslation." + ID, "一个随便写的客户端辅助模组");
         b.add("modmenu.descriptionTranslation." + ID, """
-          走下楼梯时尝试立刻落到地面。 
-          当玩家悬空时，如果到下方方块的距离小于等于玩家的可上台阶高度，则瞬间下落到方块上。
+          提供一些客户端辅助功能：
+          - 用于搜索方块的指令：/trifleclient find block [block]
           """);
     }
 }
