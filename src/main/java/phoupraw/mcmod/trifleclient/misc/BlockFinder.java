@@ -4,6 +4,7 @@ import com.google.common.base.Predicates;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import dev.xpple.clientarguments.arguments.CBlockPredicateArgument;
+import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
+@UtilityClass
 public class BlockFinder {
     //private static final Set<BlockPos> iterated = new ObjectOpenHashSet<>();
     private volatile static @NotNull Iterator<BlockPos> iterator = Collections.emptyIterator();
@@ -132,7 +134,7 @@ public class BlockFinder {
                 source.sendFeedback(Text.literal("已清除搜索结果。"));
                 return 1;
             } else {
-                source.sendError(Text.literal("没有可执行的操作！"));
+                source.sendError(Text.literal("没有搜索结果或进行中的搜索！"));
                 return 0;
             }
         }

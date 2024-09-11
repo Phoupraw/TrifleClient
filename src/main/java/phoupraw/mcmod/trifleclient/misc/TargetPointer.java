@@ -2,6 +2,7 @@ package phoupraw.mcmod.trifleclient.misc;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -19,6 +20,7 @@ import java.util.Set;
 
 /**
  @apiNote {@link #POSITIONS} */
+@UtilityClass
 public class TargetPointer {
     public static final Set<Vec3d> POSITIONS = new ObjectOpenHashSet<>();
     private static Matrix4f viewMatrix = new Matrix4f(), projMatrix = new Matrix4f();
