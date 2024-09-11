@@ -22,34 +22,47 @@ public class TargetPointer {
     }
     private static void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (!MinecraftClient.isHudEnabled()) return;
-        //var camera = MinecraftClient.getInstance().cameraEntity;
-        //if (camera == null) {
-        //    camera = MinecraftClient.getInstance().player;
-        //    if (camera == null) return;
-        //}
         Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+        Camera.Projection projection = camera.getProjection();
+        Vec3d C = camera.getPos();
+        Vec3d O = projection.getPosition(0.5f, 0.5f);
+        Vec3d X = projection.getPosition(1, 0.5f);
+        Vec3d Y = projection.getPosition(0.5f, 1);
+        Vec3d OX = X.subtract(O);
+        Vec3d OY = Y.subtract(O);
+        Vec3d n = OX.crossProduct(OY);
         float tickDelta = tickCounter.getTickDelta(false);
         float yaw0 = camera.getYaw();
         float pitch0 = camera.getPitch();
         for (BlockPos pos : POSITIONS) {
-            Vec3d dis = camera.getPos().subtract(pos.toCenterPos());
+            Vec3d P = pos.toCenterPos();
+            double t = -(n.x * (P.x - O.x) + n.y * (P.y - O.y) + n.z * (P.z - O.z)) / (n.x * (C.x - P.x) + n.y * (C.y - P.y) + n.z * (C.z - P.z));
+            Vec3d Q = new Vec3d(P.x + t * (C.x - P.x), P.y + t * (C.y - P.y), P.z + t * (C.z - P.z));
+            //a=(Q.x-b*OX.x)
+            //Q.y=(Q.x-b*OX.x)*OX.y+b*OY.y
+            //Q.y=Q.x*OX.y-b*OX.x*OX.y+b*OY.y
+            //Q.y=Q.x*OX.y+b*(OY.y-OX.x*OX.y)
+            double b = (Q.y - Q.x * OX.y) / (OY.y - OX.x * OX.y);
+            double a = Q.x - b * OX.x;
+            
+            Vec3d dis = O.subtract(P);
             double rho = dis.length();
-            double pitch1 = Math.acos(dis.getY() / rho);
-            double yaw1 = Math.atan2(dis.getY(), dis.getZ());
+            double pitch1 = Math.acos(dis.y / rho);
+            double yaw1 = Math.atan2(dis.y, dis.z);
             double yaw2 = yaw0 - yaw1;
             double pitch2 = pitch0 - pitch1;
-            double angle = Math.atan2(pitch2, yaw2);
+            double angle = Math.atan2(b, a);
             if (Double.isNaN(angle)) {
                 angle = 0;
             }
             MatrixStack matrices = drawContext.getMatrices();
             int x1 = drawContext.getScaledWindowWidth() / 2;
             int x2 = x1 - 100;
-            int y = drawContext.getScaledWindowHeight() / 2;
+            int y1 = drawContext.getScaledWindowHeight() / 2;
             //drawContext.drawHorizontalLine(x1, x2, y, -1);
             matrices.push();
-            matrices.multiply(new Quaternionf().rotateZ((float) angle), x1 + 0.5f, y + 0.5f, 0);
-            drawContext.drawHorizontalLine(x1, x2, y, -1);
+            matrices.multiply(new Quaternionf().rotateZ((float) angle), x1 + 0.5f, y1 + 0.5f, 0);
+            drawContext.drawHorizontalLine(x1, x2, y1, -1);
             matrices.pop();
         }
     }
