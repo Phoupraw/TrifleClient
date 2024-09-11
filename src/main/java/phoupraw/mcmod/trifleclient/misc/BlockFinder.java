@@ -55,17 +55,8 @@ public class BlockFinder {
             synchronized (BlockFinder.class) {
                 iterator = BlockPos.iterateOutwards(source.getPlayer().getBlockPos(), range, range, range).iterator();
                 predicate = CBlockPredicateArgument.getBlockPredicate(context, "block");
-                if (found != null) {
-                    TargetPointer.POSITIONS.remove(found.toCenterPos());
-                }
-                found = null;
-                if (thread != null) {
-                    thread.interrupt();
-                }
-                thread = new Thread(BlockFinder::run);
                 source.sendFeedback(Text.of("开始搜索……"));
-                thread.start();
-                thread.join(1);
+                start();
                 return 1;
             }
         } catch (Throwable e) {
@@ -73,6 +64,18 @@ public class BlockFinder {
             TrifleClient.LOGGER.throwing(e);
             return 0;
         }
+    }
+    private static void start() throws InterruptedException {
+        if (found != null) {
+            TargetPointer.POSITIONS.remove(found.toCenterPos());
+        }
+        found = null;
+        if (thread != null) {
+            thread.interrupt();
+        }
+        thread = new Thread(BlockFinder::run);
+        thread.start();
+        thread.join(1);
     }
     private static void run() {
         boolean failed = true;
@@ -118,8 +121,15 @@ public class BlockFinder {
         synchronized (BlockFinder.class) {
             found = BlockFinder.found;
             if (found == null || predicate.test(new CachedBlockPosition(world, found, false))) return;
-            TargetPointer.POSITIONS.remove(found.toCenterPos());
-            BlockFinder.found = null;
+            try {
+                start();
+            } catch (InterruptedException e) {
+                ClientPlayerEntity player = MinecraftClient.getInstance().player;
+                if (player != null) {
+                    player.sendMessage(Text.empty().append("开始新一轮搜索时发生错误：" + e).formatted(Formatting.RED));
+                }
+                TrifleClient.LOGGER.throwing(e);
+            }
         }
     }
     private static int clearSearching(CommandContext<FabricClientCommandSource> context) {
