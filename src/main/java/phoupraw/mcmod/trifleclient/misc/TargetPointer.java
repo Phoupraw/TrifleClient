@@ -10,7 +10,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -18,15 +17,17 @@ import org.joml.Vector4f;
 
 import java.util.Set;
 
+/**
+ @apiNote {@link #POSITIONS} */
 public class TargetPointer {
-    public static final Set<BlockPos> POSITIONS = new ObjectOpenHashSet<>();
-    public static Matrix4f viewMatrix = new Matrix4f(), projMatrix = new Matrix4f();
+    public static final Set<Vec3d> POSITIONS = new ObjectOpenHashSet<>();
+    private static Matrix4f viewMatrix = new Matrix4f(), projMatrix = new Matrix4f();
     static {
         //POSITIONS.add(BlockPos.ORIGIN);
         WorldRenderEvents.LAST.register(TargetPointer::onLast);
         HudRenderCallback.EVENT.register(TargetPointer::onHudRender);
-        WorldRenderEvents.END.register(TargetPointer::onEnd);
-        WorldRenderEvents.BLOCK_OUTLINE.register(TargetPointer::onBlockOutline);
+        //WorldRenderEvents.END.register(TargetPointer::onEnd);
+        //WorldRenderEvents.BLOCK_OUTLINE.register(TargetPointer::onBlockOutline);
     }
     private static void onLast(WorldRenderContext context) {
         viewMatrix = new Matrix4f(RenderSystem.getModelViewStack());
@@ -34,15 +35,23 @@ public class TargetPointer {
     }
     private static void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (!MinecraftClient.isHudEnabled() || client.isPaused()) return;
+        if (!MinecraftClient.isHudEnabled()/* || client.isPaused()*/) return;
         Matrix4f viewMatrix = new Matrix4f(TargetPointer.viewMatrix);
         Matrix4f projMatrix = new Matrix4f(TargetPointer.projMatrix);
         MatrixStack matrices = drawContext.getMatrices();
         Camera camera = client.gameRenderer.getCamera();
         Vec3d cameraPos = camera.getPos();
-        for (BlockPos blockPos : POSITIONS) {
+        float pitch = camera.getPitch();
+        float yaw = camera.getYaw();
+        Vec3d rotVec = Vec3d.fromPolar(pitch, yaw);
+        int windowWidth = drawContext.getScaledWindowWidth();
+        int windowHeight = drawContext.getScaledWindowHeight();
+        float centerX = windowWidth / 2f;
+        float centerY = windowHeight / 2f;
+        int dx2 = 30;
+        for (var blockPos : POSITIONS) {
             //pos = new BlockPos(1, 1, 1);
-            Vec3d pos = blockPos.toCenterPos().subtract(cameraPos);
+            Vec3d pos = blockPos.subtract(cameraPos);
             Vector4f homoPos = new Vector4f((float) pos.getX(), (float) pos.getY(), (float) pos.getZ(), 1);
             Vector4f viewCoords = viewMatrix.transform(homoPos);
             Vector4f clipCoords = projMatrix.transform(viewCoords);
@@ -50,20 +59,12 @@ public class TargetPointer {
             if (w != 0) {
                 clipCoords.div(w, w, w, 1);
             }
-            int windowWidth = drawContext.getScaledWindowWidth();
-            int windowHeight = drawContext.getScaledWindowHeight();
             float screenX = (clipCoords.x + 1) / 2 * windowWidth;
             float screenY = (1 - clipCoords.y) / 2 * windowHeight;
             //drawContext.drawVerticalLine((int) screenX, 0, (int) screenY, -1);
-            float centerX = windowWidth / 2f;
-            float centerY = windowHeight / 2f;
             float y = screenY - centerY;
             float x = screenX - centerX;
-            int dx2 = 30;
             double angle = Math.atan2(y, x);
-            float pitch = camera.getPitch();
-            float yaw = camera.getYaw();
-            Vec3d rotVec = Vec3d.fromPolar(pitch, yaw);
             double dotted = rotVec.dotProduct(pos);
             if (dotted < 0) {
                 angle += Math.PI;
@@ -76,10 +77,10 @@ public class TargetPointer {
             matrices.pop();
         }
     }
-    private static void onEnd(WorldRenderContext context) {
-    
-    }
-    private static boolean onBlockOutline(WorldRenderContext worldRenderContext, WorldRenderContext.BlockOutlineContext blockOutlineContext) {
-        return true;
-    }
+    //private static void onEnd(WorldRenderContext context) {
+    //
+    //}
+    //private static boolean onBlockOutline(WorldRenderContext worldRenderContext, WorldRenderContext.BlockOutlineContext blockOutlineContext) {
+    //    return true;
+    //}
 }
