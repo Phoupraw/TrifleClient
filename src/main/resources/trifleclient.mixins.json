@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "phoupraw.mcmod.fast_step_down.mixin",
+  "package": "phoupraw.mcmod.trifleclient.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],
@@ -8,6 +8,6 @@
     "defaultRequire": 1
   },
   "client": ["minecraft.MClientPlayerEntity"],
-  "plugin": "phoupraw.mcmod.fast_step_down.mixins.FastStepDownMixinConfigPlugin",
+  "plugin": "phoupraw.mcmod.trifleclient.mixins.TrifleClientMixinConfigPlugin",
   "priority": 10000
 }

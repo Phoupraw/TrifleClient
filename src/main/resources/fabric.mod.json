@@ -1,36 +1,36 @@
 {
   "schemaVersion": 1,
-  "id": "fast_step_down",
+  "id": "trifleclient",
   "version": "${version}",
-  "name": "Fast Step Down",
-  "description": "走下楼梯时尝试立刻落到地面。",
+  "name": "Trifle Client",
+  "description": "一个随便写的客户端辅助模组",
   "authors": ["Phoupraw"],
   "contact": {
     "homepage": "https://www.mcmod.cn/class/TODO.html",
-    "sources": "https://github.com/Phoupraw/FastStepDown",
-    "issues": "https://github.com/Phoupraw/FastStepDown/issues"
+    "sources": "https://github.com/Phoupraw/TrifleClient",
+    "issues": "https://github.com/Phoupraw/TrifleClient/issues"
   },
   "entrypoints": {
-    "main": ["phoupraw.mcmod.fast_step_down.FastStepDown"],
-    "client": ["phoupraw.mcmod.fast_step_down.FastStepDownClient"],
-    "fabric-datagen": ["phoupraw.mcmod.fast_step_down.datagen.FastStepDownDataGen"],
-    "modmenu": ["phoupraw.mcmod.fast_step_down.config.FastStepDownModMenuApi"]
+    "main": ["phoupraw.mcmod.trifleclient.TrifleClient"],
+    "client": ["phoupraw.mcmod.trifleclient.TrifleClient"],
+    "fabric-datagen": ["phoupraw.mcmod.trifleclient.datagen.TrifleClientDataGen"],
+    "modmenu": ["phoupraw.mcmod.trifleclient.config.TrifleClientModMenuApi"]
   },
   "environment": "client",
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*"
   },
-  "mixins": ["fast_step_down.mixins.json"],
-  "icon": "assets/fast_step_down/icon.png",
+  "mixins": ["trifleclient.mixins.json"],
+  "icon": "assets/trifleclient/icon.png",
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.modrinth": "https://modrinth.com/project/fast-step-down",
-        "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/fast-step-down"
+        "modmenu.modrinth": "https://modrinth.com/project/trifle-client",
+        "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/trifle-client"
       }
     }
   },
   "license": "MPL-2.0",
-  "accessWidener": "fast_step_down.accessWidener"
+  "accessWidener": "trifleclient.accessWidener"
 }

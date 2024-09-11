@@ -1,4 +1,4 @@
-package phoupraw.mcmod.fast_step_down.events;
+package phoupraw.mcmod.trifleclient.events;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

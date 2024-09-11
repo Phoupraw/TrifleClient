@@ -1,4 +1,4 @@
 @ApiStatus.Internal
-package phoupraw.mcmod.fast_step_down.mixins.minecraft;
+package phoupraw.mcmod.trifleclient.mixins.minecraft;
 
 import org.jetbrains.annotations.ApiStatus;

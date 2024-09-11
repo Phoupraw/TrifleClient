@@ -81,7 +81,7 @@ repositories {
     maven {
         url = "https://maven.xpple.dev/maven2"
         content {
-            includeGroup("")
+            includeGroup("dev.xpple")
         }
     }
 }

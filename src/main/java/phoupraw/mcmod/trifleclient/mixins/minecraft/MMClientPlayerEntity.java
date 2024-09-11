@@ -1,4 +1,4 @@
-package phoupraw.mcmod.fast_step_down.mixins.minecraft;
+package phoupraw.mcmod.trifleclient.mixins.minecraft;
 
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import net.fabricmc.api.EnvType;
@@ -10,9 +10,9 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
-import phoupraw.mcmod.fast_step_down.events.AfterStepDown;
-import phoupraw.mcmod.fast_step_down.events.BeforeStepDown;
-import phoupraw.mcmod.fast_step_down.events.OnStepDown;
+import phoupraw.mcmod.trifleclient.events.AfterStepDown;
+import phoupraw.mcmod.trifleclient.events.BeforeStepDown;
+import phoupraw.mcmod.trifleclient.events.OnStepDown;
 
 import java.util.Comparator;
 
