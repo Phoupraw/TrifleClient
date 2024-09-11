@@ -18,6 +18,7 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,11 +66,11 @@ public class BlockFinder {
             return 0;
         }
     }
+    /**
+     需要外部同步
+     */
     private static void start() throws InterruptedException {
-        if (found != null) {
-            TargetPointer.POSITIONS.remove(found.toCenterPos());
-        }
-        found = null;
+        clearFound();
         if (thread != null) {
             thread.interrupt();
         }
@@ -89,6 +90,7 @@ public class BlockFinder {
                         found = pos.toImmutable();
                         iterator = Collections.emptyIterator();
                         TargetPointer.POSITIONS.add(pos.toCenterPos());
+                        BlockHighlighter.BLOCK_BOXES.add(new BlockBox(found));
                         ClientPlayerEntity player = MinecraftClient.getInstance().player;
                         if (player != null) {
                             player.sendMessage(Text.empty().append("找到方块，位于(%d,%d,%d)。".formatted(pos.getX(), pos.getY(), pos.getZ())).fillStyle(Style.EMPTY.withColor(0xFF88FF88)));
@@ -140,7 +142,7 @@ public class BlockFinder {
                 source.sendFeedback(Text.literal("已中止搜索。"));
                 return 1;
             } else if (found != null) {
-                found = null;
+                clearFound();
                 source.sendFeedback(Text.literal("已清除搜索结果。"));
                 return 1;
             } else {
@@ -148,5 +150,14 @@ public class BlockFinder {
                 return 0;
             }
         }
+    }
+    /**
+     需要外部同步
+     */
+    private static void clearFound() {
+        if (found == null) return;
+        TargetPointer.POSITIONS.remove(found.toCenterPos());
+        BlockHighlighter.BLOCK_BOXES.remove(new BlockBox(found));
+        found = null;
     }
 }

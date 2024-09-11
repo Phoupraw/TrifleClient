@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.misc.BlockFinder;
+import phoupraw.mcmod.trifleclient.misc.BlockHighlighter;
 import phoupraw.mcmod.trifleclient.misc.TargetPointer;
 
 import java.lang.invoke.MethodHandles;
@@ -24,7 +25,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     public static final Logger LOGGER = LogManager.getLogger(ID);
     @SneakyThrows
     private static void loadClasses() {
-        for (var cls : Arrays.asList(TargetPointer.class, BlockFinder.class)) {
+        for (var cls : Arrays.asList(TargetPointer.class, BlockFinder.class, BlockHighlighter.class)) {
             MethodHandles.lookup().ensureInitialized(cls);
         }
     }
