@@ -1,5 +1,6 @@
 package phoupraw.mcmod.trifleclient;
 
+import lombok.SneakyThrows;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -7,6 +8,10 @@ import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import phoupraw.mcmod.trifleclient.misc.TargetPointer;
+
+import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 
 @Environment(EnvType.CLIENT)
 public final class TrifleClient implements ModInitializer, ClientModInitializer {
@@ -14,11 +19,11 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     public static final String NAME_KEY = "modmenu.nameTranslation." + ID;
     @ApiStatus.Internal
     public static final Logger LOGGER = LogManager.getLogger(ID);
-    //@SneakyThrows
+    @SneakyThrows
     private static void loadClasses() {
-        //for (var cls : Arrays.asList(FSDConfigs.class)) {
-        //    MethodHandles.lookup().ensureInitialized(cls);
-        //}
+        for (var cls : Arrays.asList(TargetPointer.class)) {
+            MethodHandles.lookup().ensureInitialized(cls);
+        }
     }
     //private static Boolean checkConfig(ClientPlayerEntity self, MovementType movementType, Vec3d movement, MinecraftClient client, boolean prevOnGround) {
     //    return ClientConfigs.g(FSDConfigs.PATH).get(FSDConfigs.ON) ? null : false;
@@ -52,6 +57,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     //}
     @Override
     public void onInitializeClient() {
+        loadClasses();
         //Configs.register(FSDConfigs.PATH, FSDConfigs.ON);
         //BeforeStepDown.EVENT.register(TrifleClient::checkConfig);
         //BeforeStepDown.EVENT.register(TrifleClient::checkMovementType);
