@@ -1,0 +1,5 @@
+{
+  "modmenu.descriptionTranslation.fast_step_down": "走下楼梯时尝试立刻落到地面。 \n当玩家悬空时，如果到下方方块的距离小于等于玩家的可上台阶高度，则瞬间下落到方块上。\n",
+  "modmenu.nameTranslation.fast_step_down": "快速下楼梯",
+  "modmenu.summaryTranslation.fast_step_down": "下楼梯不再磕头"
+}
