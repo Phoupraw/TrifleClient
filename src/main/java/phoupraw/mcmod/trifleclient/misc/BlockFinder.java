@@ -52,12 +52,12 @@ public class BlockFinder {
     private static int setSearching(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
         try {
-            int range = (MinecraftClient.getInstance().options.getViewDistance().getValue() * 2 + 1) * 16 / 2;
+            
             synchronized (BlockFinder.class) {
-                iterator = BlockPos.iterateOutwards(source.getPlayer().getBlockPos(), range, range, range).iterator();
+                //iterator = BlockPos.iterateOutwards(source.getPlayer().getBlockPos(), range, range, range).iterator();
                 predicate = CBlockPredicateArgument.getBlockPredicate(context, "block");
                 source.sendFeedback(Text.of("开始搜索……"));
-                start();
+                start(source.getPlayer().getBlockPos());
                 return 1;
             }
         } catch (Throwable e) {
@@ -69,11 +69,13 @@ public class BlockFinder {
     /**
      需要外部同步
      */
-    private static void start() throws InterruptedException {
+    private static void start(BlockPos origin) throws InterruptedException {
         clearFound();
         if (thread != null) {
             thread.interrupt();
         }
+        int range = (MinecraftClient.getInstance().options.getViewDistance().getValue() * 2 + 1) * 16 / 2;
+        iterator = BlockPos.iterateOutwards(origin, range, range, range).iterator();
         thread = new Thread(BlockFinder::run);
         thread.start();
         thread.join(1);
@@ -124,7 +126,7 @@ public class BlockFinder {
             found = BlockFinder.found;
             if (found == null || predicate.test(new CachedBlockPosition(world, found, false))) return;
             try {
-                start();
+                start(found);
             } catch (InterruptedException e) {
                 ClientPlayerEntity player = MinecraftClient.getInstance().player;
                 if (player != null) {
@@ -152,7 +154,9 @@ public class BlockFinder {
         }
     }
     /**
-     需要外部同步
+     @apiNote 需要外部同步<br>
+     不需要外部检查{@link #found}
+     
      */
     private static void clearFound() {
         if (found == null) return;
