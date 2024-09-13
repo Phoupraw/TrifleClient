@@ -14,7 +14,8 @@
     "main": ["phoupraw.mcmod.trifleclient.TrifleClient"],
     "client": ["phoupraw.mcmod.trifleclient.TrifleClient"],
     "fabric-datagen": ["phoupraw.mcmod.trifleclient.datagen.TrifleClientDataGen"],
-    "modmenu": ["phoupraw.mcmod.trifleclient.config.TrifleClientModMenuApi"]
+    "modmenu": ["phoupraw.mcmod.trifleclient.config.TrifleClientModMenuApi"],
+    "jade": ["phoupraw.mcmod.trifleclient.jade.TrifleClientWailaPlugin"]
   },
   "environment": "client",
   "depends": {

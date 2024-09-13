@@ -105,7 +105,7 @@ dependencies {
     //modLocalRuntime modCompileOnly("dev.isxander:yet-another-config-lib:${yacl}")
     //modLocalRuntime modCompileOnly("dev.emi:emi-fabric:${emi}")
     /////*modLocalRuntime*/ modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei}")
-    //modLocalRuntime modCompileOnly("curse.maven:jade-324717:${jade}")
+    modLocalRuntime modCompileOnly("curse.maven:jade-324717:${jade}")
     //modApi("dev.emi:trinkets:${trinkets}")
 
     //## 非mod依赖
