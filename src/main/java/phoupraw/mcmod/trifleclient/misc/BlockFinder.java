@@ -117,7 +117,13 @@ public class BlockFinder {
         }
     }
     private static void onClientStopping(MinecraftClient client) {
-        thread.interrupt();
+        try {
+            if (thread != null) {
+                thread.interrupt();
+            }
+        } catch (Exception e) {
+            TrifleClient.LOGGER.throwing(e);
+        }
     }
     private static void onEndTick(ClientWorld world) {
         BlockPos found = BlockFinder.found;
@@ -156,7 +162,6 @@ public class BlockFinder {
     /**
      @apiNote 需要外部同步<br>
      不需要外部检查{@link #found}
-     
      */
     private static void clearFound() {
         if (found == null) return;
