@@ -100,7 +100,7 @@ dependencies {
     modApi("net.fabricmc.fabric-api:fabric-api:${fabric_api}")
     //## mod依赖
     modLocalRuntime(modCompileOnly("com.terraformersmc:modmenu:${modmenu}"))
-    include(modLocalRuntime(modCompileOnly("phoupraw.mcmod:TrilevelConfig-1.21:+")))
+    //include(modLocalRuntime(modCompileOnly("phoupraw.mcmod:TrilevelConfig-1.21:+")))
     include(modImplementation("dev.xpple:clientarguments:${clientarguments}"))
     //modLocalRuntime modCompileOnly("dev.isxander:yet-another-config-lib:${yacl}")
     //modLocalRuntime modCompileOnly("dev.emi:emi-fabric:${emi}")
