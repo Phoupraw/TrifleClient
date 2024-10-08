@@ -12,28 +12,12 @@ public interface SpeedSpeed {
      基本是从meteor抄的
      */
     @ApiStatus.Internal
-    static Vec3d mixin(ClientPlayerEntity player, Vec3d velocity) {
+    static Vec3d onClientPlayerMove(ClientPlayerEntity player, Vec3d velocity) {
         if (!TCKeyBindings.SPEED.isPressed()) {
             return velocity;
         }
-        //velocity = velocity.multiply(TClientConfig.getInstance().getNormalSpeed());
-        //if (!getCollidingBlocks(player.getWorld(), player.getBoundingBox(), s -> s.isOf(Blocks.COBWEB), true).isEmpty()) {
-        //    velocity=Vec3d.ZERO;
-        //}
-        //GameOptions options = MinecraftClient.getInstance().options;
-        //if (/*TClientConfig.getInstance().isAutoClimb() && */player.getPitch() < -80 && player.isClimbing() && options.jumpKey.isPressed() && !options.sneakKey.isPressed()) {
-        //    if (velocity.getY() < 1) {
-        //        velocity = velocity.withAxis(Direction.Axis.Y, 1);
-        //    }
-        //}
-        //if (options.jumpKey.isPressed() && !((AEntity) player).getSubmergedFluidTag().isEmpty() && player.getPitch() < -80) {
-        //    double swimUp = TClientConfig.getInstance().getSwimUp();
-        //    if (velocity.getY() < swimUp) {
-        //        velocity = velocity.withAxis(Direction.Axis.Y, swimUp);
-        //    }
-        //}
         Input input = player.input;
-        if (/*!TrifleClient.speed || */input == null) {
+        if (input == null) {
             return velocity;
         }
         float yaw = player.getYaw();

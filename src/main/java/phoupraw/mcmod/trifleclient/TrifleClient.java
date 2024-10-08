@@ -9,10 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
-import phoupraw.mcmod.trifleclient.misc.BlockFinder;
-import phoupraw.mcmod.trifleclient.misc.BlockHighlighter;
-import phoupraw.mcmod.trifleclient.misc.MiningDelay;
-import phoupraw.mcmod.trifleclient.misc.TargetPointer;
+import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
+import phoupraw.mcmod.trifleclient.misc.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
@@ -34,6 +32,8 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     @Override
     public void onInitializeClient() {
         loadClasses();
+        OnClientPlayerMove.EVENT.register(NormalSpeed::onClientPlayerMove);
+        OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
     }
     @Override
     public void onInitialize() {
