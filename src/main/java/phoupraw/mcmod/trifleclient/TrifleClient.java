@@ -5,6 +5,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -14,7 +15,7 @@ import phoupraw.mcmod.trifleclient.misc.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
-
+//TODO 使在流体中行走不减速
 /**
  @apiNote {@link TargetPointer} */
 @Environment(EnvType.CLIENT)
@@ -32,6 +33,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     @Override
     public void onInitializeClient() {
         loadClasses();
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> server.setFlightEnabled(false));
         OnClientPlayerMove.EVENT.register(NormalSpeed::onClientPlayerMove);
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
     }
