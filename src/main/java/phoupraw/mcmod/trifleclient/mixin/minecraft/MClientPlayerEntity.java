@@ -18,13 +18,12 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     public MClientPlayerEntity(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
-    //@ModifyVariable(method = "move", at = @At("HEAD"), argsOnly = true)
-    //private Vec3d speedSpeed(Vec3d movement) {
-    //
-    //    return SpeedSpeed.onClientPlayerMove((ClientPlayerEntity) (Object) this, movement);
-    //}
     @ModifyVariable(method = "move", at = @At("HEAD"), argsOnly = true)
     private Vec3d onClientPlayerMove(Vec3d movement) {
         return OnClientPlayerMove.EVENT.invoker().onClientPlayerMove((ClientPlayerEntity) (Object) this, movement);
     }
+    //@Override
+    //public void updateVelocity(float speed, Vec3d movementInput) {
+    //    MMClientPlayerEntity.updateVelocity((ClientPlayerEntity) (Object) this,speed,movementInput,super::updateVelocity,getOffGroundSpeed());
+    //}
 }

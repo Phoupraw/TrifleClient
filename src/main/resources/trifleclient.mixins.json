@@ -3,6 +3,7 @@
   "package": "phoupraw.mcmod.trifleclient.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "minecraft.MLivingEntity"
   ],
   "injectors": {
     "defaultRequire": 1
