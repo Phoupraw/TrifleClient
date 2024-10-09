@@ -1,5 +1,6 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
+import phoupraw.mcmod.trifleclient.mixins.minecraft.MMClientPlayerEntity;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = ClientPlayerEntity.class)
@@ -26,4 +28,8 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     //public void updateVelocity(float speed, Vec3d movementInput) {
     //    MMClientPlayerEntity.updateVelocity((ClientPlayerEntity) (Object) this,speed,movementInput,super::updateVelocity,getOffGroundSpeed());
     //}
+    @ModifyExpressionValue(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
+    private boolean noUsingItemSlow(boolean original) {
+        return MMClientPlayerEntity.noUsingItemSlow((ClientPlayerEntity) (Object) this, original);
+    }
 }
