@@ -38,6 +38,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         OnClientPlayerMove.EVENT.register(NormalSpeed::onClientPlayerMove);
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
         AttackEntityCallback.EVENT.register(AutoCrit::interact);
+        OnClientPlayerMove.EVENT.register(OftenOnGround::onClientPlayerMove);
     }
     @Override
     public void onInitialize() {

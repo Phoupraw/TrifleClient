@@ -16,4 +16,5 @@ public class TCConfigs {
     private boolean blockFinder = true;
     private boolean miningDelay = true;
     private boolean autoCrit = true;
+    private boolean oftenOnGround = true;
 }
