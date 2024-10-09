@@ -32,6 +32,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCIDs;
 
 import java.util.Collection;
@@ -90,7 +91,7 @@ public class AutoAttacker {
     }
     public static boolean isAutoAttacking(ClientPlayerEntity player) {
         GameOptions options = MinecraftClient.getInstance().options;
-        return options.attackKey.isPressed() && options.useKey.isPressed() && Boolean.TRUE.equals(WEAPON.invoker().apply(new ItemContext(player.getWeaponStack(), player)));
+        return TCConfigs.A.isAutoAttacker() && options.attackKey.isPressed() && options.useKey.isPressed() && Boolean.TRUE.equals(WEAPON.invoker().apply(new ItemContext(player.getWeaponStack(), player)));
     }
     /**
      @return 越小越优先

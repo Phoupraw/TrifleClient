@@ -6,6 +6,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
+import phoupraw.mcmod.trifleclient.config.TCConfigs;
 
 import java.util.function.BiConsumer;
 
@@ -21,6 +22,6 @@ public interface MMClientPlayerEntity {
         invokeSuper.accept(Math.max(speed,/*self.isOnGround() ? */self.getMovementSpeed() * (0.216f / (slipperiness * slipperiness * slipperiness)) /*: offGroundSpeed*/), movementInput);
     }
     static boolean noUsingItemSlow(ClientPlayerEntity self, boolean original) {
-        return false;
+        return original && !TCConfigs.A.isNoUsingItemSlow();
     }
 }

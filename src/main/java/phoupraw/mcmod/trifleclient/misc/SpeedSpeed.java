@@ -4,6 +4,7 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
+import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 
 @ApiStatus.NonExtendable
@@ -13,7 +14,7 @@ public interface SpeedSpeed {
      */
     @ApiStatus.Internal
     static Vec3d onClientPlayerMove(ClientPlayerEntity player, Vec3d velocity) {
-        if (!TCKeyBindings.SPEED.isPressed()) {
+        if (!TCConfigs.A.isSpeedSpeed() || !TCKeyBindings.SPEED.isPressed()) {
             return velocity;
         }
         Input input = player.input;
