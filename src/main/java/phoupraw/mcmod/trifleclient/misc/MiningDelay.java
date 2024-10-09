@@ -43,7 +43,7 @@ public class MiningDelay {
     }
     @ApiStatus.Internal
     public static int removeDelay(ClientPlayerInteractionManager self, int original) {
-        return isOn() || TCConfigs.A.isMiningDelay() ? original : 0;
+        return isOn() || !TCConfigs.A.isMiningDelay() ? original : 0;
     }
     public static void setDelay(ClientPlayerInteractionManager self, BlockState blockState, BlockPos blockPos, Direction direction, int sequence) {
         if (MiningDelay.isOn() && TCConfigs.A.isMiningDelay()) {

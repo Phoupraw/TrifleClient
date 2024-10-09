@@ -11,6 +11,7 @@ import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
 import phoupraw.mcmod.trifleclient.mixins.minecraft.MMClientPlayerEntity;
 
@@ -31,5 +32,9 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     @ModifyExpressionValue(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
     private boolean noUsingItemSlow(boolean original) {
         return MMClientPlayerEntity.noUsingItemSlow((ClientPlayerEntity) (Object) this, original);
+    }
+    @Override
+    public float getStepHeight() {
+        return Math.max(super.getStepHeight(), TCConfigs.A.getMinStepHeight());
     }
 }

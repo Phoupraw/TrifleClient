@@ -17,4 +17,5 @@ public class TCConfigs {
     private boolean miningDelay = true;
     private boolean autoCrit = true;
     private boolean oftenOnGround = true;
+    private float minStepHeight = 1 + 6 / 16f;
 }
