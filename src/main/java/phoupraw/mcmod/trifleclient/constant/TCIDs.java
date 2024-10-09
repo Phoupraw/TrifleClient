@@ -7,6 +7,7 @@ import phoupraw.mcmod.trifleclient.TrifleClient;
 @ApiStatus.NonExtendable
 public interface TCIDs {
     Identifier MINING_DELAY = of("mining_delay");
+    Identifier BEFORE = of("before");
     static Identifier of(String path) {
         return Identifier.of(TrifleClient.ID, path);
     }

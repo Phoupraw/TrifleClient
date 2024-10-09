@@ -26,7 +26,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     public static final Logger LOGGER = LogManager.getLogger(ID);
     @SneakyThrows
     private static void loadClasses() {
-        for (var cls : Arrays.asList(TargetPointer.class, BlockFinder.class, BlockHighlighter.class, TCKeyBindings.class, MiningDelay.class)) {
+        for (var cls : Arrays.asList(TargetPointer.class, BlockFinder.class, BlockHighlighter.class, TCKeyBindings.class, MiningDelay.class, AutoAttacker.class)) {
             MethodHandles.lookup().ensureInitialized(cls);
         }
     }
