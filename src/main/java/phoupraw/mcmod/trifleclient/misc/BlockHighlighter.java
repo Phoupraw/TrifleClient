@@ -15,6 +15,7 @@ import java.util.Set;
 
 @UtilityClass
 public class BlockHighlighter {
+    public static final Set<BlockBox> BLOCK_BOXES = new ObjectOpenHashSet<>();
     /**
      <a href=https://github.com/Earthcomputer/clientcommands/blob/fabric/src/main/java/net/earthcomputer/clientcommands/render/RenderQueue.java>Client Commands</a>
      */
@@ -26,7 +27,6 @@ public class BlockHighlighter {
       .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
       .lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(2)))
       .build(true));
-    public static final Set<BlockBox> BLOCK_BOXES = new ObjectOpenHashSet<>();
     static {
         WorldRenderEvents.AFTER_ENTITIES.register(BlockHighlighter::afterEntities);
     }

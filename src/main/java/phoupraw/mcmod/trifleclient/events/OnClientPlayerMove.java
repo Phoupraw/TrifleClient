@@ -7,11 +7,11 @@ import net.minecraft.util.math.Vec3d;
 
 @FunctionalInterface
 public interface OnClientPlayerMove {
-    Vec3d onClientPlayerMove(ClientPlayerEntity player, Vec3d movement);
     Event<OnClientPlayerMove> EVENT = EventFactory.createArrayBacked(OnClientPlayerMove.class, callbacks -> (player, movement) -> {
         for (OnClientPlayerMove callback : callbacks) {
             movement = callback.onClientPlayerMove(player, movement);
         }
         return movement;
     });
+    Vec3d onClientPlayerMove(ClientPlayerEntity player, Vec3d movement);
 }
