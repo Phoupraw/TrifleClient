@@ -22,27 +22,23 @@ abstract class MItemEntity extends Entity {
     @Intrinsic
     @Override
     public boolean isGlowing() {
-        return super.isGlowing();
+        return false;
+    }
+    @SuppressWarnings("target")
+    @Dynamic(mixin = MItemEntity.class)
+    @ModifyReturnValue(method = "isGlowing()Z", at = @At("RETURN"))
+    protected boolean glow(boolean original) {
+        return MMItemEntity.glow((ItemEntity) (Object) this, original);
     }
     @Intrinsic
     @Override
     public int getTeamColorValue() {
         return super.getTeamColorValue();
     }
-    @Dynamic(mixin = MItemEntity.class)
-    @ModifyReturnValue(method = "isGlowing()Z", at = @At("RETURN"))
-    private boolean glow(boolean original) {
-        return MMItemEntity.glow((ItemEntity) (Object) this, original);
-    }
+    @SuppressWarnings("target")
     @Dynamic(mixin = MItemEntity.class)
     @ModifyReturnValue(method = "getTeamColorValue()I", at = @At("RETURN"))
     private int glintColor(int original) {
         return MMItemEntity.glintColor((ItemEntity) (Object) this, original);
     }
-    //@Mixin(MItemEntity.class)
-    //abstract static class MIItemEntity extends Entity {
-    //    public MIItemEntity(EntityType<?> type, World world) {
-    //        super(type, world);
-    //    }
-    //}
 }

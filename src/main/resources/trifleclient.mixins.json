@@ -15,6 +15,7 @@
     "minecraft.MClientPlayerInteractionManager",
     "minecraft.MCLivingEntity",
     "minecraft.MDimensionType",
+    "minecraft.MEntity",
     "minecraft.MItemEntity"
   ],
   "plugin": "phoupraw.mcmod.trifleclient.mixins.TrifleClientMixinConfigPlugin",
