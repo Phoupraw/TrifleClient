@@ -13,7 +13,7 @@ import phoupraw.mcmod.trifleclient.config.TCConfigs;
 public interface OftenOnGround {
     @ApiStatus.Internal
     static Vec3d onClientPlayerMove(ClientPlayerEntity player, Vec3d movement) {
-        if (TCConfigs.A.isOftenOnGround() && movement.getY() < 0) {
+        if (TCConfigs.A.isOftenOnGround() && movement.getY() < 0 && !player.isSneaking()) {
             player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
         }
         return movement;

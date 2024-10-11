@@ -7,6 +7,7 @@ import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 
+//FIXME 连续上楼梯比连续上完整方块要慢
 @ApiStatus.NonExtendable
 public interface SpeedSpeed {
     /**

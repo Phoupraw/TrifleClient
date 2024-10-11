@@ -33,3 +33,6 @@
 # 0.4.3
 ## 修复
 - 与《Eclipse's Tweakeroo》冲突
+# 0.4.4
+## 更改
+- 潜行时不再向服务端发OnGround包
