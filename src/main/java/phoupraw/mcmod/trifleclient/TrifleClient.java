@@ -17,7 +17,7 @@ import phoupraw.mcmod.trifleclient.misc.*;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 //TODO 使在流体中行走不减速
-
+//TODO 稀有度不为常见或有自定义名称的物品始终发光，其它物品和经验球则有不可穿墙的发光轮廓
 /**
  @see TargetPointer */
 @Environment(EnvType.CLIENT)

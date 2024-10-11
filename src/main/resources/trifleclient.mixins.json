@@ -9,8 +9,13 @@
     "defaultRequire": 1
   },
   "client": [
-    "minecraft.AClientPlayerInteractionManager", "minecraft.AClientWorld", "minecraft.MClientPlayerEntity",
-    "minecraft.MClientPlayerInteractionManager", "minecraft.MCLivingEntity"
+    "minecraft.AClientPlayerInteractionManager",
+    "minecraft.AClientWorld",
+    "minecraft.MClientPlayerEntity",
+    "minecraft.MClientPlayerInteractionManager",
+    "minecraft.MCLivingEntity",
+    "minecraft.MDimensionType",
+    "minecraft.MItemEntity"
   ],
   "plugin": "phoupraw.mcmod.trifleclient.mixins.TrifleClientMixinConfigPlugin",
   "priority": 10000
