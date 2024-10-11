@@ -10,12 +10,10 @@ import phoupraw.mcmod.trifleclient.TrifleClient;
 public interface MMPacketCodecDispatcher {
     static DecoderException logException(DecoderException original) {
         TrifleClient.LOGGER.error("检测到解码异常：");
-        TrifleClient.LOGGER.throwing(original);
-        return original;
+        return TrifleClient.LOGGER.throwing(original);
     }
     static EncoderException logException(EncoderException original) {
         TrifleClient.LOGGER.error("检测到编码异常：");
-        TrifleClient.LOGGER.throwing(original);
-        return original;
+        return TrifleClient.LOGGER.throwing(original);
     }
 }

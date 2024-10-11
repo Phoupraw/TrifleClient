@@ -10,7 +10,7 @@
   },
   "client": [
     "minecraft.AClientPlayerInteractionManager", "minecraft.AClientWorld", "minecraft.MClientPlayerEntity",
-    "minecraft.MClientPlayerInteractionManager"
+    "minecraft.MClientPlayerInteractionManager", "minecraft.MCLivingEntity"
   ],
   "plugin": "phoupraw.mcmod.trifleclient.mixins.TrifleClientMixinConfigPlugin",
   "priority": 10000

@@ -24,4 +24,7 @@ public interface MMClientPlayerEntity {
     static boolean noUsingItemSlow(ClientPlayerEntity self, boolean original) {
         return original && !TCConfigs.A.isNoUsingItemSlow();
     }
+    static float minStepHeight(float original) {
+        return Math.max(original, TCConfigs.A.getMinStepHeight());
+    }
 }

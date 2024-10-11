@@ -30,3 +30,6 @@
 # 0.4.2
 ## 修复
 - 未给`at`设置`remap=false`
+# 0.4.3
+## 修复
+- 与《Eclipse's Tweakeroo》冲突

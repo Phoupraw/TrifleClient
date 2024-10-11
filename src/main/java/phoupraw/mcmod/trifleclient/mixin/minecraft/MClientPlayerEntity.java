@@ -11,7 +11,6 @@ import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
 import phoupraw.mcmod.trifleclient.mixins.minecraft.MMClientPlayerEntity;
 
@@ -21,10 +20,16 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     public MClientPlayerEntity(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
-    @Override
-    public float getStepHeight() {
-        return Math.max(super.getStepHeight(), TCConfigs.A.getMinStepHeight());
-    }
+    //@Unique
+    //@Override
+    //public float getStepHeight() {
+    //    return super.getStepHeight();
+    //}
+    //@SuppressWarnings({"MixinAnnotationTarget", "UnresolvedMixinReference", "all"})
+    //@ModifyReturnValue(method = "getStepHeight()F", at = @At("RETURN"))
+    //private float minStepHeight(float original) {
+    //    return MMClientPlayerEntity.minStepHeight(original);
+    //}
     @ModifyVariable(method = "move", at = @At("HEAD"), argsOnly = true)
     private Vec3d onClientPlayerMove(Vec3d movement) {
         return OnClientPlayerMove.EVENT.invoker().onClientPlayerMove((ClientPlayerEntity) (Object) this, movement);
