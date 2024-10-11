@@ -11,15 +11,15 @@ import phoupraw.mcmod.trifleclient.mixins.minecraft.MMPacketCodecDispatcher;
 @Mixin(PacketCodecDispatcher.class)
 abstract class MPacketCodecDispatcher {
     @ModifyExpressionValue(method = "decode(Lio/netty/buffer/ByteBuf;)Ljava/lang/Object;", at = {
-      @At(value = "NEW", target = "(Ljava/lang/String;)Lio/netty/handler/codec/DecoderException;"),
-      @At(value = "NEW", target = "(Ljava/lang/String;Ljava/lang/Throwable;)Lio/netty/handler/codec/DecoderException;")
+      @At(value = "NEW", target = "(Ljava/lang/String;)Lio/netty/handler/codec/DecoderException;", remap = false),
+      @At(value = "NEW", target = "(Ljava/lang/String;Ljava/lang/Throwable;)Lio/netty/handler/codec/DecoderException;", remap = false)
     })
     private DecoderException logException(DecoderException original) {
         return MMPacketCodecDispatcher.logException(original);
     }
     @ModifyExpressionValue(method = "encode(Lio/netty/buffer/ByteBuf;Ljava/lang/Object;)V", at = {
-      @At(value = "NEW", target = "(Ljava/lang/String;)Lio/netty/handler/codec/EncoderException;"),
-      @At(value = "NEW", target = "(Ljava/lang/String;Ljava/lang/Throwable;)Lio/netty/handler/codec/EncoderException;")
+      @At(value = "NEW", target = "(Ljava/lang/String;)Lio/netty/handler/codec/EncoderException;", remap = false),
+      @At(value = "NEW", target = "(Ljava/lang/String;Ljava/lang/Throwable;)Lio/netty/handler/codec/EncoderException;", remap = false)
     })
     private EncoderException logException(EncoderException original) {
         return MMPacketCodecDispatcher.logException(original);
