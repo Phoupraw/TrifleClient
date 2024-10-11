@@ -19,7 +19,7 @@ import java.util.Arrays;
 //TODO 使在流体中行走不减速
 
 /**
- @apiNote {@link TargetPointer} */
+ @see TargetPointer */
 @Environment(EnvType.CLIENT)
 public final class TrifleClient implements ModInitializer, ClientModInitializer {
     public static final String ID = "trifleclient";
