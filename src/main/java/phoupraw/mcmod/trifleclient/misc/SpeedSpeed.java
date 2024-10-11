@@ -2,22 +2,32 @@ package phoupraw.mcmod.trifleclient.misc;
 
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 
-//FIXME 连续上楼梯比连续上完整方块要慢
 @ApiStatus.NonExtendable
-public interface SpeedSpeed {
+public abstract class SpeedSpeed {
+    //public static final int STEPS = 20;
+    //private static int step = 0;
+    private static boolean looping;
     /**
      基本是从meteor抄的
      */
     @ApiStatus.Internal
-    static Vec3d onClientPlayerMove(ClientPlayerEntity player, Vec3d velocity) {
-        if (!TCConfigs.A.isSpeedSpeed() || !TCKeyBindings.SPEED.isPressed()) {
+    public static Vec3d onClientPlayerMove(ClientPlayerEntity player, MovementType movementType, Vec3d velocity) {
+        if (!TCConfigs.A.isSpeedSpeed() || !TCKeyBindings.SPEED.isPressed() || movementType != MovementType.SELF || looping) {
             return velocity;
         }
+        //if (step >= STEPS) {
+        //    step = 0;
+        //    return velocity;
+        //} else {
+        //    step++;
+        //    player.move(movementType,Vec3d.ZERO);
+        //}
         Input input = player.input;
         if (input == null) {
             return velocity;
@@ -28,7 +38,7 @@ public interface SpeedSpeed {
         double velX = 0;
         double velZ = 0;
         boolean isForward = false;
-        double factor = 1.5;
+        double factor = TCConfigs.A.getSpeedFactor();
         if (input.pressingForward) {
             velX += forward.x * factor;
             velZ += forward.z * factor;
@@ -55,6 +65,13 @@ public interface SpeedSpeed {
             velX *= diagonal;
             velZ *= diagonal;
         }
-        return new Vec3d(velX, velocity.getY(), velZ);
+        int steps = TCConfigs.A.getSpeedSteps();
+        Vec3d motion = new Vec3d(velX, velocity.getY() / steps, velZ);
+        looping = true;
+        for (int i = 1; i < steps; i++) {
+            player.move(movementType, motion);
+        }
+        looping = false;
+        return motion;
     }
 }

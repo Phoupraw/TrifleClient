@@ -8,6 +8,8 @@ import lombok.Setter;
 public class TCConfigs {
     public static final TCConfigs A = new TCConfigs();
     private boolean speedSpeed = true;
+    private int speedSteps = 20;
+    private double speedFactor = 0.05;
     private boolean normalSpeed = true;
     private boolean noUsingItemSlow = true;
     private boolean autoAttacker = true;
@@ -18,4 +20,7 @@ public class TCConfigs {
     private float minStepHeight = 1 + 6 / 16f;
     protected TCConfigs() {
     }
+    //public float getMinStepHeight() {
+    //    return 0;
+    //}
 }
