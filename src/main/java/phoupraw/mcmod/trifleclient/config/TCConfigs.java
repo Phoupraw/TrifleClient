@@ -23,6 +23,7 @@ public class TCConfigs {
     private float minStepHeight = 1 + 6 / 16f;
     private @Nullable LootCondition glowingItem = AnyOfLootCondition.builder().build();//MatchToolLootCondition.builder(ItemPredicate.Builder.create().component(ComponentPredicate.builder().add(DataComponentTypes.RARITY, Rarity.COMMON).build())).build();
     private float minAmbientLight = 0.08f;
+    private double itemGlowingRange = 24;
     protected TCConfigs() {
     }
     //public float getMinStepHeight() {

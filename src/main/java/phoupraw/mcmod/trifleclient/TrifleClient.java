@@ -18,6 +18,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 //TODO 使在流体中行走不减速
 //TODO 稀有度不为常见或有自定义名称的物品始终发光，其它物品和经验球则有不可穿墙的发光轮廓
+//TODO 手持繁殖物品按住shift双击右键可以一键繁殖周围所有生物
 /**
  @see TargetPointer */
 @Environment(EnvType.CLIENT)
