@@ -7,18 +7,21 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
+import phoupraw.mcmod.trifleclient.events.OnUseKeyPress;
 import phoupraw.mcmod.trifleclient.misc.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 //TODO 使在流体中行走不减速
 //TODO 稀有度不为常见或有自定义名称的物品始终发光，其它物品和经验球则有不可穿墙的发光轮廓
-//TODO 手持繁殖物品按住shift双击右键可以一键繁殖周围所有生物
 /**
  @see TargetPointer */
 @Environment(EnvType.CLIENT)
@@ -41,6 +44,10 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
         AttackEntityCallback.EVENT.register(AutoCrit::interact);
         OnClientPlayerMove.EVENT.register(OftenOnGround::onClientPlayerMove);
+        UseItemCallback.EVENT.register(OnekeyBreeding::interact);
+        UseBlockCallback.EVENT.register(OnekeyBreeding::interact);
+        UseEntityCallback.EVENT.register(OnekeyBreeding::interact);
+        OnUseKeyPress.EVENT.register(OnekeyBreeding::onUseKeyPress);
     }
     @Override
     public void onInitialize() {
