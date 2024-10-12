@@ -1,7 +1,7 @@
 package phoupraw.mcmod.trifleclient.misc;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.ApiStatus;
@@ -10,8 +10,9 @@ import phoupraw.mcmod.trifleclient.config.TCConfigs;
 @ApiStatus.NonExtendable
 public interface ItemGlowing {
     static boolean isInRange(Entity self) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        return player != null && self.isInRange(player, TCConfigs.A.getItemGlowingRange());
+        Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+        double range = TCConfigs.A.getItemGlowingRange();
+        return self.squaredDistanceTo(camera.getPos()) <= range * range;
     }
     static boolean glow(Entity self, boolean original) {
         if (original) return true;
