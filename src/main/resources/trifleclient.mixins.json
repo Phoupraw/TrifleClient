@@ -16,7 +16,9 @@
     "minecraft.MCLivingEntity",
     "minecraft.MDimensionType",
     "minecraft.MEntity",
-    "minecraft.MItemEntity", "minecraft.MMinecraftClient"
+    "minecraft.MExperienceOrbEntity",
+    "minecraft.MItemEntity",
+    "minecraft.MMinecraftClient"
   ],
   "plugin": "phoupraw.mcmod.trifleclient.mixins.TrifleClientMixinConfigPlugin",
   "priority": 10000

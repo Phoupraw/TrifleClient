@@ -1,31 +1,16 @@
 package phoupraw.mcmod.trifleclient.mixins.minecraft;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.ApiStatus;
-import phoupraw.mcmod.trifleclient.config.TCConfigs;
+import phoupraw.mcmod.trifleclient.misc.ItemGlowing;
 
 @ApiStatus.NonExtendable
 @ApiStatus.Internal
 public interface MMItemEntity {
     static boolean glow(ItemEntity self, boolean original) {
-        if (original) return true;
-        return isInRange(self);
-    }
-    private static boolean isInRange(ItemEntity self) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        return player != null && self.isInRange(player, TCConfigs.A.getItemGlowingRange());
+        return ItemGlowing.glow(self, original);
     }
     static int glintColor(ItemEntity self, int original) {
-        if (!isInRange(self)) {
-            return original;
-        }
-        long time = self.getWorld().getTime();
-        float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
-        //float[] goldHSV = Color.RGBtoHSB(0xFF,0xAA,0,null);
-        float delta = (MathHelper.sin((time + tickDelta) / 4) + 1) / 2;
-        return MathHelper.hsvToRgb(1 / 9f, delta, (float) 1);
+        return ItemGlowing.glintColor(self, original, false);
     }
 }
