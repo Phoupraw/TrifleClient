@@ -12,7 +12,10 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import phoupraw.mcmod.trifleclient.events.AfterClientPlayerMove;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
 import phoupraw.mcmod.trifleclient.mixins.minecraft.MMClientPlayerEntity;
 
@@ -35,6 +38,10 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     @ModifyVariable(method = "move", at = @At("HEAD"), argsOnly = true)
     private Vec3d onClientPlayerMove(Vec3d movement, @Local(argsOnly = true) MovementType movementType) {
         return OnClientPlayerMove.EVENT.invoker().onClientPlayerMove((ClientPlayerEntity) (Object) this, movementType, movement);
+    }
+    @Inject(method = "move", at = @At("RETURN"))
+    private void afterClientPlayerMove(MovementType movementType, Vec3d movement, CallbackInfo ci) {
+        AfterClientPlayerMove.EVENT.invoker().afterClientPlayerMove((ClientPlayerEntity) (Object) this, movementType, movement);
     }
     //@Override
     //public void updateVelocity(float speed, Vec3d movementInput) {

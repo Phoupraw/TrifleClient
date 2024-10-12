@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
+import phoupraw.mcmod.trifleclient.events.AfterClientPlayerMove;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
 import phoupraw.mcmod.trifleclient.events.OnUseKeyPress;
 import phoupraw.mcmod.trifleclient.misc.*;
@@ -40,7 +41,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     public void onInitializeClient() {
         loadClasses();
         ServerLifecycleEvents.SERVER_STARTING.register(server -> server.setFlightEnabled(false));
-        OnClientPlayerMove.EVENT.register(NormalSpeed::onClientPlayerMove);
+        AfterClientPlayerMove.EVENT.register(NormalSpeed::afterClientPlayerMove);
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
         AttackEntityCallback.EVENT.register(AutoCrit::interact);
         OnClientPlayerMove.EVENT.register(OftenOnGround::onClientPlayerMove);
