@@ -7,9 +7,15 @@ import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 
 @ApiStatus.NonExtendable
-public interface NormalSpeed {
+public abstract class NormalSpeed {
+    private static boolean recursion;
     @ApiStatus.Internal
-    static Vec3d onClientPlayerMove(ClientPlayerEntity player, MovementType movementType, Vec3d velocity) {
-        return TCConfigs.A.isNormalSpeed() ? velocity.multiply(1.75) : velocity;
+    public static Vec3d onClientPlayerMove(ClientPlayerEntity player, MovementType movementType, Vec3d velocity) {
+        if (TCConfigs.A.isNormalSpeed() && !recursion) {
+            recursion = true;
+            player.move(movementType, velocity.multiply(0.75));
+            recursion = false;
+        }
+        return velocity;
     }
 }
