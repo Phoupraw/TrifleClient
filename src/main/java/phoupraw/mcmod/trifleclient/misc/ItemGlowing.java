@@ -25,8 +25,8 @@ public interface ItemGlowing {
         long time = self.getWorld().getTime();
         float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
         //float[] goldHSV = Color.RGBtoHSB(0xFF,0xAA,0,null);
-        int period = 4;
-        float delta = ((halfWave ? -1 : 1) * MathHelper.sin((time % period + tickDelta) / period) + 1) / 2;
+        int period = 20;
+        float delta = ((halfWave ? -1 : 1) * MathHelper.sin((time % period + tickDelta) / period * MathHelper.PI * 2) + 1) / 2;
         return MathHelper.hsvToRgb(1 / 9f, delta, (float) 1);
     }
 }
