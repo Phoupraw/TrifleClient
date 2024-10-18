@@ -29,7 +29,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.SequencedCollection;
+import java.util.Collections;
+import java.util.List;
 
 @UtilityClass
 public class OnekeyBreeding {
@@ -85,12 +86,13 @@ public class OnekeyBreeding {
         double range0 = player.getEntityInteractionRange();
         float width = player.getWidth();
         Box box = new Box(eyePos, eyePos).expand(range0 + width, range0 + player.getHeight(), range0 + width);
-        SequencedCollection<Entity> animals = new ObjectArrayList<>();
+        List<Entity> animals = new ObjectArrayList<>();
         for (var animal : world.getEntitiesByClass(entityClass, box, Predicates.alwaysTrue())) {
             if (!animal.isBaby() && player.canInteractWithEntity(animal, 0) && animal.isBreedingItem(stack)) {
                 animals.add(animal);
             }
         }
+        Collections.shuffle(animals);
         if (animals.size() % 2 == 1) {
             animals.removeLast();
         }
@@ -111,12 +113,13 @@ public class OnekeyBreeding {
     public static ActionResult interact(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult hitResult) {
         return interact(player, world, hand).getResult();
     }
+    //FIXME 经常需要三击才能触发
     @ApiStatus.Internal
     public static void onUseKeyPress(MinecraftClient client, KeyBinding useKey) {
         if (Screen.hasShiftDown()) {
             if (lastUse == 0) {
                 lastUse = client.world.getTime();
-            } else if (client.world.getTime() - lastUse < 5) {
+            } else if (client.world.getTime() - lastUse < 8) {
                 lastUse = Long.MIN_VALUE;
             } else {
                 lastUse = 0;

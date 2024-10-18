@@ -13,7 +13,6 @@
     "minecraft.AClientWorld",
     "minecraft.MClientPlayerEntity",
     "minecraft.MClientPlayerInteractionManager",
-    "minecraft.MCLivingEntity",
     "minecraft.MDimensionType",
     "minecraft.MEntity",
     "minecraft.MExperienceOrbEntity",

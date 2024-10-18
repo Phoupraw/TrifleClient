@@ -1,15 +1,18 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import phoupraw.mcmod.trifleclient.mixins.minecraft.MMLivingEntity;
 
+@Environment(EnvType.CLIENT)
 @Mixin(LivingEntity.class)
 abstract class MLivingEntity {
-    @Shadow
-    protected abstract float getMovementSpeed(float slipperiness);
-    //@ModifyArg(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;updateVelocity(FLnet/minecraft/util/math/Vec3d;)V"))
-    //private float moveLikeOnLand(float speed) {
-    //    return MMLivingEntity.moveLikeOnLand((LivingEntity) (Object) this, speed, getMovementSpeed(0.6f));
-    //}
+    @ModifyReturnValue(method = "getStepHeight()F", at = @At("RETURN"))
+    private float minStepHeight(float original) {
+        return MMLivingEntity.minStepHeight((LivingEntity) (Object) this, original);
+    }
 }
