@@ -28,7 +28,7 @@ public class BlockHighlighter {
       .lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(2)))
       .build(true));
     static {
-        WorldRenderEvents.AFTER_ENTITIES.register(BlockHighlighter::afterEntities);
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(BlockHighlighter::afterEntities);
     }
     private static void afterEntities(WorldRenderContext context) {
         MatrixStack matrices = context.matrixStack();
