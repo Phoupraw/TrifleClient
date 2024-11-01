@@ -11,6 +11,7 @@
   "client": [
     "minecraft.AClientPlayerInteractionManager",
     "minecraft.AClientWorld",
+    "minecraft.MChatScreen",
     "minecraft.MClientPlayerEntity",
     "minecraft.MClientPlayerInteractionManager",
     "minecraft.MDimensionType",
