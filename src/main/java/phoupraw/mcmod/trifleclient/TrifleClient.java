@@ -12,9 +12,11 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 import phoupraw.mcmod.trifleclient.events.AfterClientPlayerMove;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
@@ -55,6 +57,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         ClientCommandRegistrationCallback.EVENT.register(SprucePlanter::register);
         ClientTickEvents.START_WORLD_TICK.register(SprucePlanter::onStartAndEndTick);
         ClientTickEvents.END_WORLD_TICK.register(SprucePlanter::onStartAndEndTick);
+        if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
+            AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
+        }
     }
     @Override
     public void onInitialize() {

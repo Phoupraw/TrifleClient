@@ -1,6 +1,7 @@
 package phoupraw.mcmod.trifleclient.misc;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.experimental.UtilityClass;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
@@ -42,6 +43,7 @@ import java.util.function.Function;
  杀戮光环
  */
 @Environment(EnvType.CLIENT)
+@UtilityClass
 public class AutoAttacker {
     /**
      最终结果为{@code null}视为{@code false}
