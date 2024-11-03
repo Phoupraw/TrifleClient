@@ -8,6 +8,7 @@ import phoupraw.mcmod.trifleclient.TrifleClient;
 public interface TCIDs {
     Identifier MINING_DELAY = of("mining_delay");
     Identifier BEFORE = of("before");
+    Identifier MINING_SAME = of("mining_same");
     static Identifier of(String path) {
         return Identifier.of(TrifleClient.ID, path);
     }

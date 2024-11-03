@@ -1,6 +1,7 @@
 {
   "config.jade.plugin_trifleclient.mining_delay": "挖掘速度与延迟",
   "key.trifleclient.mining_delay": "挖掘延迟",
+  "key.trifleclient.mining_same": "连续挖掘方块须相同",
   "modmenu.descriptionTranslation.trifleclient": "提供一些客户端辅助功能：\n- 用于搜索方块的指令：/trifleclient find block [block]\n- 挖掘延迟控制\n",
   "modmenu.nameTranslation.trifleclient": "琐物·客户端",
   "modmenu.summaryTranslation.trifleclient": "一个随便写的客户端辅助模组"

@@ -26,5 +26,6 @@ final class ChineseGen extends FabricLanguageProvider {
           """);
         b.add(TCIDs.MINING_DELAY.toTranslationKey("key"), "挖掘延迟");
         b.add("config.jade.plugin_" + TCIDs.MINING_DELAY.toTranslationKey(), "挖掘速度与延迟");
+        b.add(TCIDs.MINING_SAME.toTranslationKey("key"), "连续挖掘方块须相同");
     }
 }
