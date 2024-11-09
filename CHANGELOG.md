@@ -76,13 +76,10 @@
 # 0.10.0
 ## 新增
 - 《通用机械》的Meka工具也算作杀戮光环的武器。
-#  
+# 0.11.0
 ## 新增
 - 检测到《通用机械》时会在日志打印一条消息。
-## 更改
-- Logger的名称从`trifleclient`改为`TrifleClient`。
-#
-## 新增
 - 指令`/trifleclient strip`，可以在手持斧头时持续给周围原木去皮。
 ## 更改
+- Logger的名称从`trifleclient`改为`TrifleClient`。
 - 前移方块高亮渲染时机。
