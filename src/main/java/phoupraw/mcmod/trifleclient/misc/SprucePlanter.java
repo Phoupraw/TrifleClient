@@ -27,12 +27,10 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @ApiStatus.NonExtendable
-public abstract class SprucePlanter {
-    //private static BlockPos pos;
-    //private static Direction direction;
-    private final static Collection<BlockPos> POSITIONS = new ObjectArrayList<>();
+public interface SprucePlanter {
+    Collection<BlockPos> POSITIONS = new ObjectArrayList<>();
     @ApiStatus.Internal
-    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+    static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         dispatcher.register(ClientCommandManager.literal(TrifleClient.ID)
           .then(ClientCommandManager.literal("spruce")
             .executes(SprucePlanter::runStop)
@@ -55,8 +53,6 @@ public abstract class SprucePlanter {
             }
             POSITIONS.clear();
             POSITIONS.addAll(posList);
-            //SprucePlanter.pos = pos;
-            //SprucePlanter.direction = direction;
             var sb = new StringJoiner(", ", "[", "]");
             for (BlockPos blockPos : posList) {
                 sb.add("[" + blockPos.toShortString() + "]");
@@ -79,15 +75,10 @@ public abstract class SprucePlanter {
         }
     }
     @ApiStatus.Internal
-    public static void onStartAndEndTick(ClientWorld world) {
-        //BlockPos pos = SprucePlanter.pos;
-        //Direction direction = SprucePlanter.direction;
-        //if (pos == null || direction == null) {
-        //    return;
-        //}
-        if (POSITIONS.isEmpty()) {
-            return;
-        }
+    static void onStartAndEndTick(ClientWorld world) {
+        if (POSITIONS.isEmpty()) return;
+        var interactor = MinecraftClient.getInstance().interactionManager;
+        if (interactor == null) return;
         var player = MinecraftClient.getInstance().player;
         if (player == null || !player.getMainHandStack().isOf(Items.SPRUCE_SAPLING)) {
             return;
@@ -102,7 +93,6 @@ public abstract class SprucePlanter {
                 return;
             }
         }
-        var interactor = MinecraftClient.getInstance().interactionManager;
         for (BlockPos pos : POSITIONS) {
             interactor.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos, 1), Direction.UP, pos, false));
         }

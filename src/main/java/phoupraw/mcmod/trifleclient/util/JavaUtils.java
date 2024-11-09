@@ -1,4 +1,4 @@
-package phoupraw.mcmod.trifleclient.misc;
+package phoupraw.mcmod.trifleclient.util;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;

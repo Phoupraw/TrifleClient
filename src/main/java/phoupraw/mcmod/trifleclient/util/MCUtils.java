@@ -1,15 +1,17 @@
-package phoupraw.mcmod.trifleclient.misc;
+package phoupraw.mcmod.trifleclient.util;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -69,5 +71,15 @@ public interface MCUtils {
     }
     static boolean hasOpLevel(CommandSource source) {
         return source.hasPermissionLevel(2);
+    }
+    static @NotNull BlockHitResult getHitResult(World world, @Unmodifiable BlockPos pos, BlockState state, PlayerEntity player) {
+        Vec3d centerPos = pos.toCenterPos();
+        Vec3d eyePos = player.getEyePos();
+        Vec3d end = eyePos.lerp(centerPos, 2);
+        BlockHitResult hitResult = world.raycastBlock(eyePos, end, pos, state.getRaycastShape(world, pos), state);
+        if (hitResult == null) {
+            hitResult = new BlockHitResult(centerPos, Direction.UP, pos, false);
+        }
+        return hitResult;
     }
 }

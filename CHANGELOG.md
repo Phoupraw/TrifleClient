@@ -82,5 +82,7 @@
 ## 更改
 - Logger的名称从`trifleclient`改为`TrifleClient`。
 #
+## 新增
+- 指令`/trifleclient strip`，可以在手持斧头时持续给周围原木去皮。
 ## 更改
 - 前移方块高亮渲染时机。

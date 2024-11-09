@@ -14,6 +14,8 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -40,6 +42,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     static void loadClass(Class<?> cls) {
         MethodHandles.lookup().ensureInitialized(cls);
     }
+    public static MutableText name() {
+        return Text.translatableWithFallback(NAME_KEY, ID);
+    }
     @Override
     public void onInitializeClient() {
         loadClass(TargetPointer.class);
@@ -61,6 +66,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         ClientCommandRegistrationCallback.EVENT.register(SprucePlanter::register);
         ClientTickEvents.START_WORLD_TICK.register(SprucePlanter::onStartAndEndTick);
         ClientTickEvents.END_WORLD_TICK.register(SprucePlanter::onStartAndEndTick);
+        ClientCommandRegistrationCallback.EVENT.register(LogStripper::register);
+        ClientTickEvents.START_WORLD_TICK.register(LogStripper::onStartAndEndTick);
+        ClientTickEvents.END_WORLD_TICK.register(LogStripper::onStartAndEndTick);
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             TrifleClient.LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
