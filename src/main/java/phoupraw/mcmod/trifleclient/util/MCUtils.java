@@ -77,9 +77,6 @@ public interface MCUtils {
         Vec3d eyePos = player.getEyePos();
         Vec3d end = eyePos.lerp(centerPos, 2);
         BlockHitResult hitResult = world.raycastBlock(eyePos, end, pos, state.getRaycastShape(world, pos), state);
-        if (hitResult == null) {
-            hitResult = new BlockHitResult(centerPos, Direction.UP, pos, false);
-        }
-        return hitResult;
+        return hitResult != null ? hitResult : new BlockHitResult(centerPos, player.getFacing().getOpposite(), pos, false);
     }
 }
