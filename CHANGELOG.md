@@ -88,6 +88,6 @@
 - 物品和经验球发光的范围会随“实体渲染距离”而缩放。
 - 鞘翅飞行时不发送`OnGround`信包。
 - 指令`/trifleclient spruce <pos>`改为`/trifleclient spruce`，位置为准心对着的方块。
-#
+# 0.12.1
 ## 修复
 - `/trifleclient spruce`选取了高一格的方块。
