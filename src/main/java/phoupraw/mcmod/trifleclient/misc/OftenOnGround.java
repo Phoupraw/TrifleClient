@@ -14,7 +14,7 @@ import phoupraw.mcmod.trifleclient.config.TCConfigs;
 public interface OftenOnGround {
     @ApiStatus.Internal
     static Vec3d onClientPlayerMove(ClientPlayerEntity player, MovementType movementType, Vec3d movement) {
-        if (TCConfigs.A.isOftenOnGround() && !player.isClimbing() && (movement.getY() < 0 || player.getAbilities().flying)) {
+        if (TCConfigs.A.isOftenOnGround() && !player.isClimbing() && (movement.getY() < 0 || player.getAbilities().flying) && !player.isFallFlying()) {
             player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
         }
         return movement;
