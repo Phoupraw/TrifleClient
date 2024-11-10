@@ -47,7 +47,7 @@ public interface SprucePlanter {
             source.sendError(Text.literal("准心未选中方块！"));
             return 0;
         }
-        BlockPos pos = hitResult.getBlockPos().up();
+        BlockPos pos = hitResult.getBlockPos();
         fail:
         for (Direction direction : Direction.Type.HORIZONTAL) {
             BlockPos pos2 = pos.offset(direction);
