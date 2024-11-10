@@ -2,7 +2,6 @@ package phoupraw.mcmod.trifleclient.misc;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import dev.xpple.clientarguments.arguments.CBlockPosArgument;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -15,6 +14,7 @@ import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -33,14 +33,21 @@ public interface SprucePlanter {
     static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         dispatcher.register(ClientCommandManager.literal(TrifleClient.ID)
           .then(ClientCommandManager.literal("spruce")
-            .executes(SprucePlanter::runStop)
-            .then(ClientCommandManager.argument("pos", CBlockPosArgument.blockPos())
-              .executes(SprucePlanter::runStart))));
+            .executes(SprucePlanter::runStartOrStop)));
     }
-    private static int runStart(CommandContext<FabricClientCommandSource> context) {
-        BlockPos pos = CBlockPosArgument.getBlockPos(context, "pos");
+    private static int runStartOrStop(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
         ClientWorld world = source.getWorld();
+        if (!POSITIONS.isEmpty()) {
+            source.sendFeedback(Text.literal("停止种植云杉树苗。"));
+            POSITIONS.clear();
+            return 1;
+        }
+        if (!(MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult hitResult) || hitResult.getType() == HitResult.Type.MISS) {
+            source.sendError(Text.literal("准心未选中方块！"));
+            return 0;
+        }
+        BlockPos pos = hitResult.getBlockPos().up();
         fail:
         for (Direction direction : Direction.Type.HORIZONTAL) {
             BlockPos pos2 = pos.offset(direction);
@@ -55,24 +62,13 @@ public interface SprucePlanter {
             POSITIONS.addAll(posList);
             var sb = new StringJoiner(", ", "[", "]");
             for (BlockPos blockPos : posList) {
-                sb.add("[" + blockPos.toShortString() + "]");
+                sb.add("(" + blockPos.toShortString() + ")");
             }
             source.sendFeedback(Text.literal("在%s上持续种植云杉树苗……".formatted(sb)));
             return 1;
         }
         source.sendError(Text.literal("在%s找不到2×2灰化土！".formatted("[" + pos.toShortString() + "]")));
         return 0;
-    }
-    private static int runStop(CommandContext<FabricClientCommandSource> context) {
-        FabricClientCommandSource source = context.getSource();
-        if (POSITIONS.isEmpty()) {
-            source.sendError(Text.literal("当前并未在种植云杉树苗！"));
-            return 0;
-        } else {
-            source.sendFeedback(Text.literal("停止种植云杉树苗。"));
-            POSITIONS.clear();
-            return 1;
-        }
     }
     @ApiStatus.Internal
     static void onStartAndEndTick(ClientWorld world) {
