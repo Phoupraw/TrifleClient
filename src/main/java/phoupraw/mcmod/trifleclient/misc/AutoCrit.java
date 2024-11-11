@@ -43,12 +43,12 @@ public interface AutoCrit {
         FabricClientCommandSource source = context.getSource();
         if (TCConfigs.A.isAutoCrit()) {
             TCConfigs.A.setAutoCrit(false);
-            source.sendFeedback(Texts.bracketed(TrifleClient.name()).append("启用自动暴击。"));
-            return 1;
-        } else {
-            TCConfigs.A.setAutoCrit(true);
             source.sendFeedback(Texts.bracketed(TrifleClient.name()).append("关闭自动暴击。"));
             return 0;
+        } else {
+            TCConfigs.A.setAutoCrit(true);
+            source.sendFeedback(Texts.bracketed(TrifleClient.name()).append("启用自动暴击。"));
+            return 1;
         }
     }
 }
