@@ -69,6 +69,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         ClientCommandRegistrationCallback.EVENT.register(LogStripper::register);
         ClientTickEvents.START_WORLD_TICK.register(LogStripper::onStartAndEndTick);
         ClientTickEvents.END_WORLD_TICK.register(LogStripper::onStartAndEndTick);
+        ClientCommandRegistrationCallback.EVENT.register(AutoCrit::register);
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             TrifleClient.LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
