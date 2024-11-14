@@ -28,6 +28,7 @@ public class TCConfigs {
     float minAmbientLight = 0.08f;
     double itemGlowingRange = 24;
     boolean rightClickOpenFolder = true;
+    boolean detailPacketError = true;
     protected TCConfigs() {
     }
     //public float getMinStepHeight() {
