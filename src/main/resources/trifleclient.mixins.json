@@ -2,7 +2,16 @@
   "required": true,
   "package": "phoupraw.mcmod.trifleclient.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["minecraft.MDecoderHandler", "minecraft.MLivingEntity", "minecraft.MPacketCodecDispatcher"],
+  "mixins": [
+    "minecraft.MDataTracker",
+    "minecraft.MDecoderHandler",
+    "minecraft.MFireworkRocketEntity",
+    "minecraft.MLivingEntity",
+    "minecraft.MPacketCodecDispatcher",
+    "minecraft.MPlayerEntity",
+    "minecraft.MPlayerInputC2SPacket",
+    "minecraft.MPlayerMoveC2SPacket"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

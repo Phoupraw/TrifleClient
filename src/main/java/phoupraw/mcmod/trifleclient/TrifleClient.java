@@ -14,12 +14,15 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
+import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 import phoupraw.mcmod.trifleclient.events.AfterClientPlayerMove;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
@@ -58,7 +61,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         AfterClientPlayerMove.EVENT.register(NormalSpeed::afterClientPlayerMove);
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
         AttackEntityCallback.EVENT.register(AutoCrit::interact);
-        OnClientPlayerMove.EVENT.register(OftenOnGround::onClientPlayerMove);
+        //OnClientPlayerMove.EVENT.register(OftenOnGround::onClientPlayerMove);
         UseItemCallback.EVENT.register(OnekeyBreeding::interact);
         UseBlockCallback.EVENT.register(OnekeyBreeding::interact);
         UseEntityCallback.EVENT.register(OnekeyBreeding::interact);
@@ -70,6 +73,14 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         ClientTickEvents.START_WORLD_TICK.register(LogStripper::onStartAndEndTick);
         ClientTickEvents.END_WORLD_TICK.register(LogStripper::onStartAndEndTick);
         ClientCommandRegistrationCallback.EVENT.register(AutoCrit::register);
+        ClientTickEvents.END_WORLD_TICK.register(world -> {
+            var player = MinecraftClient.getInstance().player;
+            if (TCConfigs.A.isOftenOnGround() && player != null && !player.isClimbing() && !player.isSwimming() && /*!FreeElytraFlying.isFlying(player) &&*/ (player.getVelocity().getY() < 0/* || player.getAbilities().flying */) && !player.isFallFlying()) {
+                player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+                //player.stopFallFlying();
+            }
+        });
+        ClientTickEvents.END_WORLD_TICK.register(FreeElytraFlying::onEndTick);
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             TrifleClient.LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
@@ -77,6 +88,6 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     }
     @Override
     public void onInitialize() {
-    
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> server.setFlightEnabled(false));
     }
 }

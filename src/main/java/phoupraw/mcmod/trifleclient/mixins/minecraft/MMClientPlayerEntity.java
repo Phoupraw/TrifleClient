@@ -27,4 +27,7 @@ public interface MMClientPlayerEntity {
     static float minStepHeight(float original) {
         return Math.max(original, TCConfigs.A.getMinStepHeight());
     }
+    static boolean notSendStopFlyingPacket(ClientPlayerEntity instance) {
+        return instance.getAbilities().allowFlying;
+    }
 }

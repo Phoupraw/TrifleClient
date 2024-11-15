@@ -1,6 +1,7 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
@@ -50,5 +51,13 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     @ModifyExpressionValue(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
     private boolean noUsingItemSlow(boolean original) {
         return MMClientPlayerEntity.noUsingItemSlow((ClientPlayerEntity) (Object) this, original);
+    }
+    //@ModifyExpressionValue(method = "tickMovement",at = {@At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z",opcode = Opcodes.GETFIELD)/*,@At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;flying:Z", opcode = Opcodes.GETFIELD)*/})
+    //private boolean elytraFreeFlying(boolean original){
+    //    return original || isFallFlying();
+    //}
+    @WrapWithCondition(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;sendAbilitiesUpdate()V"))
+    private boolean notSendStopFlyingPacket(ClientPlayerEntity instance) {
+        return MMClientPlayerEntity.notSendStopFlyingPacket(instance);
     }
 }

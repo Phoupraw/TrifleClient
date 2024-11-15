@@ -30,6 +30,7 @@ public class TCConfigs {
     boolean rightClickOpenFolder = true;
     boolean detailPacketError = true;
     boolean elytraCancelSyncFlying;
+    boolean freeElytraFlying = true;
     protected TCConfigs() {
     }
 }

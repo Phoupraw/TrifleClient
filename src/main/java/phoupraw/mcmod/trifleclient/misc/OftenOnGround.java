@@ -11,10 +11,11 @@ import phoupraw.mcmod.trifleclient.config.TCConfigs;
  防止摔落伤害
  */
 @ApiStatus.NonExtendable
+@Deprecated
 public interface OftenOnGround {
     @ApiStatus.Internal
     static Vec3d onClientPlayerMove(ClientPlayerEntity player, MovementType movementType, Vec3d movement) {
-        if (TCConfigs.A.isOftenOnGround() && !player.isClimbing() && (movement.getY() < 0 || player.getAbilities().flying) && !player.isFallFlying()) {
+        if (TCConfigs.A.isOftenOnGround() && !player.isClimbing() && /*!FreeElytraFlying.isFlying(player) &&*/ (movement.getY() < 0/* || player.getAbilities().flying */) /*&& !player.isFallFlying()*/) {
             player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
         }
         return movement;
