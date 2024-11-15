@@ -12,6 +12,7 @@
     "minecraft.MChatScreen",
     "minecraft.MClientPlayerEntity",
     "minecraft.MClientPlayerInteractionManager",
+    "minecraft.MClientPlayNetworkHandler",
     "minecraft.MDimensionType",
     "minecraft.MEntity",
     "minecraft.MExperienceOrbEntity",

@@ -29,9 +29,7 @@ public class TCConfigs {
     double itemGlowingRange = 24;
     boolean rightClickOpenFolder = true;
     boolean detailPacketError = true;
+    boolean elytraCancelSyncFlying;
     protected TCConfigs() {
     }
-    //public float getMinStepHeight() {
-    //    return 0;
-    //}
 }
