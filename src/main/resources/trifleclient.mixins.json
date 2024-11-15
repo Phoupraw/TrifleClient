@@ -3,6 +3,8 @@
   "package": "phoupraw.mcmod.trifleclient.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "minecraft.AEntity",
+    "minecraft.MClientCommandC2SPacket",
     "minecraft.MDataTracker",
     "minecraft.MDecoderHandler",
     "minecraft.MFireworkRocketEntity",

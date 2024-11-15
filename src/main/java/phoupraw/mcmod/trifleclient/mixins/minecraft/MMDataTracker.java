@@ -18,7 +18,7 @@ public interface MMDataTracker {
     static void freeElytraFlying(DataTracker instance, DataTracker.Entry<?> to, DataTracker.SerializedEntry<?> from, Operation<Void> original, DataTracked trackedEntity) {
         if (trackedEntity instanceof ClientPlayerEntity player && FreeElytraFlying.isFlying(player)) {
             original.call(instance, to, from);
-            if (!player.isFallFlying() /*&& !player.checkFallFlying()*/) {
+            if (!player.isFallFlying() /*&& !player.checkFallFlying()*/ && player.getAbilities().flying) {
                 player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false));
                 if (player.checkFallFlying()) {
                     player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));

@@ -81,6 +81,15 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             }
         });
         ClientTickEvents.END_WORLD_TICK.register(FreeElytraFlying::onEndTick);
+        //ClientPlayConnectionEvents.JOIN.register(new ClientPlayConnectionEvents.Join() {
+        //    @Override
+        //    public void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
+        //        ClientPlayerEntity player = client.player;
+        //        if (FreeElytraFlying.isFlying(player)) {
+        //            player.get
+        //        }
+        //    }
+        //});
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             TrifleClient.LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);

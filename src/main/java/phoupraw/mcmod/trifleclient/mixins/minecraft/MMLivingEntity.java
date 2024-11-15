@@ -25,9 +25,9 @@ public interface MMLivingEntity {
     }
     @Environment(EnvType.CLIENT)
     static boolean freeElytraFly(LivingEntity self, boolean original) {
-        if (original && self instanceof ClientPlayerEntity player && FreeElytraFlying.isFlying(player)) {
+        if (original && self instanceof ClientPlayerEntity player && FreeElytraFlying.canFly(player)) {
             /*player.getAbilities().allowFlying =*/
-            player.getAbilities().flying = true;
+            player.getAbilities().flying = true;//FIXME 加上这句无法在空中取消飞行；去掉这句在空中取消飞行容易摔死。
             //player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(),90,false));
             return false;
         }
