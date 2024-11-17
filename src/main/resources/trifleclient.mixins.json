@@ -28,7 +28,7 @@
     "minecraft.MEntity",
     "minecraft.MExperienceOrbEntity",
     "minecraft.MItemEntity",
-    "minecraft.MMinecraftClient"
+    "minecraft.MMinecraftClient", "modchecker.MRequestPacketListener"
   ],
   "plugin": "phoupraw.mcmod.trifleclient.mixins.TrifleClientMixinConfigPlugin",
   "priority": 10000

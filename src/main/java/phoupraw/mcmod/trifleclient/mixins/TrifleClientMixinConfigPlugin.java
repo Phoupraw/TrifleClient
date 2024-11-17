@@ -1,9 +1,12 @@
 package phoupraw.mcmod.trifleclient.mixins;
 
+import fun.rtos.modchecker.ModChecker;
+import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import phoupraw.mcmod.trifleclient.TrifleClient;
 
 import java.util.List;
 import java.util.Set;
@@ -19,6 +22,9 @@ public final class TrifleClientMixinConfigPlugin implements IMixinConfigPlugin {
     }
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (mixinClassName.startsWith("phoupraw.mcmod." + TrifleClient.ID + ".mixin." + ModChecker.MOD_ID)) {
+            return FabricLoader.getInstance().isModLoaded(ModChecker.MOD_ID);
+        }
         return true;
     }
     @Override
