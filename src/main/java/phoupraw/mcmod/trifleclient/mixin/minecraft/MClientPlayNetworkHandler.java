@@ -10,12 +10,11 @@ import net.minecraft.client.network.ClientCommonNetworkHandler;
 import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerAbilities;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.PlayerAbilitiesS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Slice;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.mixins.minecraft.MMClientPlayNetworkHandler;
 
@@ -33,8 +32,8 @@ abstract class MClientPlayNetworkHandler extends ClientCommonNetworkHandler {
     private boolean elytraCancelSyncAllowFlying(PlayerAbilities instance, boolean value, @Local(argsOnly = true) PlayerAbilitiesS2CPacket packet) {
         return MMClientPlayNetworkHandler.elytraCancelSyncAllowFlying(instance, value, packet, client);
     }
-    @ModifyExpressionValue(method = "onPlayerPositionLook", slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/network/packet/s2c/play/PositionFlag;X_ROT:Lnet/minecraft/network/packet/s2c/play/PositionFlag;")), at = @At(value = "INVOKE", target = "Ljava/util/Set;contains(Ljava/lang/Object;)Z", ordinal = 0))
-    private boolean no90sync(boolean original, @Local(argsOnly = true) PlayerPositionLookS2CPacket packet) {
-        return original && !(TCConfigs.A.isFreeElytraFlying() && packet.getPitch() <= -90);
+    @ModifyExpressionValue(method = "onPlayerPositionLook", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/PlayerPositionLookS2CPacket;getPitch()F"))
+    private float no90sync(float original, @Local PlayerEntity player) {
+        return original < -89 && TCConfigs.A.isFreeElytraFlying() ? player.getPitch() : original;
     }
 }
