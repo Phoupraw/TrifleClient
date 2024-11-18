@@ -15,6 +15,8 @@ import phoupraw.mcmod.trifleclient.mixin.minecraft.AEntity;
 
 @UtilityClass
 public class FreeElytraFlying {
+    public static double y;
+    private static int landing;
     @Contract(pure = true, value = "null->false")
     public static boolean canFly(@Nullable PlayerEntity player) {
         //ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
@@ -28,7 +30,7 @@ public class FreeElytraFlying {
         return canFly(player) && player.getAbilities().flying;
     }
     @ApiStatus.Internal
-    public static void onEndTick(ClientWorld world) {
+    public static void lambda_onEndTick(ClientWorld world) {
         var player = (ClientPlayerEntity & AEntity) MinecraftClient.getInstance().player;
         if (!isFlying(player)) return;
         if (landing == 0) {
@@ -57,6 +59,4 @@ public class FreeElytraFlying {
             landing--;
         }
     }
-    private static int landing;
-    public static double y;
 }

@@ -6,8 +6,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.HoglinEntity;
 import net.minecraft.entity.passive.*;
@@ -61,7 +61,7 @@ public class OnekeyBreeding {
     ));
     private long lastUse;
     @ApiStatus.Internal
-    public static TypedActionResult<ItemStack> interact(PlayerEntity player, World world, Hand hand) {
+    public static TypedActionResult<ItemStack> lambda_interact(PlayerEntity player, World world, Hand hand) {
         if (Screen.hasShiftDown()) {
             ItemStack stack = player.getStackInHand(hand);
             if (!stack.isEmpty()) {
@@ -81,7 +81,33 @@ public class OnekeyBreeding {
         }
         return TypedActionResult.pass(ItemStack.EMPTY);
     }
+    @ApiStatus.Internal
+    public static ActionResult lambda_interact(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+        return lambda_interact(player, world, hand).getResult();
+    }
+    @ApiStatus.Internal
+    public static ActionResult lambda_interact(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult hitResult) {
+        return lambda_interact(player, world, hand).getResult();
+    }
+    //FIXME 经常需要三击才能触发
+    @ApiStatus.Internal
+    public static void lambda_onUseKeyPress(MinecraftClient client, KeyBinding useKey) {
+        if (Screen.hasShiftDown()) {
+            ClientWorld world = client.world;
+            if (world != null) {
+                if (lastUse == 0) {
+                    lastUse = world.getTime();
+                } else if (world.getTime() - lastUse < 8) {
+                    lastUse = Long.MIN_VALUE;
+                } else {
+                    lastUse = 0;
+                }
+            }
+        }
+    }
     private static boolean findAndBreed(PlayerEntity player, World world, Hand hand, ItemStack stack, Class<? extends AnimalEntity> entityClass) {
+        var interactor = MinecraftClient.getInstance().interactionManager;
+        if (interactor == null) return false;
         Vec3d eyePos = player.getEyePos();
         double range0 = player.getEntityInteractionRange();
         float width = player.getWidth();
@@ -96,7 +122,6 @@ public class OnekeyBreeding {
         if (animals.size() % 2 == 1) {
             animals.removeLast();
         }
-        ClientPlayerInteractionManager interactor = MinecraftClient.getInstance().interactionManager;
         boolean success = false;
         for (Entity animal : animals) {
             if (interactor.interactEntity(player, animal, hand).isAccepted()) {
@@ -104,26 +129,5 @@ public class OnekeyBreeding {
             }
         }
         return success;
-    }
-    @ApiStatus.Internal
-    public static ActionResult interact(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
-        return interact(player, world, hand).getResult();
-    }
-    @ApiStatus.Internal
-    public static ActionResult interact(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult hitResult) {
-        return interact(player, world, hand).getResult();
-    }
-    //FIXME 经常需要三击才能触发
-    @ApiStatus.Internal
-    public static void onUseKeyPress(MinecraftClient client, KeyBinding useKey) {
-        if (Screen.hasShiftDown()) {
-            if (lastUse == 0) {
-                lastUse = client.world.getTime();
-            } else if (client.world.getTime() - lastUse < 8) {
-                lastUse = Long.MIN_VALUE;
-            } else {
-                lastUse = 0;
-            }
-        }
     }
 }

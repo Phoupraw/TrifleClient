@@ -30,10 +30,33 @@ import java.util.StringJoiner;
 public interface SprucePlanter {
     Collection<BlockPos> POSITIONS = new ObjectArrayList<>();
     @ApiStatus.Internal
-    static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+    static void lambda_register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         dispatcher.register(ClientCommandManager.literal(TrifleClient.ID)
           .then(ClientCommandManager.literal("spruce")
             .executes(SprucePlanter::runStartOrStop)));
+    }
+    @ApiStatus.Internal
+    static void onStartAndEndTick(ClientWorld world) {
+        if (POSITIONS.isEmpty()) return;
+        var interactor = MinecraftClient.getInstance().interactionManager;
+        if (interactor == null) return;
+        var player = MinecraftClient.getInstance().player;
+        if (player == null || !player.getMainHandStack().isOf(Items.SPRUCE_SAPLING)) {
+            return;
+        }
+        for (BlockPos pos : POSITIONS) {
+            if (!world.getBlockState(pos).isOf(Blocks.PODZOL)) {
+                return;
+            }
+            BlockPos up = pos.up();
+            BlockState stateUp = world.getBlockState(up);
+            if (!(stateUp.isAir() || stateUp.isOf(Blocks.SPRUCE_SAPLING))) {
+                return;
+            }
+        }
+        for (BlockPos pos : POSITIONS) {
+            interactor.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos, 1), Direction.UP, pos, false));
+        }
     }
     private static int runStartOrStop(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
@@ -69,28 +92,5 @@ public interface SprucePlanter {
         }
         source.sendError(Text.literal("在%s找不到2×2灰化土！".formatted("[" + pos.toShortString() + "]")));
         return 0;
-    }
-    @ApiStatus.Internal
-    static void onStartAndEndTick(ClientWorld world) {
-        if (POSITIONS.isEmpty()) return;
-        var interactor = MinecraftClient.getInstance().interactionManager;
-        if (interactor == null) return;
-        var player = MinecraftClient.getInstance().player;
-        if (player == null || !player.getMainHandStack().isOf(Items.SPRUCE_SAPLING)) {
-            return;
-        }
-        for (BlockPos pos : POSITIONS) {
-            if (!world.getBlockState(pos).isOf(Blocks.PODZOL)) {
-                return;
-            }
-            BlockPos up = pos.up();
-            BlockState stateUp = world.getBlockState(up);
-            if (!(stateUp.isAir() || stateUp.isOf(Blocks.SPRUCE_SAPLING))) {
-                return;
-            }
-        }
-        for (BlockPos pos : POSITIONS) {
-            interactor.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos, 1), Direction.UP, pos, false));
-        }
     }
 }

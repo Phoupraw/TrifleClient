@@ -41,12 +41,12 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     public static final String NAME_KEY = "modmenu.nameTranslation." + ID;
     @ApiStatus.Internal
     public static final Logger LOGGER = LogManager.getLogger();
+    public static MutableText name() {
+        return Text.translatableWithFallback(NAME_KEY, ID);
+    }
     @SneakyThrows
     static void loadClass(Class<?> cls) {
         MethodHandles.lookup().ensureInitialized(cls);
-    }
-    public static MutableText name() {
-        return Text.translatableWithFallback(NAME_KEY, ID);
     }
     @Override
     public void onInitializeClient() {
@@ -62,14 +62,14 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
         AttackEntityCallback.EVENT.register(AutoCrit::interact);
         //OnClientPlayerMove.EVENT.register(OftenOnGround::onClientPlayerMove);
-        UseItemCallback.EVENT.register(OnekeyBreeding::interact);
-        UseBlockCallback.EVENT.register(OnekeyBreeding::interact);
-        UseEntityCallback.EVENT.register(OnekeyBreeding::interact);
-        OnUseKeyPress.EVENT.register(OnekeyBreeding::onUseKeyPress);
-        ClientCommandRegistrationCallback.EVENT.register(SprucePlanter::register);
+        UseItemCallback.EVENT.register(OnekeyBreeding::lambda_interact);
+        UseBlockCallback.EVENT.register(OnekeyBreeding::lambda_interact);
+        UseEntityCallback.EVENT.register(OnekeyBreeding::lambda_interact);
+        OnUseKeyPress.EVENT.register(OnekeyBreeding::lambda_onUseKeyPress);
+        ClientCommandRegistrationCallback.EVENT.register(SprucePlanter::lambda_register);
         ClientTickEvents.START_WORLD_TICK.register(SprucePlanter::onStartAndEndTick);
         ClientTickEvents.END_WORLD_TICK.register(SprucePlanter::onStartAndEndTick);
-        ClientCommandRegistrationCallback.EVENT.register(LogStripper::register);
+        ClientCommandRegistrationCallback.EVENT.register(LogStripper::lambda_register);
         ClientTickEvents.START_WORLD_TICK.register(LogStripper::onStartAndEndTick);
         ClientTickEvents.END_WORLD_TICK.register(LogStripper::onStartAndEndTick);
         ClientCommandRegistrationCallback.EVENT.register(AutoCrit::register);
@@ -80,7 +80,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
                 //player.stopFallFlying();
             }
         });
-        ClientTickEvents.END_WORLD_TICK.register(FreeElytraFlying::onEndTick);
+        ClientTickEvents.END_WORLD_TICK.register(FreeElytraFlying::lambda_onEndTick);
         //ClientPlayConnectionEvents.JOIN.register(new ClientPlayConnectionEvents.Join() {
         //    @Override
         //    public void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {

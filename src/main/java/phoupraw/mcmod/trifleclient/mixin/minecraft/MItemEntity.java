@@ -21,6 +21,11 @@ abstract class MItemEntity extends Entity {
     }
     @Intrinsic
     @Override
+    public int getTeamColorValue() {
+        return super.getTeamColorValue();
+    }
+    @Intrinsic
+    @Override
     public boolean isGlowing() {
         return super.isGlowing();
     }
@@ -29,11 +34,6 @@ abstract class MItemEntity extends Entity {
     @ModifyReturnValue(method = "isGlowing()Z", at = @At("RETURN"))
     protected boolean glow(boolean original) {
         return MMItemEntity.glow((ItemEntity) (Object) this, original);
-    }
-    @Intrinsic
-    @Override
-    public int getTeamColorValue() {
-        return super.getTeamColorValue();
     }
     @SuppressWarnings("target")
     @Dynamic(mixin = MItemEntity.class)
