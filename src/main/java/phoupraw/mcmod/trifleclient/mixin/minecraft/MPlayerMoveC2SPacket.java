@@ -1,5 +1,6 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -17,7 +18,7 @@ abstract class MPlayerMoveC2SPacket {
     }
     @Environment(EnvType.CLIENT)
     @ModifyVariable(method = "<init>", at = @At("HEAD"), ordinal = 1, argsOnly = true)
-    private static double slowlyDown(double y) {
-        return MMPlayerMoveC2SPacket.slowlyDown(y);
+    private static double slowlyDown(double y, @Local(argsOnly = true, ordinal = 1) boolean changePosition) {
+        return MMPlayerMoveC2SPacket.slowlyDown(y, changePosition);
     }
 }

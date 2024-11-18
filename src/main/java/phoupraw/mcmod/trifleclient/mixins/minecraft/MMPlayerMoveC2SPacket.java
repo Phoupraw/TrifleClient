@@ -19,10 +19,13 @@ public interface MMPlayerMoveC2SPacket {
         return pitch;
     }
     @Environment(EnvType.CLIENT)
-    static double slowlyDown(double y) {
+    static double slowlyDown(double y, boolean changePosition) {
+        if (!changePosition) {
+            return y;
+        }
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (FreeElytraFlying.isFlying(player)) {
-            FreeElytraFlying.y -= 0.2;
+            FreeElytraFlying.y -= 0.5;
             if (y < FreeElytraFlying.y) {
                 return FreeElytraFlying.y;
             }

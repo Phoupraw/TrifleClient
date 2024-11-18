@@ -32,21 +32,9 @@ public class FreeElytraFlying {
     @ApiStatus.Internal
     public static void lambda_onEndTick(ClientWorld world) {
         var player = (ClientPlayerEntity & AEntity) MinecraftClient.getInstance().player;
-        if (!isFlying(player)) return;
+        if (!(isFlying(player) && player.getVelocity().getY() < 0)) return;
         if (landing == 0) {
-            //for (int i = 0; i < 3; i++) {
-            //    Vec3d movement = player.invokeAdjustMovementForCollisions(new Vec3d(0, -2*(i+1), 0));
-            //    Vec3d pos = player.getPos().add(movement);
-            //    player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(),pos.getY(),pos.getZ(),true));
-            //}
-           /* if (player.getVelocity().getY() < 0) {
-                Vec3d movement = player.invokeAdjustMovementForCollisions(player.getVelocity().multiply(-1));
-                Vec3d pos = player.getPos().add(movement);
-                player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), true));
-            } else */
             Vec3d movement = player.invokeAdjustMovementForCollisions(new Vec3d(0, -5, 0));
-            //Vec3d pos = player.getPos().add(movement);
-            //player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), true));
             if (movement.getY() > -5) {
                 Vec3d pos = player.getPos().add(movement);
                 player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), true));
@@ -55,7 +43,6 @@ public class FreeElytraFlying {
             }
             landing = 5;
         } else {
-            //player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false));
             landing--;
         }
     }
