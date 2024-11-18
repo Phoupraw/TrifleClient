@@ -32,7 +32,7 @@ public class FreeElytraFlying {
     @ApiStatus.Internal
     public static void lambda_onEndTick(ClientWorld world) {
         var player = (ClientPlayerEntity & AEntity) MinecraftClient.getInstance().player;
-        if (!(isFlying(player) && player.getVelocity().getY() < 0)) return;
+        if (!(isFlying(player) /*&& player.getVelocity().getY() < 0*/)) return;
         if (landing == 0) {
             Vec3d movement = player.invokeAdjustMovementForCollisions(new Vec3d(0, -5, 0));
             if (movement.getY() > -5) {

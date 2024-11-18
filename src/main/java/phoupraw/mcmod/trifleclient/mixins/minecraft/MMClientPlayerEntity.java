@@ -3,10 +3,8 @@ package phoupraw.mcmod.trifleclient.mixins.minecraft;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
@@ -36,9 +34,9 @@ public interface MMClientPlayerEntity {
     static boolean notSendStopFlyingPacket(ClientPlayerEntity instance) {
         return instance.getAbilities().allowFlying;
     }
-    static boolean cancelPoseSync(AbstractClientPlayerEntity instance, TrackedData<?> data, TrackedData<?> POSE) {
-        return !instance.isFallFlying() || !POSE.equals(data);
-    }
+    //static boolean cancelPoseSync(AbstractClientPlayerEntity instance, TrackedData<?> data, TrackedData<?> POSE) {
+    //    return !instance.isFallFlying() || !POSE.equals(data);
+    //}
     //static void startFlying(ClientPlayerEntity self) {
     //    if (FreeElytraFlying.isFlying(self)) {
     //        self.getAbilities().flying = true;

@@ -10,7 +10,6 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.util.math.Vec3d;
 import org.objectweb.asm.Opcodes;
@@ -63,10 +62,11 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     private boolean notSendStopFlyingPacket(ClientPlayerEntity instance) {
         return MMClientPlayerEntity.notSendStopFlyingPacket(instance);
     }
-    @WrapWithCondition(method = "onTrackedDataSet", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;onTrackedDataSet(Lnet/minecraft/entity/data/TrackedData;)V"))
-    private boolean cancelPoseSync(AbstractClientPlayerEntity instance, TrackedData<?> data) {
-        return MMClientPlayerEntity.cancelPoseSync(instance, data, POSE);
-    }
+    //@WrapWithCondition(method = "onTrackedDataSet", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;onTrackedDataSet(Lnet/minecraft/entity/data/TrackedData;)V"))
+    //private boolean cancelPoseSync(AbstractClientPlayerEntity instance, TrackedData<?> data) {
+    //    return MMClientPlayerEntity.cancelPoseSync(instance, data, POSE);
+    //}
+    
     //逆天Fabric API，直接把if块截断了，搞得我排查了半天！
     
     //@Inject(method = "tickMovement", at = @At(value = "FIELD", target = "Lnet/minecraft/network/packet/c2s/play/ClientCommandC2SPacket$Mode;START_FALL_FLYING:Lnet/minecraft/network/packet/c2s/play/ClientCommandC2SPacket$Mode;"))

@@ -25,7 +25,7 @@ public interface MMPlayerMoveC2SPacket {
         }
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (FreeElytraFlying.isFlying(player)) {
-            FreeElytraFlying.y -= 0.5;
+            FreeElytraFlying.y -= 0.4;
             if (y < FreeElytraFlying.y) {
                 return FreeElytraFlying.y;
             }
