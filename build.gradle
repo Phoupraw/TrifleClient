@@ -107,7 +107,7 @@ dependencies {
     /////*modLocalRuntime*/ modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei}")
     modLocalRuntime modCompileOnly("curse.maven:jade-324717:${jade}")
     //modApi("dev.emi:trinkets:${trinkets}")
-    modLocalRuntime(modCompileOnly(files("C:\\ProgramData\\Minecraft\\.minecraft\\mods\\[A][模组检查] ModChecker-1.0.0.jar")))
+    modLocalRuntime(modCompileOnly(files("C:\\Directs\\Minecraft\\.minecraft/versions/1.21.1\\mods\\[A][模组检查] ModChecker-mc1.21.1-1.1.1+build.8.jar")))
 
     //## 非mod依赖
     compileOnlyApi(annotationProcessor("org.projectlombok:lombok:${lombok}"))
