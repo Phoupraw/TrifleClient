@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
+import phoupraw.mcmod.trifleclient.config.TCYACL;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 import phoupraw.mcmod.trifleclient.events.AfterClientPlayerMove;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
@@ -93,6 +94,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             TrifleClient.LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
+        }
+        if (FabricLoader.getInstance().isModLoaded(TCYACL.MOD_ID)) {
+            TCYACL.assignConfig();
         }
     }
     @Override

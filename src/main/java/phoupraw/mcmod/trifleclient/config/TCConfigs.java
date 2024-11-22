@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TCConfigs {
-    public static final TCConfigs A = new TCConfigs();
+    public static TCConfigs A = new TCConfigs();
     boolean speedSpeed = true;
     int speedSteps = 20;
     double speedFactor = 0.05;
@@ -31,6 +31,4 @@ public class TCConfigs {
     boolean detailPacketError = true;
     boolean elytraCancelSyncFlying = true;
     boolean freeElytraFlying;
-    protected TCConfigs() {
-    }
 }
