@@ -29,6 +29,6 @@ public class TCConfigs {
     double itemGlowingRange = 24;
     boolean rightClickOpenFolder = true;
     boolean detailPacketError = true;
-    boolean elytraCancelSyncFlying = true;
-    boolean freeElytraFlying;
+    boolean elytraCancelSyncFlying = false;
+    boolean freeElytraFlying = false;
 }

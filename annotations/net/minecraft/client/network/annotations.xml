@@ -1,8 +1,0 @@
-<root>
-    <item name='net.minecraft.client.network.ClientPlayerEntity input'>
-        <annotation name='org.jetbrains.annotations.Nullable'/>
-    </item>
-    <item name='net.minecraft.client.network.ClientPlayerInteractionManager net.minecraft.util.ActionResult interactBlock(net.minecraft.client.network.ClientPlayerEntity, net.minecraft.util.Hand, net.minecraft.util.hit.BlockHitResult) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

@@ -18,10 +18,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
+import phoupraw.mcmod.trifleclient.compact.MekanismWeaponsCompact;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.config.TCYACL;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
@@ -31,6 +29,8 @@ import phoupraw.mcmod.trifleclient.events.OnUseKeyPress;
 import phoupraw.mcmod.trifleclient.misc.*;
 
 import java.lang.invoke.MethodHandles;
+
+import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 //TODO 使在流体中行走不减速
 //TODO 稀有度不为常见或有自定义名称的物品始终发光，其它物品和经验球则有不可穿墙的发光轮廓
 
@@ -40,8 +40,6 @@ import java.lang.invoke.MethodHandles;
 public final class TrifleClient implements ModInitializer, ClientModInitializer {
     public static final String ID = "trifleclient";
     public static final String NAME_KEY = "modmenu.nameTranslation." + ID;
-    @ApiStatus.Internal
-    public static final Logger LOGGER = LogManager.getLogger();
     public static MutableText name() {
         return Text.translatableWithFallback(NAME_KEY, ID);
     }
@@ -92,10 +90,15 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         //    }
         //});
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
-            TrifleClient.LOGGER.info("检测到《通用机械》，将加载相关兼容。");
+            LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
         }
+        if (FabricLoader.getInstance().isModLoaded(MekanismWeaponsCompact.MOD_ID)) {
+            LOGGER.info("检测到《通用机械武器》，将加载相关兼容。");
+            AutoAttacker.WEAPON.register(MekanismWeaponsCompact::isWeapon);
+        }
         if (FabricLoader.getInstance().isModLoaded(TCYACL.MOD_ID)) {
+            LOGGER.info("检测到《Yet Another Config Lib》，将加载相关兼容。");
             TCYACL.assignConfig();
         }
     }

@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
+import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
+
 @UtilityClass
 public class BlockFinder {
     //private static final Set<BlockPos> iterated = new ObjectOpenHashSet<>();
@@ -64,7 +66,7 @@ public class BlockFinder {
             }
         } catch (Throwable e) {
             source.sendError(Text.of("开始搜索时发生错误：" + e));
-            TrifleClient.LOGGER.throwing(e);
+            LOGGER.catching(e);
             return 0;
         }
     }
@@ -108,7 +110,7 @@ public class BlockFinder {
                 if (player != null) {
                     player.sendMessage(Text.empty().append("搜索时发生错误：" + e).formatted(Formatting.RED));
                 }
-                TrifleClient.LOGGER.throwing(e);
+                LOGGER.catching(e);
             }
         }
         if (failed) {
@@ -124,7 +126,7 @@ public class BlockFinder {
                 thread.interrupt();
             }
         } catch (Exception e) {
-            TrifleClient.LOGGER.throwing(e);
+            LOGGER.catching(e);
         }
     }
     private static void onEndTick(ClientWorld world) {
@@ -141,7 +143,7 @@ public class BlockFinder {
                 if (player != null) {
                     player.sendMessage(Text.empty().append("开始新一轮搜索时发生错误：" + e).formatted(Formatting.RED));
                 }
-                TrifleClient.LOGGER.throwing(e);
+                LOGGER.catching(e);
             }
         }
     }

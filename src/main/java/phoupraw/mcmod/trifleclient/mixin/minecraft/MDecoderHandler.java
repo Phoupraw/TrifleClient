@@ -9,17 +9,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import phoupraw.mcmod.trifleclient.TrifleClient;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
+
+import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 
 @Mixin(DecoderHandler.class)
 abstract class MDecoderHandler {
     @Inject(method = "decode", at = @At(value = "INVOKE", target = "Ljava/io/IOException;<init>(Ljava/lang/String;)V", shift = At.Shift.AFTER))
     private void printCustomPayloadId(CallbackInfo ci, @Local Packet<?> packet) {
-        if (TCConfigs.A.isDetailPacketError() && packet instanceof CustomPayloadS2CPacket customPacket) {
-            CustomPayload payload = customPacket.payload();
-            TrifleClient.LOGGER.error("CustomPayload.Id: " + payload.getId());
-            TrifleClient.LOGGER.error("CustomPayload: " + payload);
+        if (TCConfigs.A.isDetailPacketError() && packet instanceof CustomPayloadS2CPacket(CustomPayload payload)) {
+            LOGGER.error("CustomPayload.Id: {}", payload.getId());
+            LOGGER.error("CustomPayload: {}", payload);
         }
     }
 }

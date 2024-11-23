@@ -2,6 +2,9 @@ package phoupraw.mcmod.trifleclient.mixins;
 
 import fun.rtos.modchecker.ModChecker;
 import net.fabricmc.loader.api.FabricLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -11,7 +14,9 @@ import phoupraw.mcmod.trifleclient.TrifleClient;
 import java.util.List;
 import java.util.Set;
 
-public final class TrifleClientMixinConfigPlugin implements IMixinConfigPlugin {
+public final class TCMixinConfigPlugin implements IMixinConfigPlugin {
+    @ApiStatus.Internal
+    public static final Logger LOGGER = LogManager.getLogger();
     @Override
     public void onLoad(String mixinPackage) {
     

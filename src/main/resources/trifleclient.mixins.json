@@ -30,6 +30,6 @@
     "minecraft.MItemEntity",
     "minecraft.MMinecraftClient", "modchecker.MRequestPacketListener"
   ],
-  "plugin": "phoupraw.mcmod.trifleclient.mixins.TrifleClientMixinConfigPlugin",
+  "plugin": "phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin",
   "priority": 10000
 }
