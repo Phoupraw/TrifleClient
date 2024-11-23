@@ -1,7 +1,6 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
@@ -10,9 +9,7 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.util.math.Vec3d;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -54,14 +51,14 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     private boolean noUsingItemSlow(boolean original) {
         return MMClientPlayerEntity.noUsingItemSlow((ClientPlayerEntity) (Object) this, original);
     }
-    @ModifyExpressionValue(method = "tickMovement", at = {@At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z", opcode = Opcodes.GETFIELD)/*,@At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;flying:Z", opcode = Opcodes.GETFIELD)*/})
-    private boolean toggleFlying(boolean original) {
-        return MMClientPlayerEntity.toggleFlying((ClientPlayerEntity) (Object) this, original);
-    }
-    @WrapWithCondition(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;sendAbilitiesUpdate()V"))
-    private boolean notSendStopFlyingPacket(ClientPlayerEntity instance) {
-        return MMClientPlayerEntity.notSendStopFlyingPacket(instance);
-    }
+    //@ModifyExpressionValue(method = "tickMovement", at = {@At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z", opcode = Opcodes.GETFIELD)/*,@At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;flying:Z", opcode = Opcodes.GETFIELD)*/})
+    //private boolean toggleFlying(boolean original) {
+    //    return MMClientPlayerEntity.toggleFlying((ClientPlayerEntity) (Object) this, original);
+    //}
+    //@WrapWithCondition(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;sendAbilitiesUpdate()V"))
+    //private boolean notSendStopFlyingPacket(ClientPlayerEntity instance) {
+    //    return MMClientPlayerEntity.notSendStopFlyingPacket(instance);
+    //}
     //@WrapWithCondition(method = "onTrackedDataSet", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;onTrackedDataSet(Lnet/minecraft/entity/data/TrackedData;)V"))
     //private boolean cancelPoseSync(AbstractClientPlayerEntity instance, TrackedData<?> data) {
     //    return MMClientPlayerEntity.cancelPoseSync(instance, data, POSE);
@@ -73,8 +70,8 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     //private void startFlying(CallbackInfo ci) {
     //    MMClientPlayerEntity.startFlying((ClientPlayerEntity) (Object) this);
     //}
-    @WrapWithCondition(method = "tickMovement", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;flying:Z", opcode = Opcodes.PUTFIELD))
-    private boolean stopFlying(PlayerAbilities instance, boolean value) {
-        return MMClientPlayerEntity.stopFlying((ClientPlayerEntity) (Object) this, instance, value);
-    }
+    //@WrapWithCondition(method = "tickMovement", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;flying:Z", opcode = Opcodes.PUTFIELD))
+    //private boolean stopFlying(PlayerAbilities instance, boolean value) {
+    //    return MMClientPlayerEntity.stopFlying((ClientPlayerEntity) (Object) this, instance, value);
+    //}
 }
