@@ -132,7 +132,7 @@ public class BlockFinder {
     private static void onEndTick(ClientWorld world) {
         if (!TCConfigs.A.isBlockFinder()) return;
         BlockPos found = BlockFinder.found;
-        if (found == null || predicate.test(new CachedBlockPosition(world, BlockFinder.found, false))) return;
+        if (found == null || predicate.test(new CachedBlockPosition(world, found, false))) return;
         synchronized (BlockFinder.class) {
             found = BlockFinder.found;
             if (found == null || predicate.test(new CachedBlockPosition(world, found, false))) return;
@@ -169,9 +169,10 @@ public class BlockFinder {
      不需要外部检查{@link #found}
      */
     private static void clearFound() {
+        BlockPos found = BlockFinder.found;
         if (found == null) return;
         TargetPointer.POSITIONS.remove(found.toCenterPos());
         BlockHighlighter.BLOCK_BOXES.remove(new BlockBox(found));
-        found = null;
+        BlockFinder.found = null;
     }
 }
