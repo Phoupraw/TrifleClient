@@ -93,7 +93,8 @@ public class BlockFinder {
                 BlockPos pos = iterator.next();
                 if (predicate.test(new CachedBlockPosition(world, pos, false))) {
                     synchronized (BlockFinder.class) {
-                        found = pos.toImmutable();
+                        BlockPos found = pos.toImmutable();
+                        BlockFinder.found = found;
                         iterator = Collections.emptyIterator();
                         TargetPointer.POSITIONS.add(pos.toCenterPos());
                         BlockHighlighter.BLOCK_BOXES.add(new BlockBox(found));

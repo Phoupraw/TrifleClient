@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.*;
@@ -58,10 +59,16 @@ public interface TCYACL {
         return builder
           .title(TrifleClient.name())
           .category(ConfigCategory.createBuilder()
-            .name(Text.of("设置目前还在开发中，尚不全面，且不会保存到硬盘"))
+            .name(Text.empty())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("自动暴击"))
               .binding(defaults.isAutoCrit(), config::isAutoCrit, config::setAutoCrit)
+              .controller(TickBoxControllerBuilder::create)
+              .build())
+            .option(Option.<Boolean>createBuilder()
+              .name(Text.of("减免摔落伤害"))
+              .description(OptionDescription.of(Text.of("不断向服务器发送落地信包")))
+              .binding(defaults.isOftenOnGround(), config::isOftenOnGround, config::setOftenOnGround)
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Boolean>createBuilder()
