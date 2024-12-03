@@ -66,9 +66,14 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
             LOGGER.info("检测到{}与默认值相等，正在删除{}……", id(), path);
             try {
                 if (Files.deleteIfExists(path)) {
-                    try (var files = Files.list(path.getParent())) {
-                        if (!files.iterator().hasNext()) {
-                            Files.delete(path.getParent());
+                    Path dir = path;
+                    while (true) {
+                        dir = dir.getParent();
+                        try (var files = Files.list(dir)) {
+                            if (files.iterator().hasNext()) {
+                                break;
+                            }
+                            Files.delete(dir);
                         }
                     }
                 }
