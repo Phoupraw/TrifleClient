@@ -46,7 +46,7 @@ import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 @ApiStatus.NonExtendable
 public interface TCYACL {
     String MOD_ID = "yet_another_config_lib_v3";
-    String FILE_NAME = ID + ".json5";
+    String FILE_NAME = ID + ".config.json5";
     Identifier CONFIG_ID = TCIDs.of("c");
     ConfigClassHandler<TCConfigs> HANDLER = new ParentedConfigClassHandler<>(new RootConfigClassHandler<>(TCConfigs.class, CONFIG_ID), FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME));
     @ApiStatus.Internal
