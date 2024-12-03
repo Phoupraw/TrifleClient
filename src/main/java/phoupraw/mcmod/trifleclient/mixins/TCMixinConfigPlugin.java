@@ -30,6 +30,9 @@ public final class TCMixinConfigPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith("phoupraw.mcmod." + TrifleClient.ID + ".mixin." + ModChecker.MOD_ID)) {
             return FabricLoader.getInstance().isModLoaded(ModChecker.MOD_ID);
         }
+        if (mixinClassName.startsWith("phoupraw.mcmod." + TrifleClient.ID + ".mixin.minecraft.elytra")) {
+            return !FabricLoader.getInstance().isModLoaded("neoforge");
+        }
         return true;
     }
     @Override
