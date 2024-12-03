@@ -22,7 +22,7 @@ abstract class MChatScreen {
     protected abstract Style getTextStyleAt(double x, double y);
     @WrapOperation(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"))
     private boolean rightClick(ChatScreen instance, double mouseX, double mouseY, int button, Operation<Boolean> original) {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && TCConfigs.A.isRightClickOpenFolder()) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && TCConfigs.A().isRightClickOpenFolder()) {
             if (MMChatScreen.rightClick(getTextStyleAt(mouseX, mouseY))) {
                 return true;
             }

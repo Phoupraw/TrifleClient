@@ -13,8 +13,6 @@ import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -26,6 +24,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.TrifleClient;
@@ -47,7 +46,8 @@ import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 public interface TCYACL {
     String MOD_ID = "yet_another_config_lib_v3";
     String FILE_NAME = ID + ".json5";
-    ConfigClassHandler<TCConfigs> HANDLER = new ParentedConfigClassHandler<>(new RootConfigClassHandler<>(TCConfigs.class, TCIDs.of("c")), FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME));
+    Identifier CONFIG_ID = TCIDs.of("c");
+    ConfigClassHandler<TCConfigs> HANDLER = new ParentedConfigClassHandler<>(new RootConfigClassHandler<>(TCConfigs.class, CONFIG_ID), FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME));
     @ApiStatus.Internal
     static Screen createScreen(Screen parent) {
         ConfigClassHandler<TCConfigs> config = getConfig();
@@ -79,28 +79,27 @@ public interface TCYACL {
     }
     @ApiStatus.Internal
     static void assignConfig() {
-        TCConfigs.A = HANDLER.instance();
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            TCConfigs.A = getConfig(server).instance();
-        });
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
-            TCConfigs.A = HANDLER.instance();
-        });
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            TCConfigs.A = getConfig(handler).instance();
-        });
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            TCConfigs.A = HANDLER.instance();
-        });
+        TCConfigs.EVENT.register(CONFIG_ID, () -> getConfig().instance());
+        TCConfigs.EVENT.addPhaseOrdering(CONFIG_ID, TCIDs.of("a"));
+        //TCConfigs.setA(HANDLER.instance());
+        //ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+        //    TCConfigs.setA(getConfig(server).instance());
+        //});
+        //ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+        //    TCConfigs.setA(HANDLER.instance());
+        //});
+        //ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+        //    TCConfigs.setA(getConfig(handler).instance());
+        //});
+        //ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+        //    TCConfigs.setA(HANDLER.instance());
+        //});
     }
     private static ConfigSerializer<TCConfigs> toSerializer(ConfigClassHandler<TCConfigs> handler) {
         return GsonConfigSerializerBuilder.create(handler)
           .setPath(FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME))
           .setJson5(true)
           .build();
-    }
-    private static void onPlayInit(ClientPlayNetworkHandler handler, MinecraftClient client) {
-        TCConfigs.A = getConfig().instance();
     }
     @Deprecated
     class Serializer<T> extends ConfigSerializer<T> {

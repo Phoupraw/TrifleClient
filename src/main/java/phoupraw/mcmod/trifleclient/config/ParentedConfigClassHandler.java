@@ -97,6 +97,11 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean load() {
+        if (Files.notExists(path)) {
+            LOGGER.info("{}不存在，将{}设为默认值。", path, id());
+            instance(newInstance());
+            return false;
+        }
         LOGGER.info("正在从{}读取{}中……", path, id());
         T newInstance = newInstance();
         Map<ConfigFieldImpl<?>, ReflectionFieldAccess<?>> accessBuffer = new Object2ObjectLinkedOpenHashMap<>();

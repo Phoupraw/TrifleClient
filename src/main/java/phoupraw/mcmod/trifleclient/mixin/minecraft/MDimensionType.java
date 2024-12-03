@@ -13,6 +13,6 @@ import phoupraw.mcmod.trifleclient.config.TCConfigs;
 abstract class MDimensionType {
     @ModifyReturnValue(method = "ambientLight", at = @At("RETURN"))
     public float lighter(float original) {
-        return Math.max(original, TCConfigs.A.getMinAmbientLight());
+        return Math.max(original, TCConfigs.A().getMinAmbientLight());
     }
 }

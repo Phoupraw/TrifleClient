@@ -48,7 +48,7 @@ public class BlockFinder {
         dispatcher.register(ClientCommandManager.literal(TrifleClient.ID)
           .then(ClientCommandManager.literal("find")
             .then(ClientCommandManager.literal("block")
-              .requires(source -> TCConfigs.A.isBlockFinder())
+              .requires(source -> TCConfigs.A().isBlockFinder())
               .executes(BlockFinder::clearSearching)
               .then(ClientCommandManager.argument("block", CBlockPredicateArgument.blockPredicate(registryAccess))
                 .executes(BlockFinder::setSearching)))));
@@ -130,7 +130,7 @@ public class BlockFinder {
         }
     }
     private static void onEndTick(ClientWorld world) {
-        if (!TCConfigs.A.isBlockFinder()) return;
+        if (!TCConfigs.A().isBlockFinder()) return;
         BlockPos found = BlockFinder.found;
         if (found == null || predicate.test(new CachedBlockPosition(world, found, false))) return;
         synchronized (BlockFinder.class) {

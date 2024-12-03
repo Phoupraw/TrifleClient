@@ -34,6 +34,6 @@ abstract class MClientPlayNetworkHandler extends ClientCommonNetworkHandler {
     }
     @ModifyExpressionValue(method = "onPlayerPositionLook", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/PlayerPositionLookS2CPacket;getPitch()F"))
     private float no90sync(float original, @Local PlayerEntity player) {
-        return original < -89 && TCConfigs.A.isFreeElytraFlying() ? player.getPitch() : original;
+        return original < -89 && TCConfigs.A().isFreeElytraFlying() ? player.getPitch() : original;
     }
 }

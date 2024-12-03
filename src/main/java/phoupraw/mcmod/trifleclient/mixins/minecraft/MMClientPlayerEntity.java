@@ -26,10 +26,10 @@ public interface MMClientPlayerEntity {
         invokeSuper.accept(Math.max(speed,/*self.isOnGround() ? */self.getMovementSpeed() * (0.216f / (slipperiness * slipperiness * slipperiness)) /*: offGroundSpeed*/), movementInput);
     }
     static boolean noUsingItemSlow(ClientPlayerEntity self, boolean original) {
-        return original && !TCConfigs.A.isNoUsingItemSlow();
+        return original && !TCConfigs.A().isNoUsingItemSlow();
     }
     static float minStepHeight(float original) {
-        return Math.max(original, TCConfigs.A.getMinStepHeight());
+        return Math.max(original, TCConfigs.A().getMinStepHeight());
     }
     static boolean notSendStopFlyingPacket(ClientPlayerEntity instance) {
         return instance.getAbilities().allowFlying;

@@ -18,7 +18,7 @@ public abstract class SpeedSpeed {
      */
     @ApiStatus.Internal
     public static Vec3d onClientPlayerMove(ClientPlayerEntity player, MovementType movementType, Vec3d velocity) {
-        if (!TCConfigs.A.isSpeedSpeed() || !TCKeyBindings.SPEED.isPressed() || movementType != MovementType.SELF || looping) {
+        if (!TCConfigs.A().isSpeedSpeed() || !TCKeyBindings.SPEED.isPressed() || movementType != MovementType.SELF || looping) {
             return velocity;
         }
         //if (step >= STEPS) {
@@ -38,7 +38,7 @@ public abstract class SpeedSpeed {
         double velX = 0;
         double velZ = 0;
         boolean isForward = false;
-        double factor = TCConfigs.A.getSpeedFactor();
+        double factor = TCConfigs.A().getSpeedFactor();
         if (input.pressingForward) {
             velX += forward.x * factor;
             velZ += forward.z * factor;
@@ -65,7 +65,7 @@ public abstract class SpeedSpeed {
             velX *= diagonal;
             velZ *= diagonal;
         }
-        int steps = TCConfigs.A.getSpeedSteps();
+        int steps = TCConfigs.A().getSpeedSteps();
         Vec3d motion = new Vec3d(velX, velocity.getY() / steps, velZ);
         looping = true;
         for (int i = 1; i < steps; i++) {

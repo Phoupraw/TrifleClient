@@ -93,7 +93,7 @@ public class AutoAttacker {
     }
     public static boolean isAutoAttacking(ClientPlayerEntity player) {
         GameOptions options = MinecraftClient.getInstance().options;
-        return TCConfigs.A.isAutoAttacker() && options.attackKey.isPressed() && options.useKey.isPressed() && Boolean.TRUE.equals(WEAPON.invoker().apply(new ItemContext(player.getWeaponStack(), player)));
+        return TCConfigs.A().isAutoAttacker() && options.attackKey.isPressed() && options.useKey.isPressed() && Boolean.TRUE.equals(WEAPON.invoker().apply(new ItemContext(player.getWeaponStack(), player)));
     }
     /**
      @return 越小越优先

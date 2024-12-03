@@ -17,7 +17,7 @@ import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 abstract class MDecoderHandler {
     @Inject(method = "decode", at = @At(value = "INVOKE", target = "Ljava/io/IOException;<init>(Ljava/lang/String;)V", shift = At.Shift.AFTER))
     private void printCustomPayloadId(CallbackInfo ci, @Local Packet<?> packet) {
-        if (TCConfigs.A.isDetailPacketError() && packet instanceof CustomPayloadS2CPacket(CustomPayload payload)) {
+        if (TCConfigs.A().isDetailPacketError() && packet instanceof CustomPayloadS2CPacket(CustomPayload payload)) {
             LOGGER.error("CustomPayload.Id: {}", payload.getId());
             LOGGER.error("CustomPayload: {}", payload);
         }

@@ -12,7 +12,7 @@ public interface ItemGlowing {
     static boolean isInRange(Entity self) {
         MinecraftClient client = MinecraftClient.getInstance();
         Camera camera = client.gameRenderer.getCamera();
-        double range = TCConfigs.A.getItemGlowingRange() * client.options.getEntityDistanceScaling().getValue();
+        double range = TCConfigs.A().getItemGlowingRange() * client.options.getEntityDistanceScaling().getValue();
         return self.squaredDistanceTo(camera.getPos()) <= range * range;
     }
     static boolean glow(Entity self, boolean original) {

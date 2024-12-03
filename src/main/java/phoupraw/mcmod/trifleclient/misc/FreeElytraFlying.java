@@ -21,7 +21,7 @@ public class FreeElytraFlying {
     public static boolean canFly(@Nullable PlayerEntity player) {
         //ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
         //return stack.isOf(Items.ELYTRA) && ElytraItem.isUsable(stack) && player.isFallFlying();
-        return TCConfigs.A.isFreeElytraFlying() && player != null && player.getWorld().isClient() && player.isFallFlying() && !player.getAbilities().allowFlying;
+        return TCConfigs.A().isFreeElytraFlying() && player != null && player.getWorld().isClient() && player.isFallFlying() && !player.getAbilities().allowFlying;
     }
     @Contract(pure = true, value = "null->false")
     public static boolean isFlying(@Nullable PlayerEntity player) {

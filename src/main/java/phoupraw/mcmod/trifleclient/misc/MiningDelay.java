@@ -23,10 +23,10 @@ public class MiningDelay {
     }
     @ApiStatus.Internal
     public static int removeDelay(ClientPlayerInteractionManager self, int original) {
-        return isOn() || !TCConfigs.A.isMiningDelay() ? original : 0;
+        return isOn() || !TCConfigs.A().isMiningDelay() ? original : 0;
     }
     public static void setDelay(ClientPlayerInteractionManager self, BlockState blockState, BlockPos blockPos, Direction direction, int sequence) {
-        if (MiningDelay.isOn() && TCConfigs.A.isMiningDelay()) {
+        if (MiningDelay.isOn() && TCConfigs.A().isMiningDelay()) {
             var interactor = (ClientPlayerInteractionManager & AClientPlayerInteractionManager) self;
             interactor.setBlockBreakingCooldown(5);
         }
@@ -35,7 +35,7 @@ public class MiningDelay {
         return on;
     }
     private static void onStartTick(ClientWorld world0) {
-        if (!TCConfigs.A.isMiningDelay() || !TCKeyBindings.MINING_DELAY.wasPressed()) {
+        if (!TCConfigs.A().isMiningDelay() || !TCKeyBindings.MINING_DELAY.wasPressed()) {
             return;
         }
         while (TCKeyBindings.MINING_DELAY.wasPressed()) {

@@ -24,7 +24,7 @@ import phoupraw.mcmod.trifleclient.config.TCConfigs;
 public interface AutoCrit {
     @ApiStatus.Internal
     static ActionResult interact(PlayerEntity player0, World world, Hand hand, Entity entity, @Nullable EntityHitResult hitResult) {
-        if (TCConfigs.A.isAutoCrit() && player0 instanceof ClientPlayerEntity player) {
+        if (TCConfigs.A().isAutoCrit() && player0 instanceof ClientPlayerEntity player) {
             ClientPlayNetworkHandler network = player.networkHandler;
             if (network != null) {
                 network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), player.getY() + 0.625, player.getZ(), false));
@@ -41,12 +41,12 @@ public interface AutoCrit {
     }
     private static int runStartOrStop(CommandContext<FabricClientCommandSource> context) {
         FabricClientCommandSource source = context.getSource();
-        if (TCConfigs.A.isAutoCrit()) {
-            TCConfigs.A.setAutoCrit(false);
+        if (TCConfigs.A().isAutoCrit()) {
+            TCConfigs.A().setAutoCrit(false);
             source.sendFeedback(Texts.bracketed(TrifleClient.name()).append("关闭自动暴击。"));
             return 0;
         } else {
-            TCConfigs.A.setAutoCrit(true);
+            TCConfigs.A().setAutoCrit(true);
             source.sendFeedback(Texts.bracketed(TrifleClient.name()).append("启用自动暴击。"));
             return 1;
         }

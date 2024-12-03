@@ -11,7 +11,7 @@ public abstract class NormalSpeed {
     private static boolean recursion;
     @ApiStatus.Internal
     public static void afterClientPlayerMove(ClientPlayerEntity player, MovementType movementType, Vec3d velocity) {
-        if (TCConfigs.A.isNormalSpeed() && !recursion && velocity.lengthSquared() > 1e-7) {
+        if (TCConfigs.A().isNormalSpeed() && !recursion && velocity.lengthSquared() > 1e-7) {
             recursion = true;
             player.move(movementType, velocity.multiply(0.75));
             recursion = false;

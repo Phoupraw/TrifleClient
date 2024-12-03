@@ -18,7 +18,7 @@ import phoupraw.mcmod.trifleclient.config.TCConfigs;
 @ApiStatus.NonExtendable
 public interface MMClientPlayNetworkHandler {
     static boolean elytraCancelSyncFlying(PlayerAbilities instance, boolean value, PlayerAbilitiesS2CPacket packet, MinecraftClient client) {
-        if (!value && !packet.allowFlying() && TCConfigs.A.isElytraCancelSyncFlying()) {
+        if (!value && !packet.allowFlying() && TCConfigs.A().isElytraCancelSyncFlying()) {
             ClientPlayerEntity player = client.player;
             if (player != null) {
                 ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
@@ -30,7 +30,7 @@ public interface MMClientPlayNetworkHandler {
         return true;
     }
     static boolean elytraCancelSyncAllowFlying(PlayerAbilities instance, boolean value, PlayerAbilitiesS2CPacket packet, MinecraftClient client) {
-        if (!value && TCConfigs.A.isElytraCancelSyncFlying()) {
+        if (!value && TCConfigs.A().isElytraCancelSyncFlying()) {
             ClientPlayerEntity player = client.player;
             if (player != null) {
                 ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
