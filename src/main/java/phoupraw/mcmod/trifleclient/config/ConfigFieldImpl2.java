@@ -3,19 +3,18 @@ package phoupraw.mcmod.trifleclient.config;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGenField;
-import dev.isxander.yacl3.config.v2.impl.ReflectionFieldAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 public class ConfigFieldImpl2<T> implements ConfigField<T> {
-    private ReflectionFieldAccess<T> field;
+    private DecoratedFieldAccess<T> field;
     private final ReadOnlyFieldAccess<T> defaultAccess;
     private final ConfigClassHandler<?> parent;
     private final SerialField serial;
     private final AutoGenField autoGen;
     
-    public ConfigFieldImpl2(ReflectionFieldAccess<T> field, ReadOnlyFieldAccess<T> defaultAccess, ConfigClassHandler<?> parent, @Nullable SerialEntry serial, @Nullable AutoGen autoGen) {
+    public ConfigFieldImpl2(DecoratedFieldAccess<T> field, ReadOnlyFieldAccess<T> defaultAccess, ConfigClassHandler<?> parent, @Nullable SerialEntry serial, @Nullable AutoGen autoGen) {
         this.field = field;
         this.defaultAccess = defaultAccess;
         this.parent = parent;
@@ -32,11 +31,11 @@ public class ConfigFieldImpl2<T> implements ConfigField<T> {
     }
     
     @Override
-    public ReflectionFieldAccess<T> access() {
+    public DecoratedFieldAccess<T> access() {
         return field;
     }
     
-    public void setFieldAccess(ReflectionFieldAccess<T> field) {
+    public void setFieldAccess(DecoratedFieldAccess<T> field) {
         this.field = field;
     }
     

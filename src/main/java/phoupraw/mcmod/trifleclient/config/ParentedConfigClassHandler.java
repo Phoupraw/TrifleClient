@@ -5,8 +5,6 @@ import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.ConfigSerializer;
 import dev.isxander.yacl3.config.v2.api.FieldAccess;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
-import dev.isxander.yacl3.config.v2.impl.ConfigFieldImpl;
-import dev.isxander.yacl3.config.v2.impl.ReflectionFieldAccess;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import lombok.SneakyThrows;
 import net.minecraft.util.Identifier;
@@ -23,7 +21,7 @@ import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     private final ConfigClassHandler<T> parent;
     private final Path path;
-    private ConfigFieldImpl<?> @Unmodifiable [] fields;
+    private ConfigFieldImpl2<?> @Unmodifiable [] fields;
     private T instance;
     @Contract(pure = true)
     public ParentedConfigClassHandler(ConfigClassHandler<T> parent, Path path) {
@@ -91,7 +89,7 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     }
     @Contract(pure = true)
     @Override
-    public ConfigFieldImpl<?> @Unmodifiable [] fields() {
+    public ConfigFieldImpl2<?> @Unmodifiable [] fields() {
         return fields;
     }
     @Contract(pure = true)
@@ -109,9 +107,9 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
         }
         LOGGER.info("正在从{}读取{}中……", path, id());
         T newInstance = newInstance();
-        Map<ConfigFieldImpl<?>, ReflectionFieldAccess<?>> accessBuffer = new Object2ObjectLinkedOpenHashMap<>();
+        Map<ConfigFieldImpl2<?>, DecoratedFieldAccess<?>> accessBuffer = new Object2ObjectLinkedOpenHashMap<>();
         for (var field : fields()) {
-            accessBuffer.put(field, new ReflectionFieldAccess<>(field.access().field(), newInstance));
+            accessBuffer.put(field, new DecoratedFieldAccess<>(field.access().field(), newInstance, field.access().annotations()));
         }
         ConfigSerializer.LoadResult result;
         Throwable error = null;
@@ -124,8 +122,8 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
         switch (result) {
             case DIRTY:
             case SUCCESS:
-                for (var field : toFields(this, newInstance, false)) {
-                    ((ConfigFieldImpl<Object>) field).setFieldAccess((ReflectionFieldAccess<Object>) accessBuffer.get(field));
+                for (var field : toConfigFields(this, newInstance, false)) {
+                    ((ConfigFieldImpl2<Object>) field).setFieldAccess((DecoratedFieldAccess<Object>) accessBuffer.get(field));
                 }
                 instance(newInstance);
                 if (result == ConfigSerializer.LoadResult.DIRTY) {
@@ -142,13 +140,13 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     @SneakyThrows
     @Contract(mutates = "this")
     protected void setFields(boolean ignoreSame) {
-        fields = toFields(this, instance(), ignoreSame).toArray(new ConfigFieldImpl<?>[0]);
+        fields = toConfigFields(this, instance(), ignoreSame).toArray(new ConfigFieldImpl2<?>[0]);
     }
     @SuppressWarnings("unchecked")
     @Contract(pure = true)
     protected T newInstance() {
         T instance = super.newInstance();
-        for (var field : toFields(this, instance, false)) {
+        for (var field : toConfigFields(this, instance, false)) {
             ((ConfigField<Object>) field).access().set(field.defaultAccess().get());
         }
         return instance;

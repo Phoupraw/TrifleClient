@@ -4,5 +4,15 @@
   "key.trifleclient.mining_same": "连续挖掘方块须相同",
   "modmenu.descriptionTranslation.trifleclient": "提供一些客户端辅助功能：\n- 用于搜索方块的指令：/trifleclient find block [block]\n- 挖掘延迟控制\n",
   "modmenu.nameTranslation.trifleclient": "琐物·客户端",
-  "modmenu.summaryTranslation.trifleclient": "一个随便写的客户端辅助模组"
+  "modmenu.summaryTranslation.trifleclient": "一个随便写的客户端辅助模组",
+  "yacl3.config.trifleclient:c.autoCrit": "自动暴击",
+  "yacl3.config.trifleclient:c.autoCrit.desc": "自动暴击",
+  "yacl3.config.trifleclient:c.elytraCancelSyncFlying": "鞘翅取消飞行同步",
+  "yacl3.config.trifleclient:c.elytraCancelSyncFlying.desc": "鞘翅取消飞行同步",
+  "yacl3.config.trifleclient:c.freeElytraFlying": "鞘翅自由飞行",
+  "yacl3.config.trifleclient:c.freeElytraFlying.desc": "鞘翅自由飞行",
+  "yacl3.config.trifleclient:c.minAmbientLight": "环境亮度",
+  "yacl3.config.trifleclient:c.minAmbientLight.desc": "环境亮度",
+  "yacl3.config.trifleclient:c.oftenOnGround": "减免摔落伤害",
+  "yacl3.config.trifleclient:c.oftenOnGround.desc": "减免摔落伤害"
 }

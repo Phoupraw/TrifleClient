@@ -5,7 +5,6 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGenField;
-import dev.isxander.yacl3.config.v2.impl.ConfigFieldImpl;
 import dev.isxander.yacl3.config.v2.impl.ReflectionFieldAccess;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionAccessImpl;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionFactoryRegistry;
@@ -18,9 +17,9 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -79,6 +78,11 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
             }
             Option<?> option;
             try {
+                //if (field.access().type()==boolean.class) {
+                //    option = Option.<Boolean>createBuilder()
+                //      .name(Text)
+                //      .build();
+                //}
                 var option0 = OptionFactoryRegistry.createOption(field.access().field(), field, storage);
                 if (option0.isEmpty()) {
                     throw new YACLAutoGenException("Failed to create option for field '%s'".formatted(field.access().name()));
@@ -113,7 +117,7 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
     //public abstract boolean load();
     @Contract(pure = true)
     @Override
-    public abstract ConfigFieldImpl<?> @Unmodifiable [] fields();
+    public abstract ConfigFieldImpl2<?> @Unmodifiable [] fields();
     @Contract(pure = true)
     @SneakyThrows
     protected T newInstance() {
@@ -121,23 +125,30 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
     }
     @SneakyThrows
     @Contract(pure = true)
-    public static <T> Collection<? extends ConfigFieldImpl<?>> toFields(ConfigClassHandler<T> handler, T instance, boolean ignoreSame) {
-        var fields = new ObjectArrayList<ConfigFieldImpl<?>>();
+    public static <T> Collection<? extends ConfigFieldImpl2<?>> toConfigFields(ConfigClassHandler<T> handler, T instance, boolean ignoreSame) {
+        var fields = new ObjectArrayList<ConfigFieldImpl2<?>>();
         var serial = new SerialEntryData("", "", false, false);
         var autoGen = new AutoGenData("", "");
-        for (Field field : handler.configClass().getDeclaredFields()) {
-            int modifiers = field.getModifiers();
-            if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isTransient(modifiers) || field.isSynthetic()) {
-                continue;
-            }
-            if (!field.trySetAccessible()) {
-                continue;
-            }
+        for (Field field : TCConfigs.toFields(handler.configClass())) {
             if (ignoreSame && Objects.equals(field.get(instance), field.get(handler.defaults()))) {
                 continue;
             }
-            var configField = new ConfigFieldImpl<>(
-              new ReflectionFieldAccess<>(field, instance),
+            Collection<Annotation> annotations = new ObjectArrayList<>(1);
+            NumberRange range = field.getAnnotation(NumberRange.class);
+            double min = range == null ? Double.NEGATIVE_INFINITY : range.min();
+            double max = range == null ? Double.POSITIVE_INFINITY : range.max();
+            Class<?> fieldType = field.getType();
+            if (fieldType == boolean.class) {
+                annotations.add(TickBoxData.A);
+            } else if (fieldType == int.class) {
+                annotations.add(new IntFieldData((int) Math.round(min), (int) Math.round(max), "%d"));
+            } else if (fieldType == float.class) {
+                annotations.add(new FloatFieldData((float) min, (float) max, "%f"));
+            } else if (fieldType == double.class) {
+                annotations.add(new DoubleFieldData(min, max, "%f"));
+            }
+            var configField = new ConfigFieldImpl2<>(
+              new DecoratedFieldAccess<>(field, instance, annotations),
               new ReflectionFieldAccess<>(field, handler.defaults()),
               handler,
               Objects.requireNonNullElse(field.getAnnotation(SerialEntry.class), serial),

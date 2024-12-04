@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public record DecoratedFieldAccess<T>(Field field, Object instance, @Unmodifiable Map<Class<? extends Annotation>, Annotation> annotations) implements FieldAccess<T> {
-    public DecoratedFieldAccess(Field field, Object instance, Annotation... annotations) {
+    public DecoratedFieldAccess(Field field, Object instance, Iterable<? extends Annotation> annotations) {
         this(field, instance, toMap(annotations));
     }
-    public static @NotNull Map<Class<? extends Annotation>, Annotation> toMap(Annotation... annotations) {
+    public static @NotNull Map<Class<? extends Annotation>, Annotation> toMap(Iterable<? extends Annotation> annotations) {
         Map<Class<? extends Annotation>, Annotation> annotationMap = new Object2ObjectOpenHashMap<>();
         for (Annotation annotation : annotations) {
             annotationMap.put(annotation.annotationType(), annotation);
