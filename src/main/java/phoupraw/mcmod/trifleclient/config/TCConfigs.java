@@ -19,6 +19,17 @@ import java.util.function.Supplier;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TCConfigs {
+    public static final Event<Supplier<@Nullable TCConfigs>> EVENT = EventFactory.createArrayBacked(Supplier.class, callbacks -> () -> {
+        for (Supplier<TCConfigs> callback : callbacks) {
+            var r = callback.get();
+            if (r != null) return r;
+        }
+        return null;
+    });
+    static {
+        TCConfigs a = new TCConfigs();
+        EVENT.register(TCIDs.of("a"), () -> a);
+    }
     public static TCConfigs A() {
         return EVENT.invoker().get();
     }
@@ -64,15 +75,4 @@ public class TCConfigs {
     boolean elytraCancelSyncFlying = false;
     @YACLDataGen(name = "鞘翅自由飞行", desc = "穿着鞘翅时可以如同在创造模式一样自由飞行。可能会在服务端错误移动，请不要移动得过于刁钻。")
     boolean freeElytraFlying = false;
-    public static final Event<Supplier<@Nullable TCConfigs>> EVENT = EventFactory.createArrayBacked(Supplier.class, callbacks -> () -> {
-        for (Supplier<TCConfigs> callback : callbacks) {
-            var r = callback.get();
-            if (r != null) return r;
-        }
-        return null;
-    });
-    static {
-        TCConfigs a = new TCConfigs();
-        EVENT.register(TCIDs.of("a"), () -> a);
-    }
 }

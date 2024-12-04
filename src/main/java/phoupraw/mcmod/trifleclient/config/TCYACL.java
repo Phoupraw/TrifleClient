@@ -5,10 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
-import dev.isxander.yacl3.api.ConfigCategory;
-import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.*;
@@ -50,74 +47,114 @@ public interface TCYACL {
     String MOD_ID = "yet_another_config_lib_v3";
     String FILE_NAME = ID + ".config.json5";
     Identifier CONFIG_ID = TCIDs.of("c");
-    ConfigClassHandler<TCConfigs> HANDLER = new ParentedConfigClassHandler<>(new RootConfigClassHandler<>(TCConfigs.class, CONFIG_ID), FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME));
+    ConfigClassHandler<TCConfigs> HANDLER = new ParentedConfigClassHandler<>(new RootConfigClassHandler<>(TCConfigs.class, CONFIG_ID), FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME), "顶层");
+    Map<Object, ConfigClassHandler<TCConfigs>> CACHE = new WeakHashMap<>();
     @ApiStatus.Internal
     static Screen createScreen(Screen parent) {
         ConfigClassHandler<TCConfigs> config = getConfig();
         config.load();
         if (true) {
-            return YetAnotherConfigLib.create(config, TCYACL::build).generateScreen(parent);
+            return toYACL(config).generateScreen(parent);
         } else {
             return config.generateGui().generateScreen(parent);
         }
     }
-    private static YetAnotherConfigLib.Builder build(TCConfigs defaults, TCConfigs config, YetAnotherConfigLib.Builder builder) {
+    private static YetAnotherConfigLib toYACL(ConfigClassHandler<TCConfigs> config) {
+        YetAnotherConfigLib.Builder builder = YetAnotherConfigLib.createBuilder().save(config::save);
+        TCConfigs defaults = config.defaults();
+        TCConfigs instance = config.instance();
         return builder
           .title(TrifleClient.name())
           .category(ConfigCategory.createBuilder()
-            .name(Text.empty())
+            .name(TrifleClient.name())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("自动暴击"))
               .description(OptionDescription.of(Text.of("每次攻击之前向服务端发送上移和下移的信包。")))
-              .binding(defaults.isAutoCrit(), config::isAutoCrit, config::setAutoCrit)
+              .binding(defaults.isAutoCrit(), instance::isAutoCrit, instance::setAutoCrit)
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("减免摔落伤害"))
               .description(OptionDescription.of(Text.of("频繁向服务端发送落地信包。")))
-              .binding(defaults.isOftenOnGround(), config::isOftenOnGround, config::setOftenOnGround)
+              .binding(defaults.isOftenOnGround(), instance::isOftenOnGround, instance::setOftenOnGround)
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("鞘翅取消飞行同步"))
               .description(OptionDescription.of(Text.of("穿着鞘翅时，忽略从服务端来的能力同步信包中的飞行能力同步。")))
-              .binding(defaults.isElytraCancelSyncFlying(), config::isElytraCancelSyncFlying, config::setElytraCancelSyncFlying)
+              .binding(defaults.isElytraCancelSyncFlying(), instance::isElytraCancelSyncFlying, instance::setElytraCancelSyncFlying)
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("鞘翅自由飞行"))
               .description(OptionDescription.of(Text.of("穿着鞘翅时可以如同在创造模式一样自由飞行。可能会在服务端错误移动，注意不要移动得过于刁钻。")))
-              .binding(defaults.isFreeElytraFlying(), config::isFreeElytraFlying, config::setFreeElytraFlying)
+              .binding(defaults.isFreeElytraFlying(), instance::isFreeElytraFlying, instance::setFreeElytraFlying)
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Float>createBuilder()
               .name(Text.of("环境亮度"))
               .description(OptionDescription.of(Text.of("每个维度的最低环境亮度不会低于此值。注意：只需很小的值就可以让整个维度非常亮。")))
-              .binding(defaults.getMinAmbientLight(), config::getMinAmbientLight, config::setMinAmbientLight)
+              .binding(defaults.getMinAmbientLight(), instance::getMinAmbientLight, instance::setMinAmbientLight)
               .controller(option -> FloatFieldControllerBuilder.create(option)
                 .range(0f, 1f)
                 .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
               .build())
             .build())
-          /*.save(Runnables.doNothing())*/;
+          .category(ConfigCategory.createBuilder()
+            .name(Text.of(config instanceof ParentedConfigClassHandler<TCConfigs> parented ? parented.name() : "默认"))
+            .optionIf(config instanceof ParentedConfigClassHandler<TCConfigs>, ButtonOption.createBuilder()
+              .name(Text.of("前往上级设置界面"))
+              .action((screen, option) -> {
+                  if (config instanceof ParentedConfigClassHandler<TCConfigs> parented) {
+                      MinecraftClient.getInstance().setScreen(toYACL(parented.parent()).generateScreen(screen));
+                  }
+              })
+              .build())
+            .build())
+          .build();
     }
     @ApiStatus.Internal
     static void assignConfig() {
         TCConfigs.EVENT.register(CONFIG_ID, () -> getConfig().instance());
         TCConfigs.EVENT.addPhaseOrdering(CONFIG_ID, TCIDs.of("a"));
-        //TCConfigs.setA(HANDLER.instance());
-        //ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-        //    TCConfigs.setA(getConfig(server).instance());
-        //});
-        //ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
-        //    TCConfigs.setA(HANDLER.instance());
-        //});
-        //ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-        //    TCConfigs.setA(getConfig(handler).instance());
-        //});
-        //ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-        //    TCConfigs.setA(HANDLER.instance());
-        //});
+    }
+    static ConfigClassHandler<TCConfigs> getConfig(MinecraftServer server) {
+        String key = server.getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
+        ConfigClassHandler<TCConfigs> handler = CACHE.get(key);
+        if (handler == null) {
+            Path path = server.getSavePath(WorldSavePath.ROOT).resolve("config").resolve(FILE_NAME);
+            handler = new ParentedConfigClassHandler<>(HANDLER, path, key);
+            CACHE.put(key, handler);
+        }
+        return handler;
+    }
+    static ConfigClassHandler<TCConfigs> getConfig(ServerInfo serverInfo) {
+        String key = serverInfo.address;
+        ConfigClassHandler<TCConfigs> handler = CACHE.get(key);
+        if (handler == null) {
+            Path path = FabricLoader.getInstance().getConfigDir().resolve("servers").resolve(key).resolve(FILE_NAME);
+            handler = new ParentedConfigClassHandler<>(HANDLER, path, key);
+            CACHE.put(key, handler);
+        }
+        return handler;
+    }
+    static ConfigClassHandler<TCConfigs> getConfig(ClientPlayNetworkHandler networkHandler) {
+        ServerInfo serverInfo = networkHandler.getServerInfo();
+        if (serverInfo != null) {
+            return getConfig(serverInfo);
+        }
+        return getConfig();
+    }
+    static ConfigClassHandler<TCConfigs> getConfig() {
+        IntegratedServer server = MinecraftClient.getInstance().getServer();
+        if (server != null) {
+            return getConfig(server);
+        }
+        ServerInfo serverInfo = MinecraftClient.getInstance().getCurrentServerEntry();
+        if (serverInfo != null) {
+            return getConfig(serverInfo);
+        }
+        return HANDLER;
     }
     private static ConfigSerializer<TCConfigs> toSerializer(ConfigClassHandler<TCConfigs> handler) {
         return GsonConfigSerializerBuilder.create(handler)
@@ -125,6 +162,7 @@ public interface TCYACL {
           .setJson5(true)
           .build();
     }
+    
     @Deprecated
     class Serializer<T> extends ConfigSerializer<T> {
         public static final Gson GSON = new GsonBuilder()
@@ -197,45 +235,5 @@ public interface TCYACL {
         public Path path() {
             return Path.of("");
         }
-    }
-    
-    Map<Object, ConfigClassHandler<TCConfigs>> CACHE = new WeakHashMap<>();
-    static ConfigClassHandler<TCConfigs> getConfig(MinecraftServer server) {
-        String key = server.getName();
-        ConfigClassHandler<TCConfigs> handler = CACHE.get(key);
-        if (handler == null) {
-            Path path = server.getSavePath(WorldSavePath.ROOT).resolve("config").resolve(FILE_NAME);
-            handler = new ParentedConfigClassHandler<>(HANDLER, path);
-            CACHE.put(key, handler);
-        }
-        return handler;
-    }
-    static ConfigClassHandler<TCConfigs> getConfig(ServerInfo serverInfo) {
-        String key = serverInfo.address;
-        ConfigClassHandler<TCConfigs> handler = CACHE.get(key);
-        if (handler == null) {
-            Path path = FabricLoader.getInstance().getConfigDir().resolve("servers").resolve(key).resolve(FILE_NAME);
-            handler = new ParentedConfigClassHandler<>(HANDLER, path);
-            CACHE.put(key, handler);
-        }
-        return handler;
-    }
-    static ConfigClassHandler<TCConfigs> getConfig(ClientPlayNetworkHandler networkHandler) {
-        ServerInfo serverInfo = networkHandler.getServerInfo();
-        if (serverInfo != null) {
-            return getConfig(serverInfo);
-        }
-        return getConfig();
-    }
-    static ConfigClassHandler<TCConfigs> getConfig() {
-        IntegratedServer server = MinecraftClient.getInstance().getServer();
-        if (server != null) {
-            return getConfig(server);
-        }
-        ServerInfo serverInfo = MinecraftClient.getInstance().getCurrentServerEntry();
-        if (serverInfo != null) {
-            return getConfig(serverInfo);
-        }
-        return HANDLER;
     }
 }

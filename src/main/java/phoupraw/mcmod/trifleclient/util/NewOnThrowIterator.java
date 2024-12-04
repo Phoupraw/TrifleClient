@@ -35,8 +35,8 @@ public abstract class NewOnThrowIterator<T> implements Iterator<T> {
         }
         return iterator;
     }
-    public abstract Iterator<T> newIterator();
     public void setIterator(Iterator<T> iterator) {
         this.iterator = iterator;
     }
+    public abstract Iterator<T> newIterator();
 }

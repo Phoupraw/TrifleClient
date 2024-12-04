@@ -5,6 +5,7 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGenField;
+import dev.isxander.yacl3.config.v2.impl.ConfigFieldImpl;
 import dev.isxander.yacl3.config.v2.impl.ReflectionFieldAccess;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionAccessImpl;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionFactoryRegistry;
@@ -17,7 +18,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -25,6 +25,41 @@ import java.util.Map;
 import java.util.Objects;
 
 public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T> {
+    @SneakyThrows
+    @Contract(pure = true)
+    public static <T> Collection<? extends ConfigFieldImpl<?>> toConfigFields(ConfigClassHandler<T> handler, T instance, boolean ignoreSame) {
+        var fields = new ObjectArrayList<ConfigFieldImpl<?>>();
+        var serial = new SerialEntryData("", "", false, false);
+        var autoGen = new AutoGenData("", "");
+        for (Field field : TCConfigs.toFields(handler.configClass())) {
+            if (ignoreSame && Objects.equals(field.get(instance), field.get(handler.defaults()))) {
+                continue;
+            }
+            //Collection<Annotation> annotations = new ObjectArrayList<>(1);
+            //NumberRange range = field.getAnnotation(NumberRange.class);
+            //double min = range == null ? Double.NEGATIVE_INFINITY : range.min();
+            //double max = range == null ? Double.POSITIVE_INFINITY : range.max();
+            //Class<?> fieldType = field.getType();
+            //if (fieldType == boolean.class) {
+            //    annotations.add(TickBoxData.A);
+            //} else if (fieldType == int.class) {
+            //    annotations.add(new IntFieldData((int) Math.round(min), (int) Math.round(max), "%d"));
+            //} else if (fieldType == float.class) {
+            //    annotations.add(new FloatFieldData((float) min, (float) max, "%f"));
+            //} else if (fieldType == double.class) {
+            //    annotations.add(new DoubleFieldData(min, max, "%f"));
+            //}
+            var configField = new ConfigFieldImpl<>(
+              new ReflectionFieldAccess<>(field, instance),
+              new ReflectionFieldAccess<>(field, handler.defaults()),
+              handler,
+              Objects.requireNonNullElse(field.getAnnotation(SerialEntry.class), serial),
+              Objects.requireNonNullElse(field.getAnnotation(AutoGen.class), autoGen)
+            );
+            fields.add(configField);
+        }
+        return fields;
+    }
     private final Constructor<T> noArgsConstructor;
     @Contract(pure = true)
     public BaseConfigClassHandler(Class<T> configClass) {
@@ -34,11 +69,12 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
             throw new YACLAutoGenException("Failed to find no-args constructor for config class %s.".formatted(configClass().getName()), e);
         }
     }
+    //@SuppressWarnings("unchecked")
+    //@Override
+    //public abstract boolean load();
     @Contract(pure = true)
     @Override
-    public boolean supportsAutoGen() {
-        return true;
-    }
+    public abstract ConfigFieldImpl<?> @Unmodifiable [] fields();
     @Contract(pure = true)
     @Override
     public YetAnotherConfigLib generateGui() {
@@ -112,51 +148,15 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
         }
         return yaclBuilder.build();
     }
-    //@SuppressWarnings("unchecked")
-    //@Override
-    //public abstract boolean load();
     @Contract(pure = true)
     @Override
-    public abstract ConfigFieldImpl2<?> @Unmodifiable [] fields();
+    public boolean supportsAutoGen() {
+        return true;
+    }
     @Contract(pure = true)
     @SneakyThrows
     protected T newInstance() {
         return noArgsConstructor.newInstance();
-    }
-    @SneakyThrows
-    @Contract(pure = true)
-    public static <T> Collection<? extends ConfigFieldImpl2<?>> toConfigFields(ConfigClassHandler<T> handler, T instance, boolean ignoreSame) {
-        var fields = new ObjectArrayList<ConfigFieldImpl2<?>>();
-        var serial = new SerialEntryData("", "", false, false);
-        var autoGen = new AutoGenData("", "");
-        for (Field field : TCConfigs.toFields(handler.configClass())) {
-            if (ignoreSame && Objects.equals(field.get(instance), field.get(handler.defaults()))) {
-                continue;
-            }
-            Collection<Annotation> annotations = new ObjectArrayList<>(1);
-            NumberRange range = field.getAnnotation(NumberRange.class);
-            double min = range == null ? Double.NEGATIVE_INFINITY : range.min();
-            double max = range == null ? Double.POSITIVE_INFINITY : range.max();
-            Class<?> fieldType = field.getType();
-            if (fieldType == boolean.class) {
-                annotations.add(TickBoxData.A);
-            } else if (fieldType == int.class) {
-                annotations.add(new IntFieldData((int) Math.round(min), (int) Math.round(max), "%d"));
-            } else if (fieldType == float.class) {
-                annotations.add(new FloatFieldData((float) min, (float) max, "%f"));
-            } else if (fieldType == double.class) {
-                annotations.add(new DoubleFieldData(min, max, "%f"));
-            }
-            var configField = new ConfigFieldImpl2<>(
-              new DecoratedFieldAccess<>(field, instance, annotations),
-              new ReflectionFieldAccess<>(field, handler.defaults()),
-              handler,
-              Objects.requireNonNullElse(field.getAnnotation(SerialEntry.class), serial),
-              Objects.requireNonNullElse(field.getAnnotation(AutoGen.class), autoGen)
-            );
-            fields.add(configField);
-        }
-        return fields;
     }
     
 }

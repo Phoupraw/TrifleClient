@@ -8,11 +8,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class ConfigFieldImpl2<T> implements ConfigField<T> {
-    private DecoratedFieldAccess<T> field;
     private final ReadOnlyFieldAccess<T> defaultAccess;
     private final ConfigClassHandler<?> parent;
     private final SerialField serial;
     private final AutoGenField autoGen;
+    private DecoratedFieldAccess<T> field;
     
     public ConfigFieldImpl2(DecoratedFieldAccess<T> field, ReadOnlyFieldAccess<T> defaultAccess, ConfigClassHandler<?> parent, @Nullable SerialEntry serial, @Nullable AutoGen autoGen) {
         this.field = field;
@@ -34,29 +34,24 @@ public class ConfigFieldImpl2<T> implements ConfigField<T> {
     public DecoratedFieldAccess<T> access() {
         return field;
     }
-    
-    public void setFieldAccess(DecoratedFieldAccess<T> field) {
-        this.field = field;
-    }
-    
     @Override
     public ReadOnlyFieldAccess<T> defaultAccess() {
         return defaultAccess;
     }
-    
     @Override
     public ConfigClassHandler<?> parent() {
         return parent;
     }
-    
     @Override
     public Optional<SerialField> serial() {
         return Optional.ofNullable(serial);
     }
-    
     @Override
     public Optional<AutoGenField> autoGen() {
         return Optional.ofNullable(autoGen);
+    }
+    public void setFieldAccess(DecoratedFieldAccess<T> field) {
+        this.field = field;
     }
     
     private record SerialFieldImpl(String serialName, Optional<String> comment, boolean required, boolean nullable) implements SerialField {

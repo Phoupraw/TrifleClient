@@ -8,9 +8,9 @@ import dev.isxander.yacl3.config.v2.impl.ReflectionFieldAccess;
 import org.jetbrains.annotations.Nullable;
 
 public class DetailedConfigField<T> extends ConfigFieldImpl<T> {
+    public final @Nullable AutoGenDetails autoGenDetails;
     public DetailedConfigField(ReflectionFieldAccess<T> field, ReflectionFieldAccess<T> defaultField, ConfigClassHandler<?> parent, @Nullable SerialEntry config, @Nullable AutoGen autoGen, @Nullable AutoGenDetails autoGenDetails) {
         super(field, defaultField, parent, config, autoGen);
         this.autoGenDetails = autoGenDetails;
     }
-    public final @Nullable AutoGenDetails autoGenDetails;
 }
