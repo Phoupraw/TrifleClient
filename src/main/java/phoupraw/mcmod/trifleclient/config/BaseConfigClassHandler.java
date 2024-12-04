@@ -52,6 +52,15 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
             String categoryKey = autoGen.category();
             var category = categories.get(categoryKey);
             if (category == null) {
+                //if (field instanceof DetailedConfigField<?> detailed) {
+                //    AutoGenDetails details = detailed.autoGenDetails;
+                //    if (details!=null && !details.name()) {
+                //        category = Pair.of(
+                //          ConfigCategory.createBuilder().name(Text.Serialization.fromLenientJson(details)),
+                //          new Object2ObjectLinkedOpenHashMap<>()
+                //        );
+                //    }
+                //}
                 category = Pair.of(
                   ConfigCategory.createBuilder().name(Text.translatable("yacl3.config.%s.category.%s".formatted(id().toString(), categoryKey))),
                   new Object2ObjectLinkedOpenHashMap<>()
@@ -126,12 +135,13 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
             if (ignoreSame && Objects.equals(field.get(instance), field.get(handler.defaults()))) {
                 continue;
             }
-            var configField = new ConfigFieldImpl<>(
+            var configField = new DetailedConfigField<>(
               new ReflectionFieldAccess<>(field, instance),
               new ReflectionFieldAccess<>(field, handler.defaults()),
               handler,
               Objects.requireNonNullElse(field.getAnnotation(SerialEntry.class), serial),
-              field.getAnnotation(AutoGen.class)
+              field.getAnnotation(AutoGen.class),
+              field.getAnnotation(AutoGenDetails.class)
             );
             fields.add(configField);
         }
