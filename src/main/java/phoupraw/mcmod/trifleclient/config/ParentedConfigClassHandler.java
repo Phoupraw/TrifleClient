@@ -80,6 +80,7 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean load() {
+        parent().load();
         if (Files.notExists(path())) {
             LOGGER.info("{}不存在，将{}设为默认值。", path(), id());
             reset();

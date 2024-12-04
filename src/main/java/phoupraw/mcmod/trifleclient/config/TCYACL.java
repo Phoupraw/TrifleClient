@@ -11,7 +11,9 @@ import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
+import dev.isxander.yacl3.gui.YACLScreen;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -40,6 +42,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import static phoupraw.mcmod.trifleclient.TrifleClient.ID;
+import static phoupraw.mcmod.trifleclient.config.DynamicBinding.of;
 import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 
 @ApiStatus.NonExtendable
@@ -69,31 +72,31 @@ public interface TCYACL {
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("自动暴击"))
               .description(OptionDescription.of(Text.of("每次攻击之前向服务端发送上移和下移的信包。")))
-              .binding(defaults.isAutoCrit(), instance::isAutoCrit, instance::setAutoCrit)
+              .binding(of(instance::isAutoCrit, defaults::isAutoCrit, instance::setAutoCrit))
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("减免摔落伤害"))
               .description(OptionDescription.of(Text.of("频繁向服务端发送落地信包。")))
-              .binding(defaults.isOftenOnGround(), instance::isOftenOnGround, instance::setOftenOnGround)
+              .binding(of(defaults::isOftenOnGround, instance::isOftenOnGround, instance::setOftenOnGround))
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("鞘翅取消飞行同步"))
               .description(OptionDescription.of(Text.of("穿着鞘翅时，忽略从服务端来的能力同步信包中的飞行能力同步。")))
-              .binding(defaults.isElytraCancelSyncFlying(), instance::isElytraCancelSyncFlying, instance::setElytraCancelSyncFlying)
+              .binding(of(defaults::isElytraCancelSyncFlying, instance::isElytraCancelSyncFlying, instance::setElytraCancelSyncFlying))
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("鞘翅自由飞行"))
               .description(OptionDescription.of(Text.of("穿着鞘翅时可以如同在创造模式一样自由飞行。可能会在服务端错误移动，注意不要移动得过于刁钻。")))
-              .binding(defaults.isFreeElytraFlying(), instance::isFreeElytraFlying, instance::setFreeElytraFlying)
+              .binding(of(defaults::isFreeElytraFlying, instance::isFreeElytraFlying, instance::setFreeElytraFlying))
               .controller(TickBoxControllerBuilder::create)
               .build())
             .option(Option.<Float>createBuilder()
               .name(Text.of("环境亮度"))
               .description(OptionDescription.of(Text.of("每个维度的最低环境亮度不会低于此值。注意：只需很小的值就可以让整个维度非常亮。")))
-              .binding(defaults.getMinAmbientLight(), instance::getMinAmbientLight, instance::setMinAmbientLight)
+              .binding(of(defaults::getMinAmbientLight, instance::getMinAmbientLight, instance::setMinAmbientLight))
               .controller(option -> FloatFieldControllerBuilder.create(option)
                 .range(0f, 1f)
                 .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
@@ -106,6 +109,7 @@ public interface TCYACL {
               .action((screen, option) -> {
                   if (config instanceof ParentedConfigClassHandler<TCConfigs> parented) {
                       MinecraftClient.getInstance().setScreen(toYACL(parented.parent()).generateScreen(screen));
+                      //FIXME 修改上级后，下级的instance默认值需要退出界面重进（即触发一次load）才会随上级生效
                   }
               })
               .build())
@@ -117,6 +121,13 @@ public interface TCYACL {
     static void assignConfig() {
         TCConfigs.EVENT.register(CONFIG_ID, () -> getConfig().instance());
         TCConfigs.EVENT.addPhaseOrdering(CONFIG_ID, TCIDs.of("a"));
+        ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+            ScreenEvents.remove(screen).register(screen1 -> {
+                if (screen1 instanceof YACLScreen yaclScreen) {
+                
+                }
+            });
+        });
     }
     static ConfigClassHandler<TCConfigs> getConfig(MinecraftServer server) {
         String key = server.getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
