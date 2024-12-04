@@ -38,7 +38,7 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
     @Contract(pure = true)
     @Override
     public boolean supportsAutoGen() {
-        return false;
+        return true;
     }
     @Contract(pure = true)
     @Override
@@ -124,6 +124,7 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
     public static <T> Collection<? extends ConfigFieldImpl<?>> toFields(ConfigClassHandler<T> handler, T instance, boolean ignoreSame) {
         var fields = new ObjectArrayList<ConfigFieldImpl<?>>();
         var serial = new SerialEntryData("", "", false, false);
+        var autoGen = new AutoGenData("", "");
         for (Field field : handler.configClass().getDeclaredFields()) {
             int modifiers = field.getModifiers();
             if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isTransient(modifiers) || field.isSynthetic()) {
@@ -135,13 +136,12 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
             if (ignoreSame && Objects.equals(field.get(instance), field.get(handler.defaults()))) {
                 continue;
             }
-            var configField = new DetailedConfigField<>(
+            var configField = new ConfigFieldImpl<>(
               new ReflectionFieldAccess<>(field, instance),
               new ReflectionFieldAccess<>(field, handler.defaults()),
               handler,
               Objects.requireNonNullElse(field.getAnnotation(SerialEntry.class), serial),
-              field.getAnnotation(AutoGen.class),
-              field.getAnnotation(AutoGenDetails.class)
+              Objects.requireNonNullElse(field.getAnnotation(AutoGen.class), autoGen)
             );
             fields.add(configField);
         }

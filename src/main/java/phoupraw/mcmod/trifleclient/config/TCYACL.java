@@ -9,6 +9,7 @@ import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
@@ -37,6 +38,7 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -53,7 +55,11 @@ public interface TCYACL {
     static Screen createScreen(Screen parent) {
         ConfigClassHandler<TCConfigs> config = getConfig();
         config.load();
-        return YetAnotherConfigLib.create(config, TCYACL::build).generateScreen(parent);
+        if (false) {
+            return YetAnotherConfigLib.create(config, TCYACL::build).generateScreen(parent);
+        } else {
+            return config.generateGui().generateScreen(parent);
+        }
     }
     private static YetAnotherConfigLib.Builder build(TCConfigs defaults, TCConfigs config, YetAnotherConfigLib.Builder builder) {
         return builder
@@ -80,6 +86,14 @@ public interface TCYACL {
               .name(Text.of("鞘翅创造飞行"))
               .binding(defaults.isFreeElytraFlying(), config::isFreeElytraFlying, config::setFreeElytraFlying)
               .controller(TickBoxControllerBuilder::create)
+              .build())
+            .option(Option.<Float>createBuilder()
+              .name(Text.of(""))
+              .description(OptionDescription.of(Text.of("")))
+              .binding(defaults.getMinAmbientLight(), config::getMinAmbientLight, config::setMinAmbientLight)
+              .controller(option -> FloatFieldControllerBuilder.create(option)
+                .range(0f, 1f)
+                .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
               .build())
             .build())
           /*.save(Runnables.doNothing())*/;
