@@ -2,6 +2,7 @@ package phoupraw.mcmod.trifleclient.config;
 
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
+import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGenField;
@@ -159,4 +160,10 @@ public abstract class BaseConfigClassHandler<T> implements ConfigClassHandler<T>
         return noArgsConstructor.newInstance();
     }
     
+    @SuppressWarnings("unchecked")
+    public void reset() {
+        for (var field : toConfigFields(this, instance(), true)) {
+            ((ConfigField<Object>) field).access().set(field.defaultAccess().get());
+        }
+    }
 }

@@ -28,7 +28,7 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     }
     private final ConfigSerializer<T> serializer;
     private ConfigFieldImpl<?> @Unmodifiable [] fields;
-    private T instance;
+    private final T instance;
     private final String name;
     @Contract(pure = true)
     public ParentedConfigClassHandler(ConfigClassHandler<T> parent, Path path, String name) {
@@ -36,7 +36,7 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
         this.parent = parent;
         this.path = path;
         this.name = name;
-        instance(newInstance());
+        this.instance = newInstance();
         setFields(false);
         serializer = GsonConfigSerializerBuilder.create(this)
           .setJson5(true)
@@ -82,7 +82,7 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     public boolean load() {
         if (Files.notExists(path())) {
             LOGGER.info("{}不存在，将{}设为默认值。", path(), id());
-            instance(newInstance());
+            reset();
             return false;
         }
         LOGGER.info("正在从{}读取{}中……", path(), id());
@@ -102,10 +102,16 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
         switch (result) {
             case DIRTY:
             case SUCCESS:
-                for (var field : toConfigFields(this, newInstance, false)) {
-                    ((ConfigFieldImpl<Object>) field).setFieldAccess((ReflectionFieldAccess<Object>) accessBuffer.get(field));
+                //for (var field : toConfigFields(this, newInstance, false)) {
+                //    ((ConfigFieldImpl<Object>) field).setFieldAccess((ReflectionFieldAccess<Object>) accessBuffer.get(field));
+                //}
+                for (var field : fields()) {
+                    ReflectionFieldAccess<?> newField = accessBuffer.get(field);
+                    if (newField != null) {
+                        ((ConfigField<Object>) field).access().set(newField.get());
+                    }
                 }
-                instance(newInstance);
+                //instance(newInstance);
                 if (result == ConfigSerializer.LoadResult.DIRTY) {
                     save();
                 }
@@ -163,8 +169,5 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     @Contract(mutates = "this")
     protected void setFields(boolean ignoreSame) {
         fields = toConfigFields(this, instance(), ignoreSame).toArray(new ConfigFieldImpl<?>[0]);
-    }
-    protected void instance(T instance) {
-        this.instance = instance;
     }
 }

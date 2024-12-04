@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
 public class RootConfigClassHandler<T> extends BaseConfigClassHandler<T> {
+    private final T instance;
     private final T defaults;
     private final Class<T> configClass;
     private final Identifier id;
@@ -16,6 +17,7 @@ public class RootConfigClassHandler<T> extends BaseConfigClassHandler<T> {
         super(configClass);
         this.configClass = configClass;
         this.id = id;
+        instance = newInstance();
         defaults = newInstance();
         fields = toConfigFields(this, instance(), false).toArray(new ConfigFieldImpl<?>[0]);
     }
@@ -27,7 +29,7 @@ public class RootConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     @Contract(pure = true)
     @Override
     public T instance() {
-        return defaults();
+        return instance;
     }
     @Contract(pure = true)
     @Override
@@ -52,7 +54,7 @@ public class RootConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     @Contract(pure = true)
     @Override
     public void save() {
-    
+        reset();
     }
     @Contract("->fail")
     @Override

@@ -60,10 +60,9 @@ public interface TCYACL {
         }
     }
     private static YetAnotherConfigLib toYACL(ConfigClassHandler<TCConfigs> config) {
-        YetAnotherConfigLib.Builder builder = YetAnotherConfigLib.createBuilder().save(config::save);
         TCConfigs defaults = config.defaults();
         TCConfigs instance = config.instance();
-        return builder
+        return YetAnotherConfigLib.createBuilder()
           .title(TrifleClient.name())
           .category(ConfigCategory.createBuilder()
             .name(TrifleClient.name())
@@ -111,6 +110,7 @@ public interface TCYACL {
               })
               .build())
             .build())
+          .save(config::save)
           .build();
     }
     @ApiStatus.Internal
