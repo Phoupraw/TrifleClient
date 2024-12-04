@@ -135,6 +135,6 @@
   - 分为全局配置和存档独立配置。
 ## 更改
 - 在Fabric应用鞘翅自由飞行的mixin，在Neoforge不应用。
-#
+# 0.22.0
 ## 更改
 - 移除了指令`/trifleclient crit`，由YACL配置界面替代。
