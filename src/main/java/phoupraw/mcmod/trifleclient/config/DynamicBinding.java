@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 public class DynamicBinding<T> implements Binding<T> {
     public static <T> DynamicBinding<T> of(Supplier<T> defaultGetter, Supplier<T> getter, Consumer<T> setter) {
-        return new DynamicBinding<T>(defaultGetter, getter, setter);
+        return new DynamicBinding<>(defaultGetter, getter, setter);
     }
     private final Supplier<T> defaultGetter;
     private final Supplier<T> getter;

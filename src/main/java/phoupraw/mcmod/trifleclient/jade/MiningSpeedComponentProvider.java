@@ -16,6 +16,7 @@ import snownee.jade.api.config.IPluginConfig;
 
 import java.text.DecimalFormat;
 
+//FIXME 在neoforge上不显示
 public class MiningSpeedComponentProvider implements IBlockComponentProvider {
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {

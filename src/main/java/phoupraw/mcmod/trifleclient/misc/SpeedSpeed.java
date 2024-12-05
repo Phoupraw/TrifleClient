@@ -1,5 +1,6 @@
 package phoupraw.mcmod.trifleclient.misc;
 
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
@@ -8,8 +9,9 @@ import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 
-@ApiStatus.NonExtendable
-public abstract class SpeedSpeed {
+//FIXME 在狭小空间连续上楼梯会不断服务端错误移动
+@UtilityClass
+public class SpeedSpeed {
     //public static final int STEPS = 20;
     //private static int step = 0;
     private static boolean looping;
