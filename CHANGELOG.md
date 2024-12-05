@@ -138,3 +138,9 @@
 # 0.22.0
 ## 更改
 - 移除了指令`/trifleclient crit`，由YACL配置界面替代。
+# 0.23.0
+## 新增
+- 配置界面“快速移速”。
+## 修复
+- 在信雅互联上不被Jade识别插件。
+- 在1格宽3格高的无楼梯采矿通道中，快速移动上楼会频繁触发服务端错误移动（[#2](https://github.com/Phoupraw/TrifleClient/issues/2)）
