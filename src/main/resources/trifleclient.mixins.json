@@ -31,6 +31,7 @@
     "minecraft.MItemEntity",
     "minecraft.MMinecraftClient",
     "minecraft.MWorldRenderer",
+    "minecraft.connector.MClientPlayerInteractionManager",
     "minecraft.elytra.MClientPlayerEntity",
     "modchecker.MRequestPacketListener"
   ],

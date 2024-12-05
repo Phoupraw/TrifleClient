@@ -17,6 +17,7 @@ import java.util.Set;
 public final class TCMixinConfigPlugin implements IMixinConfigPlugin {
     @ApiStatus.Internal
     public static final Logger LOGGER = LogManager.getLogger();
+    public static final boolean NEOFORGE = FabricLoader.getInstance().isModLoaded("neoforge");
     @Override
     public void onLoad(String mixinPackage) {
     
@@ -31,7 +32,10 @@ public final class TCMixinConfigPlugin implements IMixinConfigPlugin {
             return FabricLoader.getInstance().isModLoaded(ModChecker.MOD_ID);
         }
         if (mixinClassName.startsWith("phoupraw.mcmod." + TrifleClient.ID + ".mixin.minecraft.elytra")) {
-            return !FabricLoader.getInstance().isModLoaded("neoforge");
+            return !NEOFORGE;
+        }
+        if (mixinClassName.startsWith("phoupraw.mcmod." + TrifleClient.ID + ".mixin.minecraft.connector")) {
+            return NEOFORGE;
         }
         return true;
     }
