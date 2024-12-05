@@ -86,9 +86,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
                 if (!vanilla && player instanceof ClientPlayerEntity) {
                     var clientPlayer = (ClientPlayerEntity & AEntity) player;
                     ClientPlayNetworkHandler network = clientPlayer.networkHandler;
-                    double dy = clientPlayer.invokeAdjustMovementForCollisions(new Vec3d(0, 1, 0)).getY();
-                    network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), player.getY() + dy, player.getZ(), false));
-                    network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), Math.min(dy, player.getY() + 0.01), player.getZ(), false));
+                    double y = player.getY() + clientPlayer.invokeAdjustMovementForCollisions(new Vec3d(0, 1, 0)).getY();
+                    network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), y, player.getZ(), false));
+                    network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), Math.min(y, player.getY() + 0.01), player.getZ(), false));
                 }
             }
             return null;
