@@ -15,9 +15,13 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.registry.Registries;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismWeaponsCompact;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
@@ -79,15 +83,24 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             }
         });
         ClientTickEvents.END_WORLD_TICK.register(FreeElytraFlying::lambda_onEndTick);
-        //ClientPlayConnectionEvents.JOIN.register(new ClientPlayConnectionEvents.Join() {
-        //    @Override
-        //    public void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
-        //        ClientPlayerEntity player = client.player;
-        //        if (FreeElytraFlying.isFlying(player)) {
-        //            player.get
-        //        }
-        //    }
-        //});
+        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            if (TCConfigs.A().isDebugAttackEntity()) {
+                String saveName;
+                IntegratedServer server = MinecraftClient.getInstance().getServer();
+                if (server != null) {
+                    saveName = server.getSaveProperties().getLevelName();
+                } else {
+                    ServerInfo serverInfo = MinecraftClient.getInstance().getCurrentServerEntry();
+                    if (serverInfo != null) {
+                        saveName = serverInfo.name;
+                    } else {
+                        saveName = "?";
+                    }
+                }
+                LOGGER.info("debugAttackEntity ({}) {}({}) {}", saveName, entity.getName().getString(), Registries.ENTITY_TYPE.getId(entity.getType()), entity.getPos());
+            }
+            return ActionResult.PASS;
+        });
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
