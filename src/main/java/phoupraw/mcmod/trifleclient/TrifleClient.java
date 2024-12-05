@@ -76,9 +76,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         ClientCommandRegistrationCallback.EVENT.register(LogStripper::lambda_register);
         ClientTickEvents.START_WORLD_TICK.register(LogStripper::onStartAndEndTick);
         ClientTickEvents.END_WORLD_TICK.register(LogStripper::onStartAndEndTick);
-        ClientTickEvents.END_WORLD_TICK.register(world -> {
+        ClientTickEvents.START_WORLD_TICK.register(world -> {
             var player = MinecraftClient.getInstance().player;
-            if (TCConfigs.A().isOftenOnGround() && player != null && !player.isClimbing() && !player.isSwimming() && /*!FreeElytraFlying.isFlying(player) &&*/ (player.getVelocity().getY() < 0/* || player.getAbilities().flying */) && !player.isFallFlying()) {
+            if (TCConfigs.A().isOftenOnGround() && player != null && !player.isClimbing() && !player.isSwimming() && /*!FreeElytraFlying.isFlying(player) &&*/ (player.fallDistance > 2/* || player.getAbilities().flying */) && !player.isFallFlying()) {
                 player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
                 //player.stopFallFlying();
             }

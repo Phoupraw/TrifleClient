@@ -20,7 +20,7 @@ public interface AutoCrit {
         if (TCConfigs.A().isAutoCrit() && player0 instanceof ClientPlayerEntity player) {
             ClientPlayNetworkHandler network = player.networkHandler;
             if (network != null) {
-                network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), player.getY() + 0.0625, player.getZ(), false));
+                network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), player.getY() + 0.0625, player.getZ(), true));
                 network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), player.getY(), player.getZ(), false));
             }
         }
