@@ -4,12 +4,12 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 
-//FIXME 在狭小空间连续上楼梯会不断服务端错误移动
 @UtilityClass
 public class SpeedSpeed {
     //public static final int STEPS = 20;
@@ -72,6 +72,7 @@ public class SpeedSpeed {
         looping = true;
         for (int i = 1; i < steps; i++) {
             player.move(movementType, motion);
+            player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), player.getY(), player.getZ(), player.isOnGround()));
         }
         looping = false;
         return motion;
