@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
@@ -30,6 +31,7 @@ import net.minecraft.util.WorldSavePath;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.TrifleClient;
 import phoupraw.mcmod.trifleclient.constant.TCIDs;
+import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 
 import java.awt.*;
 import java.io.IOException;
@@ -92,6 +94,18 @@ public interface TCYACL {
               .description(OptionDescription.of(Text.of("穿着鞘翅时可以如同在创造模式一样自由飞行。可能会在服务端错误移动，注意不要移动得过于刁钻。")))
               .binding(of(defaults::isFreeElytraFlying, instance::isFreeElytraFlying, instance::setFreeElytraFlying))
               .controller(TickBoxControllerBuilder::create)
+              .build())
+            .option(Option.<Integer>createBuilder()
+              .name(Text.of("快速移速"))
+              .description(OptionDescription.of(Text.empty()
+                .append("按住")
+                .append(Text.keybind(TCKeyBindings.SPEED.getBoundKeyTranslationKey()))
+                .append("同时按住移动键可以高速水平移动。此设置项为每次移动时额外移动的次数。")
+              ))
+              .binding(of(defaults::getSpeedSteps, instance::getSpeedSteps, instance::setSpeedSteps))
+              .controller(option -> IntegerSliderControllerBuilder.create(option)
+                .range(0, 50)
+                .step(1))
               .build())
             .option(Option.<Float>createBuilder()
               .name(Text.of("环境亮度"))
