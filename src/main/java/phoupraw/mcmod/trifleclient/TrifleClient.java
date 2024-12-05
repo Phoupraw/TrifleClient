@@ -16,20 +16,21 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import org.jetbrains.annotations.Contract;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismWeaponsCompact;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.config.TCYACL;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
-import phoupraw.mcmod.trifleclient.events.AfterClientPlayerMove;
-import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
-import phoupraw.mcmod.trifleclient.events.OnUseKeyPress;
+import phoupraw.mcmod.trifleclient.events.*;
 import phoupraw.mcmod.trifleclient.misc.*;
 
 import java.lang.invoke.MethodHandles;
@@ -101,6 +102,8 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             }
             return ActionResult.PASS;
         });
+        GlowingCallback.BEFORE.register(entity -> isNearHostile(entity) ? true : null);
+        GlowingColorCallback.EVENT.register((entity, original) -> isNearHostile(entity) ? -0xCC0000 : original);
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
@@ -113,6 +116,16 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             LOGGER.info("检测到《Yet Another Config Lib》，将加载相关兼容。");
             TCYACL.assignConfig();
         }
+    }
+    @Contract(pure = true)
+    public static boolean isNearHostile(Entity entity) {
+        var player = MinecraftClient.getInstance().player;
+        if (TCConfigs.A().isHostileGlow() && player != null && entity instanceof HostileEntity) {
+            if (entity.getBoundingBox().offset(player.getPos().subtract(entity.getPos()).normalize().multiply(Math.min(16, player.distanceTo(entity)))).intersects(player.getBoundingBox())) {
+                return true;
+            }
+        }
+        return false;
     }
     @Override
     public void onInitialize() {

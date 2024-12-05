@@ -26,6 +26,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
 import org.jetbrains.annotations.ApiStatus;
@@ -95,11 +96,17 @@ public interface TCYACL {
               .binding(of(defaults::isFreeElytraFlying, instance::isFreeElytraFlying, instance::setFreeElytraFlying))
               .controller(TickBoxControllerBuilder::create)
               .build())
+            .option(Option.<Boolean>createBuilder()
+              .name(Text.of("高亮怪物"))
+              .description(OptionDescription.of(Text.of("使16米以内的敌对生物带有深红色边框，且一直在头顶显示名称。")))
+              .binding(of(defaults::isHostileGlow, instance::isHostileGlow, instance::setHostileGlow))
+              .controller(TickBoxControllerBuilder::create)
+              .build())
             .option(Option.<Integer>createBuilder()
               .name(Text.of("快速移速"))
               .description(OptionDescription.of(Text.empty()
                 .append("按住")
-                .append(Text.keybind(TCKeyBindings.SPEED.getBoundKeyTranslationKey()))
+                .append(Text.empty().append(TCKeyBindings.SPEED.getBoundKeyLocalizedText()).formatted(Formatting.UNDERLINE))
                 .append("同时按住移动键可以高速水平移动。此设置项为每次移动时额外移动的次数。")
               ))
               .binding(of(defaults::getSpeedSteps, instance::getSpeedSteps, instance::setSpeedSteps))
@@ -120,6 +127,11 @@ public interface TCYACL {
             .name(Text.of("调试"))
             .option(Option.<Boolean>createBuilder()
               .name(Text.of("攻击实体"))
+              .description(OptionDescription.of(Text.empty()
+                .append("对准实体按下")
+                .append(Text.empty().append(MinecraftClient.getInstance().options.attackKey.getBoundKeyLocalizedText()).formatted(Formatting.UNDERLINE))
+                .append("以攻击实体时，打印相关信息到控制台")
+              ))
               .binding(of(defaults::isDebugAttackEntity, instance::isDebugAttackEntity, instance::setDebugAttackEntity))
               .controller(TickBoxControllerBuilder::create)
               .build())

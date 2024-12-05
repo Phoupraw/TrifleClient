@@ -26,9 +26,11 @@
     "minecraft.MClientPlayNetworkHandler",
     "minecraft.MDimensionType",
     "minecraft.MEntity",
+    "minecraft.MEntityRenderer",
     "minecraft.MExperienceOrbEntity",
     "minecraft.MItemEntity",
     "minecraft.MMinecraftClient",
+    "minecraft.MWorldRenderer",
     "minecraft.elytra.MClientPlayerEntity",
     "modchecker.MRequestPacketListener"
   ],

@@ -75,5 +75,7 @@ public class TCConfigs {
     boolean elytraCancelSyncFlying = false;
     @YACLDataGen(name = "鞘翅自由飞行", desc = "穿着鞘翅时可以如同在创造模式一样自由飞行。可能会在服务端错误移动，请不要移动得过于刁钻。")
     boolean freeElytraFlying = false;
+    boolean hostileGlow = true;
+    
     boolean debugAttackEntity;
 }
