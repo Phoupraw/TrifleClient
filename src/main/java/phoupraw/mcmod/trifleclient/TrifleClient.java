@@ -28,6 +28,7 @@ import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Contract;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
@@ -131,7 +132,18 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             return ActionResult.PASS;
         });
         GlowingCallback.BEFORE.register(entity -> isNearHostile(entity) ? true : null);
-        GlowingColorCallback.EVENT.register((entity, original) -> isNearHostile(entity) ? ~0xCC0000 : original);
+        GlowingColorCallback.EVENT.register((entity, original, tickCounter, camera) -> {
+            if (isNearHostile(entity)) {
+                int period = 20;
+                float delta = (entity.getWorld().getTime() % period + tickCounter.getTickDelta(false)) / period;
+                delta = Math.abs(delta - 0.5f);
+                //delta = delta*delta;
+                float r = MathHelper.lerp(delta, 0.8f, 0f);
+                //float gb = MathHelper.lerp(delta,0f,1f);
+                return ~MathHelper.packRgb(r, 0, 0);
+            }
+            return original;
+        });
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
@@ -155,10 +167,14 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     }
     @Contract(pure = true)
     public static boolean isNearHostile(Entity entity) {
-        var player = MinecraftClient.getInstance().player;
-        if (TCConfigs.A().isHostileGlow() && player != null && entity instanceof HostileEntity && entity.squaredDistanceTo(player) < 16 * 16 / 2.0) {
-            if (entity.getBoundingBox().offset(player.getPos().subtract(entity.getPos()).normalize().multiply(Math.min(16, player.distanceTo(entity)))).intersects(player.getBoundingBox())) {
-                return true;
+        double range0 = TCConfigs.A().getHostileGlowRange();
+        if (range0 > 0) {
+            var player = MinecraftClient.getInstance().player;
+            if (player != null && entity instanceof HostileEntity) {
+                double range = range0 + Math.max(entity.getWidth(), entity.getHeight());
+                if (entity.squaredDistanceTo(player) < range * range) {
+                    return true;
+                }
             }
         }
         return false;

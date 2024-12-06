@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import dev.isxander.yacl3.api.*;
+import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
@@ -96,12 +97,6 @@ public interface TCYACL {
               .binding(of(defaults::isFreeElytraFlying, instance::isFreeElytraFlying, instance::setFreeElytraFlying))
               .controller(TickBoxControllerBuilder::create)
               .build())
-            .option(Option.<Boolean>createBuilder()
-              .name(Text.of("高亮怪物"))
-              .description(OptionDescription.of(Text.of("使16米以内的敌对生物带有深红色边框，且一直在头顶显示名称。")))
-              .binding(of(defaults::isHostileGlow, instance::isHostileGlow, instance::setHostileGlow))
-              .controller(TickBoxControllerBuilder::create)
-              .build())
             .option(Option.<Integer>createBuilder()
               .name(Text.of("快速移速"))
               .description(OptionDescription.of(Text.empty()
@@ -120,6 +115,15 @@ public interface TCYACL {
               .binding(of(defaults::getMinAmbientLight, instance::getMinAmbientLight, instance::setMinAmbientLight))
               .controller(option -> FloatFieldControllerBuilder.create(option)
                 .range(0f, 1f)
+                .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
+              .build())
+            .option(Option.<Double>createBuilder()
+              .name(Text.of("高亮怪物范围"))
+              .description(OptionDescription.of(Text.of("使范围内的敌对生物带有深红色边框，且一直在头顶显示名称。")))
+              .binding(of(defaults::getHostileGlowRange, instance::getHostileGlowRange, instance::setHostileGlowRange))
+              .controller(option -> DoubleSliderControllerBuilder.create(option)
+                .range(0.0, 128.0)
+                .step(1.0)
                 .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
               .build())
             .build())

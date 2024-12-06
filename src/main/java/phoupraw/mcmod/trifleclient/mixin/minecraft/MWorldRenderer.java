@@ -4,6 +4,8 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +16,7 @@ import phoupraw.mcmod.trifleclient.events.GlowingColorCallback;
 @Mixin(WorldRenderer.class)
 abstract class MWorldRenderer {
     @ModifyExpressionValue(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getTeamColorValue()I"))
-    private int glowingColor(int original, @Local Entity entity) {
-        return GlowingColorCallback.EVENT.invoker().getColor(entity, original);
+    private int glowingColor(int original, @Local Entity entity, @Local(argsOnly = true) RenderTickCounter tickCounter, @Local(argsOnly = true) Camera camera) {
+        return GlowingColorCallback.EVENT.invoker().getColor(entity, original, tickCounter, camera);
     }
 }
