@@ -34,6 +34,6 @@ abstract class MMinecraftClient {
     }
     @ModifyReturnValue(method = "hasOutline", at = @At("RETURN"))
     private boolean glowingCallbackAfter(boolean original, @Local(argsOnly = true) Entity entity) {
-        return Boolean.TRUE.equals(GlowingCallback.AFTER.invoker().shouldGlow(entity));
+        return original || Boolean.TRUE.equals(GlowingCallback.AFTER.invoker().shouldGlow(entity));
     }
 }
