@@ -86,9 +86,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
                 if (!vanilla && player instanceof ClientPlayerEntity) {
                     var clientPlayer = (ClientPlayerEntity & AEntity) player;
                     ClientPlayNetworkHandler network = clientPlayer.networkHandler;
-                    double y = player.getY() + clientPlayer.invokeAdjustMovementForCollisions(new Vec3d(0, 1, 0)).getY();
+                    double y = player.getY() + clientPlayer.invokeAdjustMovementForCollisions(new Vec3d(0, 0.1, 0)).getY();
                     network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), y, player.getZ(), false));
-                    network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), Math.min(y, player.getY() + 0.01), player.getZ(), false));
+                    network.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(player.getX(), player.getY(), player.getZ(), false));
                 }
             }
             return null;
@@ -156,7 +156,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     @Contract(pure = true)
     public static boolean isNearHostile(Entity entity) {
         var player = MinecraftClient.getInstance().player;
-        if (TCConfigs.A().isHostileGlow() && player != null && entity instanceof HostileEntity) {
+        if (TCConfigs.A().isHostileGlow() && player != null && entity instanceof HostileEntity && entity.squaredDistanceTo(player) < 16 * 16 / 2.0) {
             if (entity.getBoundingBox().offset(player.getPos().subtract(entity.getPos()).normalize().multiply(Math.min(16, player.distanceTo(entity)))).intersects(player.getBoundingBox())) {
                 return true;
             }

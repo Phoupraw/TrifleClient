@@ -168,3 +168,6 @@
 # 0.24.6
 ## 修复
 - 以原版机制发光的实体不会发光。（[#5](https://github.com/Phoupraw/TrifleClient/issues/5)）
+# 0.24.7
+## 修复
+- 《虚无世界3》灵巧-跳跃提升会使自动暴击让客户端玩家跳起来。（[#6](https://github.com/Phoupraw/TrifleClient/issues/6))
