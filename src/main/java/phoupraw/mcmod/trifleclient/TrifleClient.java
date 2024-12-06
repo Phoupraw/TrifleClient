@@ -131,7 +131,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             return ActionResult.PASS;
         });
         GlowingCallback.BEFORE.register(entity -> isNearHostile(entity) ? true : null);
-        GlowingColorCallback.EVENT.register((entity, original) -> isNearHostile(entity) ? -0xCC0000 : original);
+        GlowingColorCallback.EVENT.register((entity, original) -> isNearHostile(entity) ? ~0xCC0000 : original);
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);

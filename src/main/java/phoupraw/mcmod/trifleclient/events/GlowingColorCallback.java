@@ -12,7 +12,7 @@ public interface GlowingColorCallback {
     Event<GlowingColorCallback> EVENT = EventFactory.createArrayBacked(GlowingColorCallback.class, callbacks -> (entity, original) -> {
         for (GlowingColorCallback callback : callbacks) {
             original = callback.getColor(entity, original);
-            if (original < 0) return -original;
+            if (original < 0) return ~original;
         }
         return original;
     });
