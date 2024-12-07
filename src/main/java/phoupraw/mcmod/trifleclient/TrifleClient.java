@@ -13,7 +13,6 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -23,7 +22,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.integrated.IntegratedServer;
@@ -44,7 +42,6 @@ import phoupraw.mcmod.trifleclient.mixin.minecraft.AEntity;
 import phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Objects;
 
 import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 //TODO 使在流体中行走不减速
@@ -147,21 +144,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             }
             return original;
         });
-        ClientTickEvents.END_WORLD_TICK.register(world -> {
-            if (!TCConfigs.A().isSwitchOnHook()) return;
-            for (Entity entity : world.getEntities()) {
-                if (entity instanceof FishingBobberEntity bobber && bobber.getOwner() instanceof ClientPlayerEntity player && bobber.getHookedEntity() != null) {
-                    var interactor = Objects.requireNonNull(MinecraftClient.getInstance().interactionManager);
-                    if (player.getMainHandStack().isIn(ConventionalItemTags.FISHING_ROD_TOOLS)) {
-                        int selectedSlot = player.getInventory().selectedSlot;
-                        player.getInventory().selectedSlot = (selectedSlot + 1) % 9;
-                        interactor.stopUsingItem(player);
-                        player.getInventory().selectedSlot = selectedSlot;
-                    }
-                    break;
-                }
-            }
-        });
+        ClientTickEvents.END_WORLD_TICK.register(FishingRodTweaks::onEndTick);
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
