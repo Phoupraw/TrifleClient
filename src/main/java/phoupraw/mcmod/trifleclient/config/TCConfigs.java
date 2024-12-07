@@ -77,6 +77,7 @@ public class TCConfigs {
     boolean freeElytraFlying = false;
     double hostileGlowRange = 16;
     boolean switchOnHook = true;
+    float minMSPT = 0;
     
     boolean debugAttackEntity;
 }
