@@ -6,7 +6,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.*;
+import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
@@ -121,12 +124,19 @@ public interface TCYACL {
                 .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
               .build())
             .option(Option.<Float>createBuilder()
+              .name(Text.of("最大MSPT"))
+              .description(OptionDescription.of(Text.of("客户端的最大MSPT。原版无上限。如果设定为50，则即便TPS小于20，也会视为20。")))
+              .binding(of(defaults::getMaxMSPT, instance::getMaxMSPT, instance::setMaxMSPT))
+              .controller(option -> FloatFieldControllerBuilder.create(option)
+                .min(50f)
+                .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
+              .build())
+            .option(Option.<Float>createBuilder()
               .name(Text.of("最小MSPT"))
               .description(OptionDescription.of(Text.of("客户端的最小MSPT。原版为50，所以即使用tick指令将TPS调至20以上，客户端仍然保持TPS为20。")))
-              .binding(of(defaults::getMinAmbientLight, instance::getMinAmbientLight, instance::setMinAmbientLight))
-              .controller(option -> FloatSliderControllerBuilder.create(option)
-                .range(0f, 20f)
-                .step(0.1f)
+              .binding(of(defaults::getMinMSPT, instance::getMinMSPT, instance::setMinMSPT))
+              .controller(option -> FloatFieldControllerBuilder.create(option)
+                .range(0f, 50f)
                 .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
               .build())
             .option(Option.<Double>createBuilder()

@@ -1,5 +1,6 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -41,5 +42,9 @@ abstract class MMinecraftClient {
     @ModifyArg(method = "getTargetMillisPerTick", at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(FF)F"), index = 0)
     private float noCapMSPT(float millis) {
         return TCConfigs.A().getMinMSPT();
+    }
+    @ModifyExpressionValue(method = "getTargetMillisPerTick", at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(FF)F"))
+    private float limitMSPT(float original) {
+        return Math.min(original, TCConfigs.A().getMaxMSPT());
     }
 }
