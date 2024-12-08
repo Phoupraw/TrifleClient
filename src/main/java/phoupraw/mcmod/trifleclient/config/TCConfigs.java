@@ -79,6 +79,7 @@ public class TCConfigs {
     boolean switchOnHook = true;
     float minMSPT = 0;
     float maxMSPT = 50;
+    boolean allowFlight = true;
     
     boolean debugAttackEntity;
 }
