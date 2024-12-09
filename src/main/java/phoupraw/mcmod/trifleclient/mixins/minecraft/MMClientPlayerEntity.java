@@ -63,4 +63,7 @@ public interface MMClientPlayerEntity {
         }
         return true;
     }
+    static float getVelocityMultiplier(ClientPlayerEntity self, float original) {
+        return Math.max(original, TCConfigs.A().getMinSpeedFactor());
+    }
 }

@@ -1,6 +1,7 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
@@ -10,6 +11,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Vec3d;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -50,6 +52,16 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     @ModifyExpressionValue(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
     private boolean noUsingItemSlow(boolean original) {
         return MMClientPlayerEntity.noUsingItemSlow((ClientPlayerEntity) (Object) this, original);
+    }
+    @Override
+    protected float getVelocityMultiplier() {
+        return super.getVelocityMultiplier();
+    }
+    @Dynamic
+    @SuppressWarnings("target")
+    @ModifyReturnValue(method = "getVelocityMultiplier", at = @At("RETURN"))
+    private float minSpeedFactor(float original) {
+        return MMClientPlayerEntity.getVelocityMultiplier((ClientPlayerEntity) (Object) this, original);
     }
     //@WrapWithCondition(method = "onTrackedDataSet", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;onTrackedDataSet(Lnet/minecraft/entity/data/TrackedData;)V"))
     //private boolean cancelPoseSync(AbstractClientPlayerEntity instance, TrackedData<?> data) {

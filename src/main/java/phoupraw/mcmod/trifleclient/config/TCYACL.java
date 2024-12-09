@@ -136,7 +136,15 @@ public interface TCYACL {
               .binding(of(defaults::getMinAmbientLight, instance::getMinAmbientLight, instance::setMinAmbientLight))
               .controller(option -> FloatFieldControllerBuilder.create(option)
                 .range(0f, 1f)
-                .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
+                .formatValue(TCYACL::format))
+              .build())
+            .option(Option.<Float>createBuilder()
+              .name(Text.of("最小方块速度乘数"))
+              .description(OptionDescription.of(Text.of("例如灵魂沙之类方块减速。")))
+              .binding(of(defaults::getMinSpeedFactor, instance::getMinSpeedFactor, instance::setMinSpeedFactor))
+              .controller(option -> FloatFieldControllerBuilder.create(option)
+                .range(0f, 1f)
+                .formatValue(TCYACL::format))
               .build())
             .option(Option.<Float>createBuilder()
               .name(Text.of("最大MSPT"))
@@ -144,7 +152,7 @@ public interface TCYACL {
               .binding(of(defaults::getMaxMSPT, instance::getMaxMSPT, instance::setMaxMSPT))
               .controller(option -> FloatFieldControllerBuilder.create(option)
                 .min(50f)
-                .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
+                .formatValue(TCYACL::format))
               .build())
             .option(Option.<Float>createBuilder()
               .name(Text.of("最小MSPT"))
@@ -152,7 +160,7 @@ public interface TCYACL {
               .binding(of(defaults::getMinMSPT, instance::getMinMSPT, instance::setMinMSPT))
               .controller(option -> FloatFieldControllerBuilder.create(option)
                 .range(0f, 50f)
-                .formatValue(value -> Text.literal(DecimalFormat.getInstance().format(value))))
+                .formatValue(TCYACL::format))
               .build())
             .option(Option.<Double>createBuilder()
               .name(Text.of("高亮怪物范围"))
@@ -247,6 +255,9 @@ public interface TCYACL {
           .setPath(FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME))
           .setJson5(true)
           .build();
+    }
+    private static Text format(float value) {
+        return Text.literal(DecimalFormat.getInstance().format(value));
     }
     
     @Deprecated

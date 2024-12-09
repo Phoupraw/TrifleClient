@@ -9,4 +9,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface AEntity {
     @Invoker
     Vec3d invokeAdjustMovementForCollisions(Vec3d movement);
+    @Invoker
+    float invokeGetVelocityMultiplier();
 }
