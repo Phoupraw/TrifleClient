@@ -23,10 +23,8 @@ import net.minecraft.client.network.ServerInfo;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -41,9 +39,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Contract;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismWeaponsCompact;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
@@ -145,19 +141,8 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             }
             return ActionResult.PASS;
         });
-        GlowingCallback.BEFORE.register(entity -> isNearHostile(entity) ? true : null);
-        GlowingColorCallback.EVENT.register((entity, original, tickCounter, camera) -> {
-            if (isNearHostile(entity)) {
-                int period = 20;
-                float delta = (entity.getWorld().getTime() % period + tickCounter.getTickDelta(false)) / period;
-                delta = Math.abs(delta - 0.5f);
-                //delta = delta*delta;
-                float r = MathHelper.lerp(delta, 0.8f, 0f);
-                //float gb = MathHelper.lerp(delta,0f,1f);
-                return ~MathHelper.packRgb(r, 0, 0);
-            }
-            return original;
-        });
+        GlowingCallback.BEFORE.register(HostileGlowing::shouldGlow);
+        GlowingColorCallback.EVENT.register(HostileGlowing::getColor);
         ClientTickEvents.END_WORLD_TICK.register(FishingRodTweaks::onEndTick);
         AutoPickCallback.EVENT.register(AutoPickCallback::config);
         AutoPickCallback.EVENT.register((player, pos, state) -> {
@@ -229,20 +214,6 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
                 return r ? ActionResult.FAIL : ActionResult.SUCCESS;
             });
         }
-    }
-    @Contract(pure = true)
-    public static boolean isNearHostile(Entity entity) {
-        double range0 = TCConfigs.A().getHostileGlowRange();
-        if (range0 > 0) {
-            var player = MinecraftClient.getInstance().player;
-            if (player != null && entity instanceof HostileEntity) {
-                double range = range0 + Math.max(entity.getWidth(), entity.getHeight());
-                if (entity.squaredDistanceTo(player) < range * range) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
     @Override
     public void onInitialize() {
