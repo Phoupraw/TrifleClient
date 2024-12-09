@@ -15,8 +15,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CropBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -29,6 +28,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
@@ -38,6 +39,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -169,10 +171,38 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
                 }
                 interactor.attackBlock(pos.toImmutable(), Direction.UP);
             } else if (state.getBlock() instanceof CropBlock block) {
-                if (state.calcBlockBreakingDelta(player, world, pos) >= 1 && block.isMature(state) && player.getOffHandStack().getItem() instanceof BlockItem item && item.getBlock() == block) {
-                    RegistryEntry<Enchantment> enchEntry = player.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.FORTUNE).orElseThrow();
-                    if (EnchantmentHelper.getLevel(enchEntry, player.getMainHandStack()) >= enchEntry.value().getMaxLevel()) {
+                if (state.calcBlockBreakingDelta(player, world, pos) >= 1 && block.isMature(state)) {
+                    ItemStack offHandStack = player.getOffHandStack();
+                    if (offHandStack.getItem() instanceof BlockItem item && item.getBlock() == block) {
+                        RegistryEntry<Enchantment> enchEntry = player.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.FORTUNE).orElseThrow();
+                        if (EnchantmentHelper.getLevel(enchEntry, player.getMainHandStack()) >= enchEntry.value().getMaxLevel()) {
+                            interactor.attackBlock(pos.toImmutable(), Direction.UP);
+                            offHandStack.decrement(1);
+                            return Hand.OFF_HAND;
+                        }
+                    }
+                }
+            } else if (state.isOf(Blocks.BAMBOO)) {
+                if (state.calcBlockBreakingDelta(player,world,pos)>=1) {
+                    BlockPos.Mutable pos1 = new BlockPos.Mutable().set(pos);
+                    if (world.getBlockState(pos1.move(0, -1, 0)).isOf(Blocks.BAMBOO)) {
+                        BlockState state1 = world.getBlockState(pos1.move(0, -1, 0));
+                        if (!state1.isOf(Blocks.BAMBOO) && !state1.isAir()) {
+                            pos1.set(pos);
+                            while (world.getBlockState(pos1.move(0, 1, 0)).isOf(Blocks.BAMBOO)) ;
+                            BlockState state2 = world.getBlockState(pos1.move(0, -1, 0));
+                            if (state2.isOf(Blocks.BAMBOO) && state2.get(BambooBlock.STAGE) == 1) {
+                                interactor.attackBlock(pos.toImmutable(), Direction.UP);
+                            }
+                        }
+                    }
+                }
+            } else if (state.isOf(Blocks.NETHER_WART)) {
+                if (state.get(NetherWartBlock.AGE) == NetherWartBlock.MAX_AGE) {
+                    ItemStack offHandStack = player.getOffHandStack();
+                    if (offHandStack.isOf(Items.NETHER_WART)) {
                         interactor.attackBlock(pos.toImmutable(), Direction.UP);
+                        offHandStack.decrement(1);
                         return Hand.OFF_HAND;
                     }
                 }
