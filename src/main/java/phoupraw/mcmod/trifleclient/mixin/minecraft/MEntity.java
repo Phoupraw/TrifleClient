@@ -11,7 +11,6 @@ import net.minecraft.world.entity.EntityLike;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import phoupraw.mcmod.trifleclient.events.AutoPickCallback;
 import phoupraw.mcmod.trifleclient.mixins.minecraft.MMEntity;
 
 @Environment(EnvType.CLIENT)
@@ -25,6 +24,6 @@ abstract class MEntity implements EntityLike {
     private void onBlockPosSet(Entity instance, BlockPos value, Operation<Void> original) {
         BlockPos prevPos = instance.getBlockPos();
         original.call(instance, value);
-        AutoPickCallback.mixin(instance, prevPos);
+        MMEntity.onBlockPosSet(instance, prevPos);
     }
 }

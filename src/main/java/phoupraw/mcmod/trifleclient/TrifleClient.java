@@ -15,20 +15,30 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CropBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Contract;
@@ -41,6 +51,7 @@ import phoupraw.mcmod.trifleclient.events.*;
 import phoupraw.mcmod.trifleclient.misc.*;
 import phoupraw.mcmod.trifleclient.mixin.minecraft.AEntity;
 import phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin;
+import phoupraw.mcmod.trifleclient.util.MCUtils;
 
 import java.lang.invoke.MethodHandles;
 
@@ -147,6 +158,27 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         });
         ClientTickEvents.END_WORLD_TICK.register(FishingRodTweaks::onEndTick);
         AutoPickCallback.EVENT.register(AutoPickCallback::config);
+        AutoPickCallback.EVENT.register((player, pos, state) -> {
+            var world = player.getWorld();
+            var interactor = MCUtils.getInteractor();
+            if (state.isOf(Blocks.SUGAR_CANE)) {
+                for (int i = -1; i <= 1; i += 2) {
+                    if (!world.getBlockState(pos.up(i)).isOf(Blocks.SUGAR_CANE)) {
+                        return null;
+                    }
+                }
+                interactor.attackBlock(pos.toImmutable(), Direction.UP);
+            } else if (state.getBlock() instanceof CropBlock block) {
+                if (state.calcBlockBreakingDelta(player, world, pos) >= 1 && block.isMature(state) && player.getOffHandStack().getItem() instanceof BlockItem item && item.getBlock() == block) {
+                    RegistryEntry<Enchantment> enchEntry = player.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.FORTUNE).orElseThrow();
+                    if (EnchantmentHelper.getLevel(enchEntry, player.getMainHandStack()) >= enchEntry.value().getMaxLevel()) {
+                        interactor.attackBlock(pos.toImmutable(), Direction.UP);
+                        return Hand.OFF_HAND;
+                    }
+                }
+            }
+            return null;
+        });
         //AfterClientPlayerMove.EVENT.register((player0, movementType, movement) -> {
         //    var player = (ClientPlayerEntity & AEntity) player0;
         //    float multiplier = player.invokeGetVelocityMultiplier();
