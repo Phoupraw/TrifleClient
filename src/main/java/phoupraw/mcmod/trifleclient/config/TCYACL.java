@@ -6,10 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
-import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
+import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
@@ -108,6 +105,18 @@ public interface TCYACL {
               .description(OptionDescription.of(Text.of("原版默认为true。")))
               .binding(of(defaults::isAllowFlight, instance::isAllowFlight, instance::setAllowFlight))
               .controller(TickBoxControllerBuilder::create)
+              .build())
+            .option(Option.<Boolean>createBuilder()
+              .name(Text.of("自动采摘"))
+              .description(OptionDescription.of(Text.of("自动采摘周围的浆果等作物。")))
+              .binding(of(defaults::isAutoPick, instance::isAutoPick, instance::setAutoPick))
+              .controller(TickBoxControllerBuilder::create)
+              .build())
+            .option(Option.<String>createBuilder()
+              .name(Text.of("自动采摘方块列表"))
+              .description(OptionDescription.of(Text.of("语法：方块ID[方块状态=值,方块状态=值]|方块ID[方块状态=值]")))
+              .binding(of(defaults::getAutoPickBlocks, instance::getAutoPickBlocks, instance::setAutoPickBlocks))
+              .controller(StringControllerBuilder::create)
               .build())
             .option(Option.<Integer>createBuilder()
               .name(Text.of("快速移速"))

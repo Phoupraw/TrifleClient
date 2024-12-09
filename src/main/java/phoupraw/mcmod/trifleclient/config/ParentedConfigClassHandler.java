@@ -1,5 +1,7 @@
 package phoupraw.mcmod.trifleclient.config;
 
+import com.google.gson.*;
+import com.mojang.serialization.JsonOps;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.ConfigSerializer;
@@ -9,11 +11,18 @@ import dev.isxander.yacl3.config.v2.impl.ConfigFieldImpl;
 import dev.isxander.yacl3.config.v2.impl.ReflectionFieldAccess;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import lombok.SneakyThrows;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.loot.condition.AnyOfLootCondition;
+import net.minecraft.loot.condition.LootCondition;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryOps;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -41,6 +50,8 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
         serializer = GsonConfigSerializerBuilder.create(this)
           .setJson5(true)
           .setPath(path)
+          .appendGsonBuilder(gsonBuilder -> gsonBuilder
+            .registerTypeAdapter(LootCondition.class, new LootConditionSerializer()))
           .build();
     }
     @Contract(pure = true)
@@ -170,5 +181,33 @@ public class ParentedConfigClassHandler<T> extends BaseConfigClassHandler<T> {
     @Contract(mutates = "this")
     protected void setFields(boolean ignoreSame) {
         fields = toConfigFields(this, instance(), ignoreSame).toArray(new ConfigFieldImpl<?>[0]);
+    }
+    private static class LootConditionSerializer implements JsonSerializer<LootCondition>, JsonDeserializer<LootCondition> {
+        @Override
+        public JsonElement serialize(LootCondition src, Type typeOfSrc, JsonSerializationContext context) {
+            var world = MinecraftClient.getInstance().world;
+            var wrapperLookup = world != null ? world.getRegistryManager() : DynamicRegistryManager.of(Registries.REGISTRIES);
+            var result = LootCondition.CODEC.encodeStart(RegistryOps.of(JsonOps.INSTANCE, wrapperLookup), src);
+            if (result.isError()) {
+                LOGGER.error(result.error().orElseThrow());
+            }
+            if (result.hasResultOrPartial()) {
+                return result.getPartialOrThrow();
+            }
+            return new JsonArray();
+        }
+        @Override
+        public LootCondition deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            var world = MinecraftClient.getInstance().world;
+            var wrapperLookup = world != null ? world.getRegistryManager() : DynamicRegistryManager.of(Registries.REGISTRIES);
+            var result = LootCondition.CODEC.decode(RegistryOps.of(JsonOps.INSTANCE, wrapperLookup), json);
+            if (result.isError()) {
+                LOGGER.error(result.error().orElseThrow());
+            }
+            if (result.hasResultOrPartial()) {
+                return result.getPartialOrThrow().getFirst();
+            }
+            return AnyOfLootCondition.builder().build();
+        }
     }
 }

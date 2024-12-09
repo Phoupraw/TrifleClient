@@ -80,6 +80,20 @@ public class TCConfigs {
     float minMSPT = 0;
     float maxMSPT = 50;
     boolean allowFlight = true;
+    //LootCondition autoPick = AnyOfLootCondition
+    //  .builder(
+    //    BlockStatePropertyLootCondition.builder(Blocks.CAVE_VINES)
+    //      .properties(StatePredicate.Builder.create().exactMatch(CaveVines.BERRIES, true)),
+    //    BlockStatePropertyLootCondition.builder(Blocks.CAVE_VINES_PLANT)
+    //      .properties(StatePredicate.Builder.create().exactMatch(CaveVines.BERRIES, true))
+    //  )
+    //  .build();
     
+    //List<CBlockPredicateArgument.BlockPredicate> autoPick = List.of(
+    //  CBlockPredicateArgument.blockPredicate()
+    //);
+    boolean autoPick = true;
+    String autoPickBlocks = "cave_vines[berries=true]|cave_vines_plant[berries=true]|sweet_berry_bush[age=3]";
+    //
     boolean debugAttackEntity;
 }

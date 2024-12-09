@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +14,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -23,6 +25,7 @@ import org.joml.Vector3d;
 import java.util.Comparator;
 import java.util.List;
 
+@ApiStatus.NonExtendable
 public interface MCUtils {
     @Unmodifiable
     List<@NotNull Direction> DIRECTIONS = List.of(Direction.values());
@@ -78,5 +81,16 @@ public interface MCUtils {
         Vec3d end = eyePos.lerp(centerPos, 2);
         BlockHitResult hitResult = world.raycastBlock(eyePos, end, pos, state.getRaycastShape(world, pos), state);
         return hitResult != null ? hitResult : new BlockHitResult(centerPos, player.getFacing().getOpposite(), pos, false);
+    }
+    /**
+     @throws IllegalStateException null
+     */
+    @Environment(EnvType.CLIENT)
+    static @NotNull ClientPlayerInteractionManager getInteractor() {
+        var interactor = MinecraftClient.getInstance().interactionManager;
+        if (interactor == null) {
+            throw new IllegalStateException();
+        }
+        return interactor;
     }
 }
