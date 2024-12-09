@@ -59,7 +59,7 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     }
     @Dynamic
     @SuppressWarnings("target")
-    @ModifyReturnValue(method = "getVelocityMultiplier", at = @At("RETURN"))
+    @ModifyReturnValue(method = "getVelocityMultiplier()F", at = @At("RETURN"))
     private float minSpeedFactor(float original) {
         return MMClientPlayerEntity.getVelocityMultiplier((ClientPlayerEntity) (Object) this, original);
     }
