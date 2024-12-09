@@ -209,15 +209,6 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             }
             return null;
         });
-        //AfterClientPlayerMove.EVENT.register((player0, movementType, movement) -> {
-        //    var player = (ClientPlayerEntity & AEntity) player0;
-        //    float multiplier = player.invokeGetVelocityMultiplier();
-        //    if (multiplier < 1 && movementType == MovementType.SELF) {
-        //        player.move(MovementType.PLAYER, movement.multiply(1 / multiplier - 1));
-        //        //System.out.printf("%s %s %s%n",player.getPos(), player.getBlockPos().toShortString(), player.getBlockStateAtPos().getBlock().getName().getString());
-        //
-        //    }
-        //});
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
