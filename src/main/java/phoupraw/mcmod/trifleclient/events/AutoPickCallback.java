@@ -9,8 +9,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -22,10 +20,10 @@ import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 
 import java.util.function.Predicate;
-
+@Deprecated
 @Environment(EnvType.CLIENT)
-@FunctionalInterface
 public interface AutoPickCallback {
+    //TODO
     @ApiStatus.Internal
     static @Nullable Hand config(ClientPlayerEntity player, BlockPos pos, BlockState state) {
         String config = TCConfigs.A().getAutoPickBlocks();
@@ -50,13 +48,5 @@ public interface AutoPickCallback {
         }
         return null;
     }
-    @Nullable Hand shouldPick(ClientPlayerEntity player, BlockPos pos, BlockState state);
-    Event<AutoPickCallback> EVENT = EventFactory.createArrayBacked(AutoPickCallback.class, callbacks -> (player, pos, state) -> {
-        for (AutoPickCallback callback : callbacks) {
-            var r = callback.shouldPick(player, pos, state);
-            if (r != null) return r;
-        }
-        return null;
-    });
     Multimap<String, Predicate<CachedBlockPosition>> CACHE = Multimaps.newMultimap(new Object2ObjectOpenHashMap<>(), ObjectArrayList::new);
 }

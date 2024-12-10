@@ -26,6 +26,7 @@
     "minecraft.MClientPlayerEntity",
     "minecraft.MClientPlayerInteractionManager",
     "minecraft.MClientPlayNetworkHandler",
+    "minecraft.MClientWorld",
     "minecraft.MDimensionType",
     "minecraft.MEntity",
     "minecraft.MEntityRenderer",
