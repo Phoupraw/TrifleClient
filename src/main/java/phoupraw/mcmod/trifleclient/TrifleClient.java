@@ -8,6 +8,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
@@ -40,6 +41,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import phoupraw.mcmod.trifleclient.compact.FarmersDelightCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismWeaponsCompact;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
@@ -206,7 +208,13 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             LOGGER.info("检测到《Yet Another Config Lib》，将加载相关兼容。");
             TCYACL.assignConfig();
         }
+        if (FabricLoader.getInstance().isModLoaded(FarmersDelightCompact.MOD_ID)) {
+            LOGGER.info("检测到《农夫乐事》，将加载相关兼容。");
+            AutoPickCallback.EVENT.register(FarmersDelightCompact.TOMATO, FarmersDelightCompact::shouldPick);
+            AutoPickCallback.EVENT.addPhaseOrdering(FarmersDelightCompact.TOMATO, Event.DEFAULT_PHASE);
+        }
         if (!TCMixinConfigPlugin.NEOFORGE) {
+            LOGGER.info("检测到《Neoforge》，将加载相关兼容。");
             AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
                 if (!world.isClient()) return ActionResult.PASS;
                 Boolean r = ClientAttackEntityCallback.EVENT.invoker().shouldCancel(MinecraftClient.getInstance().interactionManager, player, entity);
