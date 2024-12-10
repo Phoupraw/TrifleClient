@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "minecraft.AEntity",
+    "minecraft.MAbstractBlockState",
     "minecraft.MClientCommandC2SPacket",
     "minecraft.MDataTracker",
     "minecraft.MDecoderHandler",
