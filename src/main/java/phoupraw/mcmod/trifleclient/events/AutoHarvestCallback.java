@@ -27,12 +27,13 @@ import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.util.MCUtils;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @FunctionalInterface
 public interface AutoHarvestCallback {
-    Table<ChunkPos, BlockPos, Action> CACHE = Tables.newCustomTable(new Object2ObjectOpenHashMap<>(), Object2ObjectOpenHashMap::new);
+    Table<ChunkPos, BlockPos, Action> CACHE = Tables.newCustomTable(new ConcurrentHashMap<>(), Object2ObjectOpenHashMap::new);
     ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
     Event<AutoHarvestCallback> EVENT = EventFactory.createArrayBacked(AutoHarvestCallback.class, callbacks -> (world, pos, state) -> {
         for (var callback : callbacks) {
