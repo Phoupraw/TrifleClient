@@ -16,9 +16,9 @@ import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 @UtilityClass
 public class FarmersDelightCompact {
     public static final String MOD_ID = "farmersdelight";
-    public static final Identifier TOMATO = Identifier.of(MOD_ID, "tomatoes");
-    public static final Identifier RICE = Identifier.of(MOD_ID, "rice_panicles");
-    public static AutoHarvestCallback findTomatoes(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
+    private static final Identifier TOMATO = Identifier.of(MOD_ID, "tomatoes");
+    private static final Identifier RICE = Identifier.of(MOD_ID, "rice_panicles");
+    private static AutoHarvestCallback findTomatoes(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
         var property = Properties.AGE_3;
         if (state.get(property) == Properties.AGE_3_MAX) {
             return AutoHarvestCallback::simpleUse;
