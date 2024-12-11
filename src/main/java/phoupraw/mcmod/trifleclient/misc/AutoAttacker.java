@@ -35,6 +35,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.constant.TCIDs;
+import phoupraw.mcmod.trifleclient.util.MCUtils;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -75,6 +76,7 @@ public class AutoAttacker {
         }
         return null;
     });
+   
     static {
         ClientPreAttackCallback.EVENT.register(AutoAttacker::autoAttack);
         UseItemCallback.EVENT.addPhaseOrdering(TCIDs.BEFORE, Event.DEFAULT_PHASE);
@@ -90,10 +92,11 @@ public class AutoAttacker {
         BULLET.register(TCIDs.of("alive"), AutoAttacker::checkAlive);
         BULLET.register(TCIDs.of("shulker_bullet"), AutoAttacker::checkShulkerBullet);
         BULLET.register(TCIDs.of("fireball"), AutoAttacker::checkFireball);
+        
     }
     public static boolean isAutoAttacking(ClientPlayerEntity player) {
         GameOptions options = MinecraftClient.getInstance().options;
-        return TCConfigs.A().isAutoAttacker() && options.attackKey.isPressed() && options.useKey.isPressed() && Boolean.TRUE.equals(WEAPON.invoker().apply(new ItemContext(player.getWeaponStack(), player)));
+        return TCConfigs.A().isAutoAttacker() && (options.attackKey.isPressed() && options.useKey.isPressed() /*|| force*/) && Boolean.TRUE.equals(WEAPON.invoker().apply(new ItemContext(player.getWeaponStack(), player)));
     }
     /**
      @return 越小越优先
@@ -139,11 +142,8 @@ public class AutoAttacker {
     private static @Nullable Boolean checkTagWeaponEnchantable(ItemContext context) {
         return context.stack().isIn(ItemTags.WEAPON_ENCHANTABLE) ? true : null;
     }
-    private static boolean autoAttack(MinecraftClient client, ClientPlayerEntity player, int clickCount) {
-        var interactor = client.interactionManager;
-        if (!isAutoAttacking(player) || interactor == null) {
-            return false;
-        }
+    public static void attack(ClientPlayerEntity player) {
+        var interactor = MCUtils.getInteractor();
         if (player.getOffHandStack().isIn(ConventionalItemTags.SHIELD_TOOLS)) {
             interactor.interactItem(player, Hand.OFF_HAND);
         }
@@ -167,6 +167,12 @@ public class AutoAttacker {
         for (Entity bullet : bullets) {
             interactor.attackEntity(player, bullet);
         }
+    }
+    private static boolean autoAttack(MinecraftClient client, ClientPlayerEntity player, int clickCount) {
+        if (!isAutoAttacking(player)) {
+            return false;
+        }
+        attack(player);
         return true;
     }
     private static TypedActionResult<ItemStack> autoAttackPreventUse(PlayerEntity player, World world, Hand hand) {
@@ -206,4 +212,5 @@ public class AutoAttacker {
     public record ItemContext(ItemStack stack, ClientPlayerEntity player) {}
     
     public record TargetContext(Entity target, ClientPlayerEntity player) {}
+    
 }

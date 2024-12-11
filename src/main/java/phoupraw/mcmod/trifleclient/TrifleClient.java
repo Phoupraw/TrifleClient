@@ -75,6 +75,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         loadClass(MiningDelay.class);
         loadClass(AutoAttacker.class);
         loadClass(MiningSame.class);
+        loadClass(Attacking.class);
         ServerTickEvents.START_SERVER_TICK.register(server -> server.setFlightEnabled(TCConfigs.A().isAllowFlight()));
         AfterClientPlayerMove.EVENT.register(NormalSpeed::afterClientPlayerMove);
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
