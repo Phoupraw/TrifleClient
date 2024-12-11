@@ -15,8 +15,6 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -26,17 +24,14 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.state.property.Properties;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.compact.FarmersDelightCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismWeaponsCompact;
+import phoupraw.mcmod.trifleclient.compact.TwilightForestCompact;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.config.TCYACL;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
@@ -44,7 +39,6 @@ import phoupraw.mcmod.trifleclient.events.*;
 import phoupraw.mcmod.trifleclient.misc.*;
 import phoupraw.mcmod.trifleclient.mixin.minecraft.AEntity;
 import phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin;
-import phoupraw.mcmod.trifleclient.v0.api.AutoHarvestCallback;
 import phoupraw.mcmod.trifleclient.v0.impl.AutoHarvestImpls;
 
 import java.lang.invoke.MethodHandles;
@@ -66,14 +60,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     static void loadClass(Class<?> cls) {
         MethodHandles.lookup().ensureInitialized(cls);
     }
-   
-    private static AutoHarvestCallback findTomatoes(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
-        var property = Properties.AGE_3;
-        if (state.get(property) == Properties.AGE_3_MAX) {
-            return AutoHarvestCallback::simpleUse;
-        }
-        return null;
-    }
+    
     @Override
     public void onInitializeClient() {
         loadClass(TargetPointer.class);
@@ -162,11 +149,10 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             TCYACL.assignConfig();
         }
         if (FabricLoader.getInstance().isModLoaded(FarmersDelightCompact.MOD_ID)) {
-            LOGGER.info("检测到《农夫乐事》，将加载相关兼容。");
-            AutoHarvestCallback.LOOKUP.registerForBlocks(TrifleClient::findTomatoes, Registries.BLOCK.get(FarmersDelightCompact.TOMATO), Registries.BLOCK.get(FarmersDelightCompact.RICE));
-            //AutoHarvestCallback.EVENT.register(FarmersDelightCompact.TOMATO,FarmersDelightCompact::checkTomatoes);
-            //AutoHarvestCallback.EVENT.addPhaseOrdering(FarmersDelightCompact.TOMATO, Event.DEFAULT_PHASE);
-            //AutoHarvestCallback.EVENT.register(FarmersDelightCompact.TOMATO,FarmersDelightCompact::checkRice);
+            FarmersDelightCompact.init();
+        }
+        if (FabricLoader.getInstance().isModLoaded(TwilightForestCompact.MOD_ID)) {
+            TwilightForestCompact.init();
         }
         if (!TCMixinConfigPlugin.NEOFORGE) {
             LOGGER.info("检测到《Neoforge》，将加载相关兼容。");
