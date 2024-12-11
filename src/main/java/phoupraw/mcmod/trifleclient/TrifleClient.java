@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -21,12 +22,15 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import phoupraw.mcmod.trifleclient.compact.FarmersDelightCompact;
 import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
@@ -37,6 +41,7 @@ import phoupraw.mcmod.trifleclient.config.TCYACL;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
 import phoupraw.mcmod.trifleclient.events.*;
 import phoupraw.mcmod.trifleclient.misc.*;
+import phoupraw.mcmod.trifleclient.mixin.minecraft.AClientWorld;
 import phoupraw.mcmod.trifleclient.mixin.minecraft.AEntity;
 import phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin;
 import phoupraw.mcmod.trifleclient.v0.impl.AutoHarvestImpls;
@@ -136,6 +141,27 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         GlowingColorCallback.EVENT.register(HostileGlowing::getColor);
         ClientTickEvents.END_WORLD_TICK.register(FishingRodTweaks::onEndTick);
         AutoHarvestImpls.init();
+        ClientTickEvents.END_WORLD_TICK.register(world -> {
+            if (!TCConfigs.A().isAlwaysShield()) return;
+            var player = MinecraftClient.getInstance().player;
+            if (player == null ||player.isUsingItem()&& player.getActiveHand() == Hand.MAIN_HAND) {
+                return;
+            }
+            ItemStack offHandStack = player.getOffHandStack();
+            if (!offHandStack.isIn(ConventionalItemTags.SHIELD_TOOLS) || player.getItemCooldownManager().isCoolingDown(offHandStack.getItem())) {
+                return;
+            }
+            //ItemStack mainHandStack = player.getMainHandStack();
+            //if (!mainHandStack.isIn(ConventionalItemTags.MELEE_WEAPON_TOOLS) && !mainHandStack.isIn(ConventionalItemTags.MINING_TOOL_TOOLS)) {
+            //    return;
+            //}
+            //MCUtils.getInteractor().interactItem(player, Hand.OFF_HAND);
+            player.clearActiveItem();
+            try (var sequence = ((AClientWorld) world).invokeGetPendingUpdateManager().incrementSequence()) {
+                player.networkHandler.sendPacket(new PlayerInteractItemC2SPacket(Hand.OFF_HAND, sequence.getSequence(), player.getYaw(), player.getPitch()));
+            }
+            player.clearActiveItem();
+        });
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);

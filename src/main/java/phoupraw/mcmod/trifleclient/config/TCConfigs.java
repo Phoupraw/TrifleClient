@@ -96,6 +96,7 @@ public class TCConfigs {
     String autoPickBlocks = "cave_vines[berries=true]|cave_vines_plant[berries=true]|sweet_berry_bush[age=3]";
     float minSpeedFactor = 1;
     boolean autoHarvest = true;
+    boolean alwaysShield = true;
     //
     boolean debugAttackEntity;
 }
