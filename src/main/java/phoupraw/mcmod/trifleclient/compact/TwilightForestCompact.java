@@ -21,6 +21,7 @@ import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 public class TwilightForestCompact {
     public static final String MOD_ID = "twilightforest";
     private static final RegistryKey<EntityType<?>> LICH_BOLT = RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "lich_bolt"));
+    private static final RegistryKey<EntityType<?>> HYDRA_MORTAR = RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "hydra_mortar"));
     private static final RegistryKey<Block> TORCH_BERRY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "torchberry_plant"));
     public static void init() {
         LOGGER.info("检测到《暮色森林》，将加载相关兼容。");
@@ -37,6 +38,7 @@ public class TwilightForestCompact {
     }
     @SuppressWarnings("deprecation")
     private static Boolean autoAttack(AutoAttacker.TargetContext targetContext) {
-        return targetContext.target().getType().getRegistryEntry().getKey().orElseThrow().equals(LICH_BOLT) ? true : null;
+        var registryKey = targetContext.target().getType().getRegistryEntry().getKey().orElseThrow();
+        return registryKey.equals(LICH_BOLT)||registryKey.equals(HYDRA_MORTAR) ? true : null;
     }
 }
