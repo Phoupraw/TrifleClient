@@ -32,9 +32,6 @@ public class AutoSwitchTools {
                         maxProgress = progress;
                         selected = i;
                     }
-                    //ToolComponent tool = stack.get(DataComponentTypes.TOOL);
-                    //if (tool == null) continue;
-                    //float speed = tool.getSpeed(state);
                 }
                 if (selected >= 0) {
                     AutoSwitchTools.prevSelected = prevSelected;

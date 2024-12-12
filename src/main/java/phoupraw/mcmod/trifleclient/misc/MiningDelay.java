@@ -7,8 +7,10 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import org.jetbrains.annotations.ApiStatus;
@@ -27,8 +29,7 @@ public class MiningDelay {
         ClientTickEvents.START_WORLD_TICK.register(MiningDelay::onStartTick);
         ClientPreAttackCallback.EVENT.register((client, player, clickCount) -> {
             if (isOn() && client.crosshairTarget instanceof BlockHitResult hitResult && hitResult.getType() != HitResult.Type.MISS) {
-                long time = player.getWorld().getTime();
-                if (time - lastBreak < 5) {
+                if (player.getWorld().getTime() - lastBreak < 5) {
                     return true;
                 }
             }
@@ -38,6 +39,10 @@ public class MiningDelay {
             lastBreak = world.getTime();
         });
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> lastBreak = -100);
+        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            lastBreak = world.getTime();
+            return ActionResult.PASS;
+        });
     }
     @ApiStatus.Internal
     public static int removeDelay(ClientPlayerInteractionManager self, int original) {
