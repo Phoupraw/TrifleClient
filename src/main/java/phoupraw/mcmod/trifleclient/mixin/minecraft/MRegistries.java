@@ -9,7 +9,7 @@ import phoupraw.mcmod.trifleclient.v0.api.RegistryFreezeCallback;
 
 @Mixin(Registries.class)
 abstract class MRegistries {
-    @Inject(method = "freezeRegistries", at = @At("RETURN"), remap = false)
+    @Inject(method = "freezeRegistries", at = @At("RETURN"))
     private static void afterFreeze(CallbackInfo ci) {
         RegistryFreezeCallback.EVENT.invoker().afterAllFreezed();
     }
