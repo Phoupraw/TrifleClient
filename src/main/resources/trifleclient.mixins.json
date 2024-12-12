@@ -15,7 +15,7 @@
     "minecraft.MPacketCodecDispatcher",
     "minecraft.MPlayerEntity",
     "minecraft.MPlayerInputC2SPacket",
-    "minecraft.MPlayerMoveC2SPacket"
+    "minecraft.MPlayerMoveC2SPacket", "minecraft.MRegistries"
   ],
   "injectors": {
     "defaultRequire": 1

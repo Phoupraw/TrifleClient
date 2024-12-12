@@ -203,10 +203,10 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             TCYACL.assignConfig();
         }
         if (FabricLoader.getInstance().isModLoaded(FarmersDelightCompact.MOD_ID)) {
-            FarmersDelightCompact.init();
+            loadClass(FarmersDelightCompact.class);
         }
         if (FabricLoader.getInstance().isModLoaded(TwilightForestCompact.MOD_ID)) {
-            TwilightForestCompact.init();
+            loadClass(TwilightForestCompact.class);
         }
         if (!TCMixinConfigPlugin.NEOFORGE) {
             LOGGER.info("检测到《Neoforge》，将加载相关兼容。");
