@@ -48,23 +48,26 @@ public class AutoSwitchTools {
         });
         ClientPlayerBlockBreakEvents.AFTER.register((world, player, pos, state) -> {
             if (prevSelected >= 0) {
-                player.getInventory().selectedSlot = prevSelected;
-                prevSelected = -1;
-                toSync = true;
+                setBack(player);
             }
         });
         ClientTickEvents.END_WORLD_TICK.register(world -> {
+            var player = MinecraftClient.getInstance().player;
+            if (player == null) return;
+            if (prevSelected >= 0 && !MinecraftClient.getInstance().options.attackKey.isPressed()) {
+                setBack(player);
+            }
             if (toSync) {
-                var player = MinecraftClient.getInstance().player;
-                if (player != null) {
-                    player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(player.getInventory().selectedSlot));
-                    toSync = false;
-                }
+                player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(player.getInventory().selectedSlot));
+                toSync = false;
             }
         });
     }
     public static void onStopBreaking(ClientPlayerEntity player, boolean value) {
         if (value || prevSelected < 0 || player == null) return;
+        setBack(player);
+    }
+    private static void setBack(ClientPlayerEntity player) {
         player.getInventory().selectedSlot = prevSelected;
         prevSelected = -1;
         toSync = true;

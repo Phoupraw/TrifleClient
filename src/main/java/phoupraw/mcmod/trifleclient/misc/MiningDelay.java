@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -36,6 +37,7 @@ public class MiningDelay {
         ClientPlayerBlockBreakEvents.AFTER.register((world, player, pos, state) -> {
             lastBreak = world.getTime();
         });
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> lastBreak = -100);
     }
     @ApiStatus.Internal
     public static int removeDelay(ClientPlayerInteractionManager self, int original) {
