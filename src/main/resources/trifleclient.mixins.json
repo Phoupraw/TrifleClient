@@ -3,6 +3,7 @@
   "package": "phoupraw.mcmod.trifleclient.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "minecraft.AAlternativeLootCondition",
     "minecraft.AEntity",
     "minecraft.MAbstractBlockState",
     "minecraft.MClientCommandC2SPacket",

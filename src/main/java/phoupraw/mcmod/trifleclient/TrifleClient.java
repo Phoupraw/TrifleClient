@@ -163,6 +163,33 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
             }
             player.clearActiveItem();
         });
+        //ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+        //    String autoPickBlocks = TCConfigs.A().getAutoPickBlocks();
+        //    NbtCompound parsed;
+        //    try {
+        //        parsed = StringNbtReader.parse(autoPickBlocks);
+        //    } catch (CommandSyntaxException e) {
+        //        LOGGER.catching(e);
+        //        LOGGER.error(autoPickBlocks);
+        //        return;
+        //    }
+        //    var result = LootCondition.CODEC.decode(RegistryOps.of(NbtOps.INSTANCE, handler.getRegistryManager()), parsed);
+        //    if (result.isError()) {
+        //        LOGGER.error(result.error().orElseThrow().message());
+        //    }
+        //    if (!result.hasResultOrPartial()) {
+        //        return;
+        //    }
+        //    LootCondition condition = result.getPartialOrThrow().getFirst();
+        //    if (condition instanceof AnyOfLootCondition) {
+        //        var anyOf = (AnyOfLootCondition & AAlternativeLootCondition) condition;
+        //        for (var term : anyOf.getTerms()) {
+        //            if (term instanceof LocationCheckLootCondition offsetted && offsetted.predicate().isPresent() && offsetted.predicate().get().block().isPresent()) {
+        //
+        //            }
+        //        }
+        //    }
+        //});
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);

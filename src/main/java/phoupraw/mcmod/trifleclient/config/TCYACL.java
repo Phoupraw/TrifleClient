@@ -12,6 +12,7 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
 import dev.isxander.yacl3.gui.YACLScreen;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -223,6 +224,7 @@ public interface TCYACL {
                 }
             });
         });
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> getConfig().load());
     }
     static ConfigClassHandler<TCConfigs> getConfig(MinecraftServer server) {
         String key = server.getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
