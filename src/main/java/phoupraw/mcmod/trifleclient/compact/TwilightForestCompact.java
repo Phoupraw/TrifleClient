@@ -47,7 +47,7 @@ public class TwilightForestCompact {
     }
     private static AutoHarvestCallback findTorchBerry(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
         for (var entry : state.getEntries().entrySet()) {
-            if (entry.getKey().getName().equals("has_torchberries")&&(Boolean) entry.getValue()) {
+            if (entry.getKey().getName().equals("has_torchberries") && (Boolean) entry.getValue()) {
                 return AutoHarvestCallback::simpleUse;
             }
         }
@@ -56,7 +56,7 @@ public class TwilightForestCompact {
     @SuppressWarnings("deprecation")
     private static Boolean autoAttack(AutoAttacker.TargetContext targetContext) {
         var registryKey = targetContext.target().getType().getRegistryEntry().getKey().orElseThrow();
-        return registryKey.equals(LICH_BOLT)||registryKey.equals(HYDRA_MORTAR) ? true : null;
+        return registryKey.equals(LICH_BOLT) || registryKey.equals(HYDRA_MORTAR) ? true : null;
     }
     private static AutoHarvestCallback findBrownThorns(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
         return TwilightForestCompact::burn;
