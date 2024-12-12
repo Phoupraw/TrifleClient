@@ -97,6 +97,7 @@ public class TCConfigs {
     float minSpeedFactor = 1;
     boolean autoHarvest = true;
     boolean alwaysShield = true;
+    boolean autoSwitchTool = true;
     //
     boolean debugAttackEntity;
 }

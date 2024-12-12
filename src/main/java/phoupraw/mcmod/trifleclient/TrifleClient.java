@@ -190,6 +190,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         //        }
         //    }
         //});
+        loadClass(AutoSwitchTools.class);
         if (FabricLoader.getInstance().isModLoaded(MekanismCompact.MOD_ID)) {
             LOGGER.info("检测到《通用机械》，将加载相关兼容。");
             AutoAttacker.WEAPON.register(MekanismCompact::isWeapon);
