@@ -16,7 +16,7 @@ import java.util.Set;
 
 public final class TCMixinConfigPlugin implements IMixinConfigPlugin {
     @ApiStatus.Internal
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger(TrifleClient.ID);
     public static final boolean NEOFORGE = FabricLoader.getInstance().isModLoaded("neoforge");
     @Override
     public void onLoad(String mixinPackage) {

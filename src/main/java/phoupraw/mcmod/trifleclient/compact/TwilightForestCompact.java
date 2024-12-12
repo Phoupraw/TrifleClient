@@ -9,12 +9,16 @@ import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.misc.AutoAttacker;
@@ -59,8 +63,11 @@ public class TwilightForestCompact {
     }
     @SuppressWarnings("deprecation")
     private static void burn(ClientPlayerEntity player, ClientPlayerInteractionManager interactor, ClientWorld world, BlockPos pos, BlockState state) {
-        if (player.getMainHandStack().getItem().getRegistryEntry().matchesKey(LAMP_OF_CINDERS) || player.getOffHandStack().getItem().getRegistryEntry().matchesKey(LAMP_OF_CINDERS) && player.getMainHandStack().isIn(ItemTags.SWORDS)) {
+        ItemStack mainHand = player.getMainHandStack();
+        if (mainHand.getItem().getRegistryEntry().registryKey().equals(LAMP_OF_CINDERS)) {
             AutoHarvestCallback.simpleUse(player, interactor, world, pos, state);
+        } else if (player.getOffHandStack().getItem().getRegistryEntry().registryKey().equals(LAMP_OF_CINDERS) && mainHand.isIn(ItemTags.SWORDS)) {
+            interactor.interactBlock(player, Hand.OFF_HAND, new BlockHitResult(pos.toCenterPos(), Direction.UP, pos.toImmutable(), false));
         }
     }
     private static AutoHarvestCallback findBurntThorns(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
