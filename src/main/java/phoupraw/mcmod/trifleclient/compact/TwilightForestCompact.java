@@ -1,6 +1,7 @@
 package phoupraw.mcmod.trifleclient.compact;
 
 import lombok.experimental.UtilityClass;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -23,7 +24,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.misc.AutoAttacker;
 import phoupraw.mcmod.trifleclient.v0.api.AutoHarvestCallback;
-import phoupraw.mcmod.trifleclient.v0.api.RegistryFreezeCallback;
 
 import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 
@@ -39,7 +39,7 @@ public class TwilightForestCompact {
     static {
         LOGGER.info("检测到《暮色森林》，将加载相关兼容。");
         AutoAttacker.BULLET.register(TwilightForestCompact::autoAttack);
-        RegistryFreezeCallback.EVENT.register(() -> {
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
             AutoHarvestCallback.LOOKUP.registerForBlocks(TwilightForestCompact::findTorchBerry, Registries.BLOCK.get(TwilightForestCompact.TORCH_BERRY));
             AutoHarvestCallback.LOOKUP.registerForBlocks(TwilightForestCompact::findBrownThorns, Registries.BLOCK.get(TwilightForestCompact.BROWN_THORNS));
             AutoHarvestCallback.LOOKUP.registerForBlocks(TwilightForestCompact::findBurntThorns, Registries.BLOCK.get(TwilightForestCompact.BURNT_THORNS));

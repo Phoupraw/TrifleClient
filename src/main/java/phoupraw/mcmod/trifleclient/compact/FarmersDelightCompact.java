@@ -1,6 +1,7 @@
 package phoupraw.mcmod.trifleclient.compact;
 
 import lombok.experimental.UtilityClass;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.registry.Registries;
@@ -10,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.v0.api.AutoHarvestCallback;
-import phoupraw.mcmod.trifleclient.v0.api.RegistryFreezeCallback;
 
 import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 
@@ -28,7 +28,7 @@ public class FarmersDelightCompact {
     }
     static {
         LOGGER.info("检测到《农夫乐事》，将加载相关兼容。");
-        RegistryFreezeCallback.EVENT.register(() -> {
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
             AutoHarvestCallback.LOOKUP.registerForBlocks(FarmersDelightCompact::findTomatoes, Registries.BLOCK.get(FarmersDelightCompact.TOMATO), Registries.BLOCK.get(FarmersDelightCompact.RICE));
         });
     }
