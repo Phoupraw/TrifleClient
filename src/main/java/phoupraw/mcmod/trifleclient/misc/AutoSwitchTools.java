@@ -1,8 +1,11 @@
 package phoupraw.mcmod.trifleclient.misc;
 
 import lombok.experimental.UtilityClass;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
@@ -11,6 +14,7 @@ import net.minecraft.util.ActionResult;
 @UtilityClass
 public class AutoSwitchTools {
     private int prevSelected = -1;
+    private boolean toSync;
     static {
         AttackBlockCallback.EVENT.register((player0, world, hand, pos, direction) -> {
             if (player0 instanceof ClientPlayerEntity player) {
@@ -42,18 +46,27 @@ public class AutoSwitchTools {
             }
             return ActionResult.PASS;
         });
-        //ClientPlayerBlockBreakEvents.AFTER.register((world, player, pos, state) -> {
-        //    if (prevSelected >= 0) {
-        //        player.getInventory().selectedSlot = prevSelected;
-        //        //player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(prevSelected));
-        //        prevSelected = -1;
-        //    }
-        //});
+        ClientPlayerBlockBreakEvents.AFTER.register((world, player, pos, state) -> {
+            if (prevSelected >= 0) {
+                player.getInventory().selectedSlot = prevSelected;
+                prevSelected = -1;
+                toSync = true;
+            }
+        });
+        ClientTickEvents.END_WORLD_TICK.register(world -> {
+            if (toSync) {
+                var player = MinecraftClient.getInstance().player;
+                if (player != null) {
+                    player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(player.getInventory().selectedSlot));
+                    toSync = false;
+                }
+            }
+        });
     }
     public static void onStopBreaking(ClientPlayerEntity player, boolean value) {
         if (value || prevSelected < 0 || player == null) return;
         player.getInventory().selectedSlot = prevSelected;
-        //player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(prevSelected));
         prevSelected = -1;
+        toSync = true;
     }
 }
