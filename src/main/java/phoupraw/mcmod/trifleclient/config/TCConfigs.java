@@ -98,7 +98,8 @@ public class TCConfigs {
     boolean autoHarvest = true;
     boolean alwaysShield = true;
     boolean autoSwitchTool = true;
-    double limitSpeed = 0.2;
+    double limitSpeed = 0.13;
+    float limitJump = 0.51f;
     //
     boolean debugAttackEntity;
 }

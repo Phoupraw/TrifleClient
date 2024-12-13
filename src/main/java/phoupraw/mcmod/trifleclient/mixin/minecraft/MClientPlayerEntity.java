@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.events.AfterClientPlayerMove;
 import phoupraw.mcmod.trifleclient.events.OnClientPlayerMove;
 import phoupraw.mcmod.trifleclient.mixins.minecraft.MMClientPlayerEntity;
@@ -78,4 +79,9 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     //private boolean stopFlying(PlayerAbilities instance, boolean value) {
     //    return MMClientPlayerEntity.stopFlying((ClientPlayerEntity) (Object) this, instance, value);
     //}
+    
+    @Override
+    protected float getJumpVelocity() {
+        return Math.min(super.getJumpVelocity(), TCConfigs.A().getLimitJump());
+    }
 }
