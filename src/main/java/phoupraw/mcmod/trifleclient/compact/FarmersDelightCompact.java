@@ -19,6 +19,15 @@ public class FarmersDelightCompact {
     public static final String MOD_ID = "farmersdelight";
     private static final Identifier TOMATO = Identifier.of(MOD_ID, "tomatoes");
     private static final Identifier RICE = Identifier.of(MOD_ID, "rice_panicles");
+    static {
+        LOGGER.info("检测到《农夫乐事》，将加载相关兼容。");
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+            AutoHarvestCallback.LOOKUP.registerForBlocks(FarmersDelightCompact::findTomatoes, Registries.BLOCK.get(FarmersDelightCompact.TOMATO));
+        });
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+            AutoHarvestCallback.LOOKUP.registerForBlocks(FarmersDelightCompact::findRicePanicles, Registries.BLOCK.get(FarmersDelightCompact.RICE));
+        });
+    }
     private static AutoHarvestCallback findTomatoes(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
         var property = Properties.AGE_3;
         if (state.get(property) == Properties.AGE_3_MAX) {
@@ -26,10 +35,11 @@ public class FarmersDelightCompact {
         }
         return null;
     }
-    static {
-        LOGGER.info("检测到《农夫乐事》，将加载相关兼容。");
-        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
-            AutoHarvestCallback.LOOKUP.registerForBlocks(FarmersDelightCompact::findTomatoes, Registries.BLOCK.get(FarmersDelightCompact.TOMATO), Registries.BLOCK.get(FarmersDelightCompact.RICE));
-        });
+    private static AutoHarvestCallback findRicePanicles(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
+        var property = Properties.AGE_3;
+        if (state.get(property) == Properties.AGE_3_MAX) {
+            return AutoHarvestCallback::simpleAttack;
+        }
+        return null;
     }
 }
