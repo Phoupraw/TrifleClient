@@ -1,5 +1,6 @@
 package phoupraw.mcmod.trifleclient.misc;
 
+import it.unimi.dsi.fastutil.objects.ObjectAVLTreeSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.api.EnvType;
@@ -17,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RangedAttackMob;
+import net.minecraft.entity.mob.EndermiteEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.FishEntity;
@@ -85,6 +87,7 @@ public class AutoAttacker {
         UseBlockCallback.EVENT.register(AutoAttacker::autoAttackPreventUse);
         WEAPON.register(TCIDs.of("tag/weapon"), AutoAttacker::checkTagWeapon);
         WEAPON.register(TCIDs.of("tag/enchantable/weapon"), AutoAttacker::checkTagWeaponEnchantable);
+        VICTIM.register(AutoAttacker::checkEndermite);
         VICTIM.register(TCIDs.of("alive"), AutoAttacker::checkAlive);
         VICTIM.register(TCIDs.of("monster"), AutoAttacker::checkMonster);
         VICTIM.register(TCIDs.of("fish"), AutoAttacker::checkFish);
@@ -92,7 +95,6 @@ public class AutoAttacker {
         BULLET.register(TCIDs.of("alive"), AutoAttacker::checkAlive);
         BULLET.register(TCIDs.of("shulker_bullet"), AutoAttacker::checkShulkerBullet);
         BULLET.register(TCIDs.of("fireball"), AutoAttacker::checkFireball);
-        
     }
     public static boolean isAutoAttacking(ClientPlayerEntity player) {
         GameOptions options = MinecraftClient.getInstance().options;
@@ -148,21 +150,23 @@ public class AutoAttacker {
             interactor.interactItem(player, Hand.OFF_HAND);
         }
         double range = player.getEntityInteractionRange() + 10;
-        Entity target = null;
+        Collection<Entity> victims = new ObjectAVLTreeSet<>((a, b) -> compareVictim(player, a, b));
         Collection<Entity> bullets = new ObjectArrayList<>();
         for (Entity entity : player.getWorld().getOtherEntities(player, player.getBoundingBox().expand(range))) {
-            if (!player.canInteractWithEntity(entity, 1)) continue;
+            if (!player.canInteractWithEntity(entity, 0)) continue;
             if (isValidVictim(player, entity)) {
-                if (target == null || compareVictim(player, target, entity) > 0) {
-                    target = entity;
-                }
+                victims.add(entity);
             }
             if (isValidBullet(player, entity)) {
                 bullets.add(entity);
             }
         }
-        if (target != null && player.getAttackCooldownProgress(0) >= 1) {
-            interactor.attackEntity(player, target);
+        for (Entity victim : victims) {
+            if (player.getAttackCooldownProgress(0) >= 1) {
+                interactor.attackEntity(player, victim);
+            } else {
+                break;
+            }
         }
         for (Entity bullet : bullets) {
             interactor.attackEntity(player, bullet);
@@ -207,6 +211,9 @@ public class AutoAttacker {
     private static @Nullable Boolean checkFireball(TargetContext context) {
         Entity target = context.target();
         return target instanceof FireballEntity && target.getVelocity().dotProduct(context.player().getPos().subtract(target.getPos())) > 0 ? true : null;
+    }
+    private static Boolean checkEndermite(TargetContext targetContext) {
+        return targetContext.target() instanceof EndermiteEntity endermite && endermite.hasCustomName() ? false : null;
     }
     
     public record ItemContext(ItemStack stack, ClientPlayerEntity player) {}
