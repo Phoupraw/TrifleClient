@@ -298,3 +298,6 @@
 - 自动攻击不再攻击命名的末影螨
 ## 修复
 - 不自动收割稻米
+#
+## 修复
+- 自动收割补种有时消耗两个种子（[#12](https://github.com/Phoupraw/TrifleClient/issues/12)）

@@ -127,8 +127,12 @@ public class AutoHarvestImpls {
             return;
         }
         interactor.attackBlock(pos.toImmutable(), Direction.UP);
-        interactor.interactBlock(player, Hand.OFF_HAND, new BlockHitResult(pos.toBottomCenterPos(), Direction.UP, pos.toImmutable(), false));
-        stack.decrementUnlessCreative(1, player);
+        int preCount = stack.getCount();
+        interactor.interactBlock(player, Hand.OFF_HAND, new BlockHitResult(pos.toBottomCenterPos(), Direction.UP, pos.down(), false));
+        int count = stack.getCount();
+        if (count == preCount) {
+            stack.decrementUnlessCreative(1, player);
+        }
     }
     private static AutoHarvestCallback findBamboo(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
         if (world.getBlockState(pos.down()).isOf(Blocks.BAMBOO)) {
