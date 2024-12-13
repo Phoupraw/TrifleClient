@@ -32,10 +32,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
-import phoupraw.mcmod.trifleclient.compact.FarmersDelightCompact;
-import phoupraw.mcmod.trifleclient.compact.MekanismCompact;
-import phoupraw.mcmod.trifleclient.compact.MekanismWeaponsCompact;
-import phoupraw.mcmod.trifleclient.compact.TwilightForestCompact;
+import phoupraw.mcmod.trifleclient.compact.*;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.config.TCYACL;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
@@ -208,6 +205,9 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         }
         if (FabricLoader.getInstance().isModLoaded(TwilightForestCompact.MOD_ID)) {
             loadClass(TwilightForestCompact.class);
+        }
+        if (FabricLoader.getInstance().isModLoaded(StorageDrawersCompact.MOD_ID)) {
+            loadClass(StorageDrawersCompact.class);
         }
         if (!TCMixinConfigPlugin.NEOFORGE) {
             LOGGER.info("检测到《Neoforge》，将加载相关兼容。");
