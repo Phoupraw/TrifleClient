@@ -35,6 +35,7 @@ public class TwilightForestCompact {
     private static final RegistryKey<Block> TORCH_BERRY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "torchberry_plant"));
     private static final RegistryKey<Block> BROWN_THORNS = RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "brown_thorns"));
     private static final RegistryKey<Block> BURNT_THORNS = RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "burnt_thorns"));
+    private static final RegistryKey<Block> TROLLBER = RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "trollber"));
     private static final RegistryKey<Item> LAMP_OF_CINDERS = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "lamp_of_cinders"));
     static {
         LOGGER.info("检测到《暮色森林》，将加载相关兼容。");
@@ -43,6 +44,7 @@ public class TwilightForestCompact {
             AutoHarvestCallback.LOOKUP.registerForBlocks(TwilightForestCompact::findTorchBerry, Registries.BLOCK.get(TwilightForestCompact.TORCH_BERRY));
             AutoHarvestCallback.LOOKUP.registerForBlocks(TwilightForestCompact::findBrownThorns, Registries.BLOCK.get(TwilightForestCompact.BROWN_THORNS));
             AutoHarvestCallback.LOOKUP.registerForBlocks(TwilightForestCompact::findBurntThorns, Registries.BLOCK.get(TwilightForestCompact.BURNT_THORNS));
+            AutoHarvestCallback.LOOKUP.registerForBlocks(TwilightForestCompact::findTrollber, Registries.BLOCK.get(TwilightForestCompact.TROLLBER));
         });
     }
     private static AutoHarvestCallback findTorchBerry(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
@@ -72,5 +74,8 @@ public class TwilightForestCompact {
     }
     private static AutoHarvestCallback findBurntThorns(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
         return AutoHarvestCallback::simpleAttack;
+    }
+    private static AutoHarvestCallback findTrollber(World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Void context) {
+        return AutoHarvestCallback::simpleUse;
     }
 }
