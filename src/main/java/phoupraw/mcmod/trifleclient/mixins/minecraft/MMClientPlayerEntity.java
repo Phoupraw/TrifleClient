@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerAbilities;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
@@ -65,5 +66,8 @@ public interface MMClientPlayerEntity {
     }
     static float getVelocityMultiplier(ClientPlayerEntity self, float original) {
         return Math.max(original, TCConfigs.A().getMinSpeedFactor());
+    }
+    static boolean canWalkOnFluid(ClientPlayerEntity self, FluidState state) {
+        return false;
     }
 }

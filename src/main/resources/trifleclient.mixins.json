@@ -11,11 +11,13 @@
     "minecraft.MDecoderHandler",
     "minecraft.MFireworkRocketEntity",
     "minecraft.MFishingBobberEntity",
+    "minecraft.MFluidBlock",
     "minecraft.MLivingEntity",
     "minecraft.MPacketCodecDispatcher",
     "minecraft.MPlayerEntity",
     "minecraft.MPlayerInputC2SPacket",
-    "minecraft.MPlayerMoveC2SPacket", "minecraft.MRegistries"
+    "minecraft.MPlayerMoveC2SPacket",
+    "minecraft.MRegistries"
   ],
   "injectors": {
     "defaultRequire": 1

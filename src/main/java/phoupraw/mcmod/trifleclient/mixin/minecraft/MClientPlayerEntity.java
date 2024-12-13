@@ -84,4 +84,8 @@ abstract class MClientPlayerEntity extends AbstractClientPlayerEntity {
     protected float getJumpVelocity() {
         return Math.min(super.getJumpVelocity(), TCConfigs.A().getLimitJump());
     }
+    //@Override
+    //public boolean canWalkOnFluid(FluidState state) {
+    //    return MMClientPlayerEntity.canWalkOnFluid((ClientPlayerEntity) (Object) this, state);
+    //}
 }

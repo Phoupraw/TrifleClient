@@ -100,6 +100,7 @@ public class TCConfigs {
     boolean autoSwitchTool = true;
     double limitSpeed = 0.13;
     float limitJump = 0.51f;
+    boolean walkOnFluid = true;
     //
     boolean debugAttackEntity;
 }
