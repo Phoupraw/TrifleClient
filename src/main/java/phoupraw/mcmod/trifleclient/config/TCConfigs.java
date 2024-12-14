@@ -101,6 +101,7 @@ public class TCConfigs {
     double limitSpeed = 0.13;
     float limitJump = 0.51f;
     boolean walkOnFluid = true;
+    int chatMaxLen = Integer.MAX_VALUE;
     //
     boolean debugAttackEntity;
 }

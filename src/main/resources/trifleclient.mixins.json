@@ -17,7 +17,7 @@
     "minecraft.MPlayerEntity",
     "minecraft.MPlayerInputC2SPacket",
     "minecraft.MPlayerMoveC2SPacket",
-    "minecraft.MRegistries"
+    "minecraft.MRegistries", "minecraft.MStringHelper"
   ],
   "injectors": {
     "defaultRequire": 1
