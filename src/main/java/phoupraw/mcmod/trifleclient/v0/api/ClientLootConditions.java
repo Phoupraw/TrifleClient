@@ -164,19 +164,19 @@ public class ClientLootConditions {
         if (self.dimension().isPresent() && !self.dimension().get().equals(world.getRegistryKey())) {
             return false;
         }
-        if (self.smokey().isPresent() && self.smokey().get() == CampfireBlock.isLitCampfireInRange(world, blockPos)) {
+        if (self.smokey().isPresent() && self.smokey().get() != CampfireBlock.isLitCampfireInRange(world, blockPos)) {
             return false;
         }
-        if (self.light().isPresent() && test(self.light().get(), world, blockPos)) {
+        if (self.light().isPresent() && !test(self.light().get(), world, blockPos)) {
             return false;
         }
-        if (self.block().isPresent() && test(self.block().get(), world, blockPos)) {
+        if (self.block().isPresent() && !test(self.block().get(), world, blockPos)) {
             return false;
         }
-        if (self.fluid().isPresent() && test(self.fluid().get(), world, blockPos)) {
+        if (self.fluid().isPresent() && !test(self.fluid().get(), world, blockPos)) {
             return false;
         }
-        if (self.canSeeSky().isPresent() && self.canSeeSky().get() == world.isSkyVisible(blockPos)) {
+        if (self.canSeeSky().isPresent() && self.canSeeSky().get() != world.isSkyVisible(blockPos)) {
             return false;
         }
         return true;
@@ -192,7 +192,10 @@ public class ClientLootConditions {
             return false;
         }
         BlockState state = world.getBlockState(pos);
-        if (!self.blocks().isEmpty() && !state.isIn(self.blocks().get()) || self.state().isPresent() && !(self.state().get()).test(state)) {
+        if (self.blocks().isPresent() && !state.isIn(self.blocks().get())) {
+            return false;
+        }
+        if (self.state().isPresent() && !self.state().get().test(state)) {
             return false;
         }
         if (!self.nbt().isPresent()) return true;
