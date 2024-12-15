@@ -298,7 +298,7 @@
 - 自动攻击不再攻击命名的末影螨
 ## 修复
 - 不自动收割稻米
-#
+# 0.39.0
 ## 新增
 - 限制速度也会限制FOV
 - `/trifleclient find blocks <condition>`
