@@ -38,6 +38,7 @@ public class BlockFinder2 {
     private volatile static @NotNull Iterator<BlockPos> iterator = Collections.emptyIterator();
     private volatile static @NotNull LootCondition condition = AnyOfLootCondition.builder().build();
     private volatile static @Nullable BlockPos found;
+    private volatile boolean stopping, stopped = true;
     static {
         ClientCommandRegistrationCallback.EVENT.register(BlockFinder2::register);
         ClientTickEvents.END_WORLD_TICK.register(BlockFinder2::onEndTick);
@@ -65,18 +66,17 @@ public class BlockFinder2 {
     }
     private static void onEndTick(ClientWorld world) {
         if (!TCConfigs.A().isBlockFinder()) return;
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return;
         BlockPos found = BlockFinder2.found;
         if (found == null || BlockArgumentType.test(condition, world, found)) return;
         synchronized (BlockFinder.class) {
             found = BlockFinder2.found;
             if (found == null || BlockArgumentType.test(condition, world, found)) return;
             try {
-                start(found);
+                start(player.getBlockPos());
             } catch (InterruptedException e) {
-                ClientPlayerEntity player = MinecraftClient.getInstance().player;
-                if (player != null) {
-                    player.sendMessage(Text.empty().append("开始新一轮搜索时发生错误：" + e).formatted(Formatting.RED));
-                }
+                player.sendMessage(Text.empty().append("开始新一轮搜索时发生错误：" + e).formatted(Formatting.RED));
                 LOGGER.catching(e);
             }
         }
@@ -119,19 +119,29 @@ public class BlockFinder2 {
         TargetPointer.POSITIONS.remove(found.toCenterPos());
         BlockHighlighter.BLOCK_BOXES.remove(new BlockBox(found));
         BlockFinder2.found = null;
+        stopping = true;
     }
     /**
      需要外部同步
      */
     private static void start(BlockPos origin) throws InterruptedException {
         clearFound();
+        while (!stopped) {
+            Thread.yield();
+        }
+        stopping = false;
         int range = (MinecraftClient.getInstance().options.getViewDistance().getValue() * 2 + 1) * 16 / 2;
         iterator = BlockPos.iterateOutwards(origin, range, range, range).iterator();
         THREAD_POOL.execute(BlockFinder2::run);
     }
     private static void run() {
+        stopped = false;
         boolean failed = true;
         while (iterator.hasNext()) {
+            if (stopping) {
+                stopped = true;
+                return;
+            }
             try {
                 ClientWorld world = MinecraftClient.getInstance().world;
                 if (world == null) break;
@@ -171,5 +181,6 @@ public class BlockFinder2 {
                 player.sendMessage(Text.empty().append("未能找到方块。").fillStyle(Style.EMPTY.withColor(0xFFFF8888)));
             }
         }
+        stopped = true;
     }
 }

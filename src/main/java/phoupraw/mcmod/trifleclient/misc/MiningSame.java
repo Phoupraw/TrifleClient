@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import phoupraw.mcmod.trifleclient.constant.TCKeyBindings;
-
+//TODO
 public class MiningSame {
     private static Block block = Blocks.AIR;
     static {

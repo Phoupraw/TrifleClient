@@ -1,15 +1,19 @@
 package phoupraw.mcmod.trifleclient.misc;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.AbstractIterator;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import dev.xpple.clientarguments.arguments.CBlockPredicateArgument;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -20,24 +24,31 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.RedstoneView;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import phoupraw.mcmod.trifleclient.TrifleClient;
 import phoupraw.mcmod.trifleclient.config.TCConfigs;
 
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
 import static phoupraw.mcmod.trifleclient.mixins.TCMixinConfigPlugin.LOGGER;
 
 @UtilityClass
 public class BlockFinder {
+    private static final ExecutorService THREAD_POOL = Executors.newSingleThreadExecutor();
     //private static final Set<BlockPos> iterated = new ObjectOpenHashSet<>();
     private volatile static @NotNull Iterator<BlockPos> iterator = Collections.emptyIterator();
     private volatile static @NotNull Predicate<CachedBlockPosition> predicate = Predicates.alwaysFalse();
     private volatile static @Nullable BlockPos found;
-    private static Thread thread;
+    private boolean sameSpace;
+    private volatile boolean stopping, stopped = true;
+    //private static Thread thread;
     static {
         ClientCommandRegistrationCallback.EVENT.register(BlockFinder::register);
         ClientTickEvents.END_WORLD_TICK.register(BlockFinder::onEndTick);
@@ -47,6 +58,13 @@ public class BlockFinder {
     private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         dispatcher.register(ClientCommandManager.literal(TrifleClient.ID)
           .then(ClientCommandManager.literal("find")
+            .then(ClientCommandManager.literal("samespace")
+              .executes(context -> {
+                  sameSpace ^= true;
+                  context.getSource().sendFeedback(Text.of("相同空间已" + (sameSpace ? "开启" : "关闭") + "。"));
+                  return 1;
+              })
+            )
             .then(ClientCommandManager.literal("block")
               .requires(source -> TCConfigs.A().isBlockFinder())
               .executes(BlockFinder::clearSearching)
@@ -64,7 +82,7 @@ public class BlockFinder {
                 //iterator = BlockPos.iterateOutwards(source.getPlayer().getBlockPos(), range, range, range).iterator();
                 predicate = CBlockPredicateArgument.getBlockPredicate(context, "block");
                 source.sendFeedback(Text.of("开始搜索……"));
-                start(source.getPlayer().getBlockPos());
+                start(source.getWorld(), source.getPlayer().getBlockPos());
                 return 1;
             }
         } catch (Throwable e) {
@@ -76,20 +94,52 @@ public class BlockFinder {
     /**
      需要外部同步
      */
-    private static void start(BlockPos origin) throws InterruptedException {
+    private static void start(World world, BlockPos origin) throws InterruptedException {
         clearFound();
-        if (thread != null) {
-            thread.interrupt();
+        while (!stopped) {
+            Thread.yield();
         }
+        stopping = false;
         int range = (MinecraftClient.getInstance().options.getViewDistance().getValue() * 2 + 1) * 16 / 2;
-        iterator = BlockPos.iterateOutwards(origin, range, range, range).iterator();
-        thread = new Thread(BlockFinder::run);
-        thread.start();
-        thread.join(1);
+        if (sameSpace) {
+            iterator = new AbstractIterator<>() {
+                final Set<BlockPos> set = new ObjectOpenHashSet<>();
+                final Queue<BlockPos> queue = new ArrayDeque<>();
+                {
+                    queue.add(origin);
+                }
+                @Override
+                protected BlockPos computeNext() {
+                    while (!queue.isEmpty()) {
+                        BlockPos pos = queue.poll();
+                        if (!set.add(pos) /*|| pos.getSquaredDistance(origin) > 64 * 64*/) {
+                            continue;
+                        }
+                        BlockState state = world.getBlockState(pos);
+                        if (state.isAir() || state.isOf(Blocks.WATER) || (!state.isSolidBlock(world, pos) && state.getCollisionShape(world, pos).isEmpty())) {
+                            for (Direction direction : RedstoneView.DIRECTIONS) {
+                                queue.add(pos.offset(direction));
+                            }
+                        }
+                        return pos;
+                    }
+                    endOfData();
+                    return null;
+                }
+            };
+        } else {
+            iterator = BlockPos.iterateOutwards(origin, range, range, range).iterator();
+        }
+        THREAD_POOL.execute(BlockFinder::run);
     }
     private static void run() {
+        stopped = false;
         boolean failed = true;
         while (iterator.hasNext()) {
+            if (stopping) {
+                stopped = true;
+                return;
+            }
             try {
                 ClientWorld world = MinecraftClient.getInstance().world;
                 if (world == null) break;
@@ -127,32 +177,31 @@ public class BlockFinder {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
                 player.sendMessage(Text.empty().append("未能找到方块。").fillStyle(Style.EMPTY.withColor(0xFFFF8888)));
+                iterator = Collections.emptyIterator();
             }
         }
+        stopped = true;
     }
     private static void onClientStopping(MinecraftClient client) {
         try {
-            if (thread != null) {
-                thread.interrupt();
-            }
+            THREAD_POOL.close();
         } catch (Exception e) {
             LOGGER.catching(e);
         }
     }
     private static void onEndTick(ClientWorld world) {
         if (!TCConfigs.A().isBlockFinder()) return;
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return;
         BlockPos found = BlockFinder.found;
         if (found == null || predicate.test(new CachedBlockPosition(world, found, false))) return;
         synchronized (BlockFinder.class) {
             found = BlockFinder.found;
             if (found == null || predicate.test(new CachedBlockPosition(world, found, false))) return;
             try {
-                start(found);
+                start(world, player.getBlockPos());
             } catch (InterruptedException e) {
-                ClientPlayerEntity player = MinecraftClient.getInstance().player;
-                if (player != null) {
-                    player.sendMessage(Text.empty().append("开始新一轮搜索时发生错误：" + e).formatted(Formatting.RED));
-                }
+                player.sendMessage(Text.empty().append("开始新一轮搜索时发生错误：" + e).formatted(Formatting.RED));
                 LOGGER.catching(e);
             }
         }
@@ -160,18 +209,13 @@ public class BlockFinder {
     private static int clearSearching(CommandContext<FabricClientCommandSource> context) {
         synchronized (BlockFinder.class) {
             FabricClientCommandSource source = context.getSource();
-            if (thread != null && thread.isAlive()) {
-                thread.interrupt();
-                source.sendFeedback(Text.literal("已中止搜索。"));
-                return 1;
-            } else if (found != null) {
+            if (found != null) {
                 clearFound();
                 source.sendFeedback(Text.literal("已清除搜索结果。"));
                 return 1;
-            } else {
-                source.sendError(Text.literal("没有搜索结果或进行中的搜索！"));
-                return 0;
             }
+            source.sendFeedback(Text.literal("已中止搜索。"));
+            return 1;
         }
     }
     /**
@@ -184,5 +228,6 @@ public class BlockFinder {
         TargetPointer.POSITIONS.remove(found.toCenterPos());
         BlockHighlighter.BLOCK_BOXES.remove(new BlockBox(found));
         BlockFinder.found = null;
+        stopping = true;
     }
 }

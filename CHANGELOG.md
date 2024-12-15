@@ -302,6 +302,7 @@
 ## 新增
 - 限制速度也会限制FOV
 - `/trifleclient find blocks <condition>`
+- `/trifleclient find samespace`
 - 最大聊天文本长度
 ## 修复
 - 自动收割补种有时消耗两个种子（[#12](https://github.com/Phoupraw/TrifleClient/issues/12)）
