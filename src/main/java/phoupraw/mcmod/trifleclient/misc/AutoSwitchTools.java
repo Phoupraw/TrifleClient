@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,6 +28,7 @@ public class AutoSwitchTools {
         AttackBlockCallback.EVENT.register(AutoSwitchTools::interact);
         ClientPlayerBlockBreakEvents.AFTER.register(AutoSwitchTools::afterBlockBreak);
         ClientTickEvents.END_WORLD_TICK.register(AutoSwitchTools::onEndTick);
+        AutoSwitchToolCallback.EVENT.register(AutoSwitchTools::check);
     }
     @ApiStatus.Internal
     public static void onStopBreaking(ClientPlayerEntity player, boolean value) {
@@ -82,5 +84,8 @@ public class AutoSwitchTools {
         if (prevSelected >= 0) {
             setBack(player);
         }
+    }
+    private static Boolean check(World world, BlockPos pos, BlockState state, Direction side, ClientPlayerEntity player, Hand hand) {
+        return Screen.hasShiftDown() ? false : null;
     }
 }
