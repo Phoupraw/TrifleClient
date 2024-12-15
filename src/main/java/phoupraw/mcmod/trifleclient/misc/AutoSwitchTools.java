@@ -4,14 +4,22 @@ import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -46,6 +54,7 @@ public class AutoSwitchTools {
             if (AutoSwitchToolCallback.EVENT.invoker().check(world, pos, state, side, player, hand)) {
                 int prevSelected = player.getInventory().selectedSlot;
                 float maxProgress = state.calcBlockBreakingDelta(player, world, pos);
+                double priority = 0;
                 int selected = -1;
                 for (var iter = player.getInventory().main.listIterator(9); iter.hasPrevious(); ) {
                     int i = iter.previousIndex();
@@ -54,8 +63,39 @@ public class AutoSwitchTools {
                     player.getInventory().selectedSlot = i;
                     float progress = state.calcBlockBreakingDelta(player, world, pos);
                     if (maxProgress < progress) {
+                        if (player.getMainHandStack().isIn(ItemTags.SWORDS)) {
+                            priority = -1;
+                        }
                         maxProgress = progress;
                         selected = i;
+                    } else if (maxProgress - 0.05f < progress || maxProgress >= 1 && progress >= 1) {
+                        if (player.getMainHandStack().isIn(ConventionalItemTags.SHEAR_TOOLS)) {
+                            if (priority < 2) {
+                                maxProgress = progress;
+                                selected = i;
+                                priority = 2;
+                            }
+                        } else {
+                            Registry<Enchantment> registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+                            if (EnchantmentHelper.getLevel(registry.getEntry(Enchantments.SILK_TOUCH).orElseThrow(), player.getMainHandStack()) > 0) {
+                                if (priority < 2) {
+                                    priority = 2;
+                                    maxProgress = progress;
+                                    selected = i;
+                                }
+                            } else {
+                                RegistryEntry<Enchantment> enchEntry = registry.getEntry(Enchantments.FORTUNE).orElseThrow();
+                                int level = EnchantmentHelper.getLevel(enchEntry, player.getMainHandStack());
+                                if (level > 0) {
+                                    double priority1 = (double) level / enchEntry.value().getMaxLevel();
+                                    if (priority < priority1) {
+                                        priority = priority1;
+                                        maxProgress = progress;
+                                        selected = i;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 if (selected >= 0) {

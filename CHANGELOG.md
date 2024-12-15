@@ -305,6 +305,7 @@
 - `/trifleclient find samespace`
 - 最大聊天文本长度
 ## 更改
-- 按住shift时不再触发切换工具
+- 按住shift时不再触发切换工具（[#11](https://github.com/Phoupraw/TrifleClient/issues/11)）
+- 自动切换工具优先附魔（[#13](https://github.com/Phoupraw/TrifleClient/issues/13)）
 ## 修复
 - 自动收割补种有时消耗两个种子（[#12](https://github.com/Phoupraw/TrifleClient/issues/12)）
