@@ -1,6 +1,5 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -21,10 +20,5 @@ abstract class MLivingEntity extends Entity {
     @ModifyReturnValue(method = "getStepHeight()F", at = @At("RETURN"))
     private float minStepHeight(float original) {
         return MMLivingEntity.minStepHeight((LivingEntity) (Object) this, original);
-    }
-    @Environment(EnvType.CLIENT)
-    @ModifyExpressionValue(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isFallFlying()Z"))
-    private boolean freeElytraFly(boolean original) {
-        return MMLivingEntity.freeElytraFly((LivingEntity) (Object) this, original);
     }
 }

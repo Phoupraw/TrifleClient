@@ -116,7 +116,6 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
                 //player.stopFallFlying();
             }
         });
-        ClientTickEvents.END_WORLD_TICK.register(FreeElytraFlying::lambda_onEndTick);
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (TCConfigs.A().isDebugAttackEntity()) {
                 String saveName;
