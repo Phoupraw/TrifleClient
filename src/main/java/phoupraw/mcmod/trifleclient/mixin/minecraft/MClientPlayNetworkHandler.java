@@ -1,6 +1,5 @@
 package phoupraw.mcmod.trifleclient.mixin.minecraft;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
@@ -10,12 +9,10 @@ import net.minecraft.client.network.ClientCommonNetworkHandler;
 import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.PlayerAbilitiesS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.mixins.minecraft.MMClientPlayNetworkHandler;
 
 @Environment(EnvType.CLIENT)
@@ -31,9 +28,5 @@ abstract class MClientPlayNetworkHandler extends ClientCommonNetworkHandler {
     @WrapWithCondition(method = "onPlayerAbilities", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z"))
     private boolean elytraCancelSyncAllowFlying(PlayerAbilities instance, boolean value, @Local(argsOnly = true) PlayerAbilitiesS2CPacket packet) {
         return MMClientPlayNetworkHandler.elytraCancelSyncAllowFlying(instance, value, packet, client);
-    }
-    @ModifyExpressionValue(method = "onPlayerPositionLook", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/PlayerPositionLookS2CPacket;getPitch()F"))
-    private float no90sync(float original, @Local PlayerEntity player) {
-        return original < -89 && TCConfigs.A().isFreeElytraFlying() ? player.getPitch() : original;
     }
 }

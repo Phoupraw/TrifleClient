@@ -115,7 +115,7 @@ public class AutoHarvestImpls {
         }
     }
     private static void reapCrop(ClientPlayerEntity player, ClientPlayerInteractionManager interactor, ClientWorld world, BlockPos pos, BlockState state) {
-        if (state.calcBlockBreakingDelta(player, world, pos) < 1) {
+        if (!(player.canInteractWithBlockAt(pos.down(), 0) && state.calcBlockBreakingDelta(player, world, pos) >= 1)) {
             return;
         }
         ItemStack stack = player.getOffHandStack();

@@ -309,6 +309,8 @@
 - 自动切换工具优先附魔（[#13](https://github.com/Phoupraw/TrifleClient/issues/13)）
 ## 修复
 - 自动收割补种有时消耗两个种子（[#12](https://github.com/Phoupraw/TrifleClient/issues/12)）
-#
+# 0.39.1
 ## 更改
 - 移除了鞘翅自由飞行的代码，功能移动至独立模组
+## 修复
+- 自动收获后有时补种失败
