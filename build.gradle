@@ -2,6 +2,7 @@
 plugins {
     id "fabric-loom" version "1.8.13"
     id "maven-publish"
+    id "idea"
 }
 
 version = project.mod_version
@@ -177,5 +178,11 @@ loom {
         client {
             programArg("--username=Phoupraw")
         }
+    }
+}
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }
