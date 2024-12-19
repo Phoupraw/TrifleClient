@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -73,7 +72,7 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
         loadClass(AutoAttacker.class);
         loadClass(MiningSame.class);
         loadClass(Attacking.class);
-        ServerTickEvents.START_SERVER_TICK.register(server -> server.setFlightEnabled(TCConfigs.A().isAllowFlight()));
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> server.setFlightEnabled(TCConfigs.A().isAllowFlight()));
         AfterClientPlayerMove.EVENT.register(NormalSpeed::afterClientPlayerMove);
         OnClientPlayerMove.EVENT.register(SpeedSpeed::onClientPlayerMove);
         //AttackEntityCallback.EVENT.register(AutoCrit::interact);
@@ -221,6 +220,6 @@ public final class TrifleClient implements ModInitializer, ClientModInitializer 
     }
     @Override
     public void onInitialize() {
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> server.setFlightEnabled(false));
+    
     }
 }
