@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import phoupraw.mcmod.trifleclient.v0.impl.AutoHarvestImpls;
+import phoupraw.mcmod.trifleclient.v0.impl.AutoSwitchToolImpls;
 
 import java.util.function.Supplier;
 
@@ -37,6 +38,10 @@ abstract class MClientWorld extends World {
     @Dynamic
     @Inject(method = "onBlockChanged(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;)V", at = @At("RETURN"))
     private void onBlockChanged(BlockPos pos, BlockState oldBlock, BlockState newBlock, CallbackInfo ci) {
-        AutoHarvestImpls.onBlockChanged((ClientWorld)(Object) this, pos, oldBlock, newBlock);
+        AutoHarvestImpls.onBlockChanged((ClientWorld) (Object) this, pos, oldBlock, newBlock);
+    }
+    @Inject(method = "handleBlockUpdate", at = @At("RETURN"))
+    private void afterSyncBlockState(BlockPos pos, BlockState state, int flags, CallbackInfo ci) {
+        AutoSwitchToolImpls.afterSyncBlockState((ClientWorld) (Object)this,pos,state,flags);
     }
 }

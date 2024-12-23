@@ -18,5 +18,7 @@ public interface AutoSwitchToolCallback {
         }
         return true;
     });
-    Boolean check(World world, BlockPos pos, BlockState state, Direction side, ClientPlayerEntity player, Hand hand);
+    /// @param hand 永远为{@link Hand#MAIN_HAND}
+    /// @return 可以为`null`
+    Boolean check(World world, BlockPos pos, BlockState state, Direction side, ClientPlayerEntity player, @Deprecated Hand hand);
 }

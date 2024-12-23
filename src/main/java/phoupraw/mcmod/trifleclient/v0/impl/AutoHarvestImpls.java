@@ -42,12 +42,9 @@ import java.util.concurrent.Executors;
 public class AutoHarvestImpls {
     public static final Table<ChunkPos, BlockPos, AutoHarvestCallback> CACHE = Tables.newCustomTable(new ConcurrentHashMap<>(), Object2ObjectOpenHashMap::new);
     public static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
-    /**
-     @see phoupraw.mcmod.trifleclient.mixin.minecraft.MClientWorld#onBlockChanged(BlockPos, BlockState, BlockState, CallbackInfo)
-     */
+    /// @see phoupraw.mcmod.trifleclient.mixin.minecraft.MClientWorld#onBlockChanged(BlockPos, BlockState, BlockState, CallbackInfo)
     public static void onBlockChanged(ClientWorld world, BlockPos pos, BlockState oldBlock, BlockState newBlock) {
         ChunkPos chunkPos = new ChunkPos(pos);
-        //var action = EVENT.invoker().getAction(world, pos, newBlock);
         var action = AutoHarvestCallback.LOOKUP.find(world, pos, newBlock, null, null);
         if (action == null) {
             CACHE.remove(chunkPos, pos);
