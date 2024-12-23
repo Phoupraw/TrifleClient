@@ -26,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.ApiStatus;
+import phoupraw.mcmod.trifleclient.config.TCConfigs;
 import phoupraw.mcmod.trifleclient.v0.api.AutoSwitchToolCallback;
 
 @UtilityClass
@@ -49,7 +50,7 @@ public class AutoSwitchTools {
         toSync = true;
     }
     private static ActionResult interact(PlayerEntity player0, World world, Hand hand, BlockPos pos, Direction side) {
-        if (player0 instanceof ClientPlayerEntity player) {
+        if (TCConfigs.A().isAutoSwitchTool() && player0 instanceof ClientPlayerEntity player) {
             BlockState state = world.getBlockState(pos);
             if (AutoSwitchToolCallback.EVENT.invoker().check(world, pos, state, side, player, hand)) {
                 int prevSelected = player.getInventory().selectedSlot;
